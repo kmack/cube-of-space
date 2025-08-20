@@ -1,16 +1,9 @@
-import { OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import CubeOfSpace from "./CubeOfSpace";
 
-function App() {
+export default function App() {
   return (
-    <Canvas camera={{ position: [3, 3, 3] }}>
-      <mesh>
-        <OrbitControls />
-        <boxGeometry />
-        <meshNormalMaterial />
-      </mesh>
-    </Canvas>
+    <div style={{ height: "100vh", background: "#0b0e12" }}>
+      <CubeOfSpace />
+    </div>
   );
 }
-
-export default App;

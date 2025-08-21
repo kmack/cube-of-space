@@ -38,14 +38,17 @@ type Edge = {
 
 type Axis = {
   label: string;
-  from: Vec3;
-  to: Vec3;
+  letter: string;
+  key: string;
+  from: Vec3; // axis start
+  to: Vec3; // axis end
+  normal: Vec3; // preferred “up/out” direction for label plane
 };
 
 // ---- Config ----
-
 const SIZE = 2; // cube side length in world units
 const HALF = SIZE / 2;
+const MOTHER_OFFSET = SIZE * 0.18; // tweak 0.12–0.25 to taste
 
 // Faces (double letters / planets)
 const faces: Face[] = [
@@ -210,12 +213,79 @@ const edges: Edge[] = [
 // Mother letters (internal axes)
 const axes: Axis[] = [
   // Aleph: Above <-> Below (Y axis)
-  { label: "Aleph · Air (Key 0)", from: [0, -HALF, 0], to: [0, +HALF, 0] },
+  {
+    label: "Aleph · Air",
+    letter: "א",
+    key: "0",
+    from: [0, -HALF, 0],
+    to: [0, +HALF, 0],
+    normal: [0, 0, 1], // use +Z as label “up”
+  },
   // Mem: East <-> West (X axis)
-  { label: "Mem · Water (Key 12)", from: [-HALF, 0, 0], to: [+HALF, 0, 0] },
+  {
+    label: "Mem · Water",
+    letter: "מ",
+    key: "12",
+    from: [-HALF, 0, 0],
+    to: [+HALF, 0, 0],
+    normal: [0, 1, 0], // use +Y as label “up”
+  },
   // Shin: South <-> North (Z axis)
-  { label: "Shin · Fire (Key 20)", from: [0, 0, -HALF], to: [0, 0, +HALF] },
+  {
+    label: "Shin · Fire",
+    letter: "ש",
+    key: "20",
+    from: [0, 0, -HALF],
+    to: [0, 0, +HALF],
+    normal: [0, 1, 0], // use +Y as label “up”
+  },
 ];
+
+function MotherLabels() {
+  return (
+    <>
+      {axes.map((a, i) => {
+        // tangent along the axis
+        const t = new THREE.Vector3(
+          a.to[0] - a.from[0],
+          a.to[1] - a.from[1],
+          a.to[2] - a.from[2]
+        ).normalize();
+
+        // positions: one label near each end, pulled inward by MOTHER_OFFSET
+        const fromPos = new THREE.Vector3(...a.from).add(
+          t.clone().multiplyScalar(MOTHER_OFFSET)
+        ) as unknown as Vec3;
+        const toPos = new THREE.Vector3(...a.to).add(
+          t.clone().multiplyScalar(-MOTHER_OFFSET)
+        ) as unknown as Vec3;
+
+        // orient both labels using the same basis (normal = a.normal, tangent = t)
+        const rot = eulerFromNormalAndTangent(a.normal, [t.x, t.y, t.z]);
+
+        const Tag = ({ pos }: { pos: Vec3 }) => (
+          <group position={pos} rotation={rot}>
+            <Html center transform distanceFactor={1.5}>
+              <div style={tagStyleStrong}>
+                <div style={{ fontSize: 14, opacity: 0.8 }}>{a.label}</div>
+                <div style={{ fontSize: 18 }}>
+                  {a.letter} · Key {a.key}
+                </div>
+              </div>
+            </Html>
+          </group>
+        );
+
+        return (
+          <React.Fragment key={i}>
+            <Tag pos={fromPos} />
+            <Tag pos={toPos} />
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+}
 
 // ---- Components ----
 
@@ -388,6 +458,7 @@ export default function CubeOfSpace() {
       <FaceLabels />
       <EdgeLabels />
       <AxesLines />
+      <MotherLabels />
     </Canvas>
   );
 }

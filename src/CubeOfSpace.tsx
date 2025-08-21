@@ -1,7 +1,28 @@
 import * as React from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Html, Line } from "@react-three/drei";
-// import * as THREE from "three";
+
+// ---- Types ----
+type Vec3 = [number, number, number];
+
+type Face = {
+  name: string;
+  letter: string;
+  key: string;
+  pos: Vec3;
+};
+
+type Edge = {
+  label: string;
+  letter: string;
+  pos: Vec3;
+};
+
+type Axis = {
+  label: string;
+  from: Vec3;
+  to: Vec3;
+};
 
 // ---- Config ----
 
@@ -9,7 +30,7 @@ const SIZE = 2; // cube side length in world units
 const HALF = SIZE / 2;
 
 // Faces (double letters / planets)
-const faces = [
+const faces: Face[] = [
   { name: "Beth · Mercury · Key 1", letter: "ב", key: "1", pos: [0, +HALF, 0] }, // Above
   { name: "Gimel · Moon · Key 2", letter: "ג", key: "2", pos: [0, -HALF, 0] }, // Below
   { name: "Daleth · Venus · Key 3", letter: "ד", key: "3", pos: [+HALF, 0, 0] }, // East
@@ -24,7 +45,7 @@ const faces = [
 ];
 
 // Center
-const center = {
+const center: Face = {
   name: "Tav · Saturn · Key 21",
   letter: "ת",
   key: "21",
@@ -40,7 +61,7 @@ const eastX = +HALF,
 const southZ = +HALF,
   northZ = -HALF;
 
-const edges = [
+const edges: Edge[] = [
   // verticals at corners
   { label: "Heh · Aries", letter: "ה", pos: [eastX, 0, northZ] }, // NE vertical
   { label: "Vav · Taurus", letter: "ו", pos: [eastX, 0, southZ] }, // SE vertical
@@ -65,7 +86,7 @@ const edges = [
 ];
 
 // Mother letters (internal axes)
-const axes = [
+const axes: Axis[] = [
   // Aleph: Above <-> Below (Y axis)
   { label: "Aleph · Air (Key 0)", from: [0, -HALF, 0], to: [0, +HALF, 0] },
   // Mem: East <-> West (X axis)
@@ -80,7 +101,7 @@ function FaceLabels() {
   return (
     <>
       {faces.map((f, i) => (
-        <group key={i} position={f.pos as any}>
+        <group key={i} position={f.pos}>
           <Html center transform distanceFactor={1.5}>
             <div style={tagStyle}>
               <div style={{ fontSize: 14, opacity: 0.7 }}>{f.name}</div>
@@ -91,7 +112,7 @@ function FaceLabels() {
           </Html>
         </group>
       ))}
-      <group position={center.pos as any}>
+      <group position={center.pos}>
         <Html center transform distanceFactor={1.5}>
           <div style={tagStyleStrong}>
             <div style={{ fontSize: 14, opacity: 0.8 }}>{center.name}</div>
@@ -109,7 +130,7 @@ function EdgeLabels() {
   return (
     <>
       {edges.map((e, i) => (
-        <group key={i} position={e.pos as any}>
+        <group key={i} position={e.pos}>
           <Html center transform distanceFactor={1.5}>
             <div style={edgeStyle}>
               <div style={{ fontSize: 14 }}>{e.label}</div>
@@ -127,27 +148,26 @@ function AxesLines() {
   const lineWidth = 2;
   return (
     <>
-      {axes.map((a, i) => (
-        <group key={i}>
-          <Line
-            points={[a.from as any, a.to as any]}
-            color={color}
-            lineWidth={lineWidth}
-            dashed={false}
-          />
-          {/* tiny center tag */}
-          <Html
-            position={[
-              (a.from[0] + a.to[0]) / 2,
-              (a.from[1] + a.to[1]) / 2,
-              (a.from[2] + a.to[2]) / 2,
-            ]}
-            center
-          >
-            <div style={axisStyle}>{a.label}</div>
-          </Html>
-        </group>
-      ))}
+      {axes.map((a, i) => {
+        const mid: Vec3 = [
+          (a.from[0] + a.to[0]) / 2,
+          (a.from[1] + a.to[1]) / 2,
+          (a.from[2] + a.to[2]) / 2,
+        ];
+        return (
+          <group key={i}>
+            <Line
+              points={[a.from, a.to]}
+              color={color}
+              lineWidth={lineWidth}
+              dashed={false}
+            />
+            <Html position={mid} center>
+              <div style={axisStyle}>{a.label}</div>
+            </Html>
+          </group>
+        );
+      })}
     </>
   );
 }
@@ -160,7 +180,7 @@ function WireCube({
   color?: string;
 }) {
   const h = size / 2;
-  const corners: [number, number, number][] = [
+  const corners: Vec3[] = [
     [-h, -h, -h],
     [h, -h, -h],
     [h, -h, h],
@@ -170,7 +190,7 @@ function WireCube({
     [h, h, h],
     [-h, h, h], // top square
   ];
-  const edgesIndex = [
+  const edgesIndex: [number, number][] = [
     [0, 1],
     [1, 2],
     [2, 3],
@@ -189,7 +209,7 @@ function WireCube({
       {edgesIndex.map((pair, i) => (
         <Line
           key={i}
-          points={[corners[pair[0]], corners[pair[1]]] as any}
+          points={[corners[pair[0]], corners[pair[1]]]}
           color={color}
           lineWidth={1.5}
         />

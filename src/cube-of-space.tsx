@@ -296,8 +296,8 @@ function Label3D({
 
 function AxisFacingTag({
   pos,
-  axisTangent, // the axis direction (will be normalized)
-  fallbackNormal, // used if camera is exactly along the axis
+  axisTangent, // [x,y,z]
+  fallbackNormal, // [x,y,z]
   title,
   subtitle,
   size = 0.08,
@@ -315,7 +315,7 @@ function AxisFacingTag({
 }) {
   const ref = React.useRef<THREE.Group>(null!);
 
-  // Cache vectors/matrix to avoid per-frame allocations
+  // Pre-alloc scratch
   const tmp = React.useMemo(
     () => ({
       t: new THREE.Vector3(),
@@ -328,15 +328,18 @@ function AxisFacingTag({
     []
   );
 
-  // Normalize the axis once
-  const tDep = axisTangent;
+  // ✅ Destructure arrays into scalars so the deps are simple & static-checkable
+  const [ax, ay, az] = axisTangent;
+  const [fx, fy, fz] = fallbackNormal;
+
+  // ✅ Recompute only when numbers change (lint clean)
   const tNorm = React.useMemo(
-    () => new THREE.Vector3(...tDep).normalize(),
-    [tDep[0], tDep[1], tDep[2]]
+    () => new THREE.Vector3(ax, ay, az).normalize(),
+    [ax, ay, az]
   );
   const fallback = React.useMemo(
-    () => new THREE.Vector3(...fallbackNormal).normalize(),
-    [fallbackNormal[0], fallbackNormal[1], fallbackNormal[2]]
+    () => new THREE.Vector3(fx, fy, fz).normalize(),
+    [fx, fy, fz]
   );
 
   useFrame(({ camera }) => {
@@ -352,28 +355,22 @@ function AxisFacingTag({
     // Vector from label to camera
     view.copy(camera.position).sub(worldPos);
 
-    // Project view direction onto plane perpendicular to the axis
-    // n = view - t*(view·t)
+    // Project view direction onto plane ⟂ axis
     const viewDot = view.dot(t);
     n.copy(view).addScaledVector(t, -viewDot);
 
-    // If camera is almost exactly along the axis, fall back to a stable normal
     if (n.lengthSq() < 1e-6) {
       n.copy(fallback);
-      // ensure n ⟂ t
       n.addScaledVector(t, -n.dot(t)).normalize();
     } else {
       n.normalize();
     }
 
-    // b = n × t (right-handed frame)
+    // Build basis: columns [t, b = n×t, n]
     b.crossVectors(n, t).normalize();
-
-    // Build basis where columns are [t, b, n]
     m.makeBasis(t, b, n);
 
-    // Apply rotation
-    if (ref.current) ref.current.quaternion.setFromRotationMatrix(m);
+    ref.current?.quaternion.setFromRotationMatrix(m);
   });
 
   return (

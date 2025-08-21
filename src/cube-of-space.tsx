@@ -42,7 +42,9 @@ type Axis = {
   key: string;
   from: Vec3; // axis start
   to: Vec3; // axis end
+  pos: Vec3; // where the label sits
   normal: Vec3; // preferred “up/out” direction for label plane
+  tangent: Vec3; // along-axis direction for the text baseline
 };
 
 // ---- Config ----
@@ -219,7 +221,9 @@ const axes: Axis[] = [
     key: "0",
     from: [0, -HALF, 0],
     to: [0, +HALF, 0],
-    normal: [0, 0, 1], // use +Z as label “up”
+    pos: [0, MOTHER_OFFSET, 0], // where the label sits
+    tangent: [0, 1, 0], // along the axis
+    normal: [0, 0, 1], // label’s “outward” direction
   },
   // Mem: East <-> West (X axis)
   {
@@ -228,7 +232,9 @@ const axes: Axis[] = [
     key: "12",
     from: [-HALF, 0, 0],
     to: [+HALF, 0, 0],
-    normal: [0, 1, 0], // use +Y as label “up”
+    pos: [MOTHER_OFFSET, 0, 0],
+    tangent: [1, 0, 0],
+    normal: [0, 1, 0],
   },
   // Shin: South <-> North (Z axis)
   {
@@ -237,7 +243,9 @@ const axes: Axis[] = [
     key: "20",
     from: [0, 0, -HALF],
     to: [0, 0, +HALF],
-    normal: [0, 1, 0], // use +Y as label “up”
+    pos: [0, 0, MOTHER_OFFSET], // <- not at the cube center anymore
+    tangent: [0, 0, 1],
+    normal: [0, 1, 0],
   },
 ];
 
@@ -343,25 +351,19 @@ function EdgeLabels() {
 function AxesLines() {
   const color = "#888";
   const lineWidth = 2;
+
   return (
     <>
       {axes.map((a, i) => {
-        const mid: Vec3 = [
-          (a.from[0] + a.to[0]) / 2,
-          (a.from[1] + a.to[1]) / 2,
-          (a.from[2] + a.to[2]) / 2,
-        ];
+        const rot = eulerFromNormalAndTangent(a.normal, a.tangent);
         return (
           <group key={i}>
-            <Line
-              points={[a.from, a.to]}
-              color={color}
-              lineWidth={lineWidth}
-              dashed={false}
-            />
-            <Html position={mid} center>
-              <div style={axisStyle}>{a.label}</div>
-            </Html>
+            <Line points={[a.from, a.to]} color={color} lineWidth={lineWidth} />
+            <group position={a.pos} rotation={rot}>
+              <Html center transform distanceFactor={1.4}>
+                <div style={axisStyle}>{a.label}</div>
+              </Html>
+            </group>
           </group>
         );
       })}
@@ -415,6 +417,14 @@ function WireCube({
   );
 }
 
+const noInteract: React.CSSProperties = {
+  pointerEvents: "none", // let OrbitControls receive all pointer events
+  userSelect: "none",
+  WebkitUserSelect: "none",
+  MozUserSelect: "none",
+  msUserSelect: "none",
+};
+
 const tagStyle: React.CSSProperties = {
   background: "rgba(0,0,0,0.55)",
   color: "white",
@@ -422,6 +432,7 @@ const tagStyle: React.CSSProperties = {
   borderRadius: 8,
   backdropFilter: "blur(4px)",
   whiteSpace: "nowrap",
+  ...noInteract,
 };
 const tagStyleStrong: React.CSSProperties = {
   ...tagStyle,
@@ -441,7 +452,12 @@ const axisStyle: React.CSSProperties = {
 
 export default function CubeOfSpace() {
   return (
-    <Canvas camera={{ position: [4, 3, 6], fov: 50 }}>
+    <Canvas
+      camera={{ position: [4, 3, 6], fov: 50 }}
+      onCreated={({ gl }) => {
+        gl.domElement.style.userSelect = "none";
+      }}
+    >
       {/* Lighting */}
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 8, 5]} intensity={0.9} />

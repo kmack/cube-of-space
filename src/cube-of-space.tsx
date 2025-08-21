@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as THREE from "three";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Line, Text, Billboard } from "@react-three/drei";
 
 // ---- Types ----
@@ -294,11 +294,106 @@ function Label3D({
   );
 }
 
+function AxisFacingTag({
+  pos,
+  axisTangent, // the axis direction (will be normalized)
+  fallbackNormal, // used if camera is exactly along the axis
+  title,
+  subtitle,
+  size = 0.08,
+  gap = 0.08,
+  color = "white",
+}: {
+  pos: Vec3;
+  axisTangent: Vec3;
+  fallbackNormal: Vec3;
+  title: string;
+  subtitle?: string;
+  size?: number;
+  gap?: number;
+  color?: string;
+}) {
+  const ref = React.useRef<THREE.Group>(null!);
+
+  // Cache vectors/matrix to avoid per-frame allocations
+  const tmp = React.useMemo(
+    () => ({
+      t: new THREE.Vector3(),
+      view: new THREE.Vector3(),
+      n: new THREE.Vector3(),
+      b: new THREE.Vector3(),
+      m: new THREE.Matrix4(),
+      worldPos: new THREE.Vector3(),
+    }),
+    []
+  );
+
+  // Normalize the axis once
+  const tDep = axisTangent;
+  const tNorm = React.useMemo(
+    () => new THREE.Vector3(...tDep).normalize(),
+    [tDep[0], tDep[1], tDep[2]]
+  );
+  const fallback = React.useMemo(
+    () => new THREE.Vector3(...fallbackNormal).normalize(),
+    [fallbackNormal[0], fallbackNormal[1], fallbackNormal[2]]
+  );
+
+  useFrame(({ camera }) => {
+    const { t, view, n, b, m, worldPos } = tmp;
+
+    // axis tangent (unit)
+    t.copy(tNorm);
+
+    // world position of this label
+    if (ref.current) ref.current.getWorldPosition(worldPos);
+    else worldPos.set(pos[0], pos[1], pos[2]);
+
+    // Vector from label to camera
+    view.copy(camera.position).sub(worldPos);
+
+    // Project view direction onto plane perpendicular to the axis
+    // n = view - t*(view·t)
+    const viewDot = view.dot(t);
+    n.copy(view).addScaledVector(t, -viewDot);
+
+    // If camera is almost exactly along the axis, fall back to a stable normal
+    if (n.lengthSq() < 1e-6) {
+      n.copy(fallback);
+      // ensure n ⟂ t
+      n.addScaledVector(t, -n.dot(t)).normalize();
+    } else {
+      n.normalize();
+    }
+
+    // b = n × t (right-handed frame)
+    b.crossVectors(n, t).normalize();
+
+    // Build basis where columns are [t, b, n]
+    m.makeBasis(t, b, n);
+
+    // Apply rotation
+    if (ref.current) ref.current.quaternion.setFromRotationMatrix(m);
+  });
+
+  return (
+    <group ref={ref} position={pos}>
+      <Label3D
+        title={title}
+        subtitle={subtitle}
+        size={size}
+        gap={gap}
+        color={color}
+      />
+    </group>
+  );
+}
+
 function MotherLabels() {
   return (
     <>
       {axes.map((a, i) => {
-        // tangent along the axis
+        // axis tangent from endpoints (normalized)
         const t = new THREE.Vector3(
           a.to[0] - a.from[0],
           a.to[1] - a.from[1],
@@ -313,19 +408,22 @@ function MotherLabels() {
           t.clone().multiplyScalar(-MOTHER_OFFSET)
         ) as unknown as Vec3;
 
-        // orient both labels using the same basis (normal = a.normal, tangent = t)
-        const rot = eulerFromNormalAndTangent(a.normal, [t.x, t.y, t.z]);
-
-        const Tag = ({ pos }: { pos: Vec3 }) => (
-          <group position={pos} rotation={rot}>
-            <Label3D title={`${a.letter} · Key ${a.key}`} subtitle={a.label} />
-          </group>
-        );
-
         return (
           <React.Fragment key={i}>
-            <Tag pos={fromPos} />
-            <Tag pos={toPos} />
+            <AxisFacingTag
+              pos={fromPos}
+              axisTangent={[t.x, t.y, t.z]}
+              fallbackNormal={a.normal}
+              title={`${a.letter} · Key ${a.key}`}
+              subtitle={a.label}
+            />
+            <AxisFacingTag
+              pos={toPos}
+              axisTangent={[t.x, t.y, t.z]}
+              fallbackNormal={a.normal}
+              title={`${a.letter} · Key ${a.key}`}
+              subtitle={a.label}
+            />
           </React.Fragment>
         );
       })}

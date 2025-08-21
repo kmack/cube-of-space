@@ -1,4 +1,4 @@
-import CubeOfSpace from "./CubeOfSpace";
+import CubeOfSpace from "./cube-of-space";
 
 export default function App() {
   return (

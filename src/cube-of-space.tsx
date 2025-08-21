@@ -147,14 +147,14 @@ const edges: Edge[] = [
     label: "Zain · Gemini",
     letter: "ז",
     pos: [eastX, topY, 0],
-    normal: [+1, 0, 0],
+    normal: [+1, 1, 0],
     tangent: [0, 0, -1],
   }, // East-Above
   {
     label: "Cheth · Cancer",
     letter: "ח",
     pos: [eastX, botY, 0],
-    normal: [+1, 0, 0],
+    normal: [+1, -1, 0],
     tangent: [0, 0, -1],
   }, // East-Below
 
@@ -163,14 +163,14 @@ const edges: Edge[] = [
     label: "Teth · Leo",
     letter: "ט",
     pos: [0, topY, northZ],
-    normal: [0, 0, -1],
+    normal: [0, 1, -1],
     tangent: [-1, 0, 0],
   }, // North-Above
   {
     label: "Yod · Virgo",
     letter: "י",
     pos: [0, botY, northZ],
-    normal: [0, 0, -1],
+    normal: [0, -1, -1],
     tangent: [-1, 0, 0],
   }, // North-Below
 
@@ -179,14 +179,14 @@ const edges: Edge[] = [
     label: "Samekh · Sag.",
     letter: "ס",
     pos: [westX, topY, 0],
-    normal: [-1, 0, 0],
+    normal: [-1, 1, 0],
     tangent: [0, 0, 1],
   }, // West-Above
   {
     label: "Ayin · Capricorn",
     letter: "ע",
     pos: [westX, botY, 0],
-    normal: [-1, 0, 0],
+    normal: [-1, -1, 0],
     tangent: [0, 0, 1],
   }, // West-Below
 
@@ -195,14 +195,14 @@ const edges: Edge[] = [
     label: "Tzaddi · Aquarius",
     letter: "צ",
     pos: [0, topY, southZ],
-    normal: [0, 0, +1],
+    normal: [0, 1, +1],
     tangent: [1, 0, 0],
   }, // South-Above
   {
     label: "Qoph · Pisces",
     letter: "ק",
     pos: [0, botY, southZ],
-    normal: [0, 0, +1],
+    normal: [0, -1, +1],
     tangent: [1, 0, 0],
   }, // South-Below
 ];

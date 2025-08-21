@@ -377,13 +377,9 @@ function AxesLines() {
   return (
     <>
       {axes.map((a, i) => {
-        const rot = eulerFromNormalAndTangent(a.normal, a.tangent);
         return (
           <group key={i}>
             <Line points={[a.from, a.to]} color={color} lineWidth={lineWidth} />
-            <group position={a.pos} rotation={rot}>
-              <Label3D title={a.label} />
-            </group>
           </group>
         );
       })}

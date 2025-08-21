@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Html, Line } from "@react-three/drei";
+import { OrbitControls, Line, Text, Billboard } from "@react-three/drei";
 
 // ---- Types ----
 type Vec3 = [number, number, number];
@@ -249,6 +249,51 @@ const axes: Axis[] = [
   },
 ];
 
+function Label3D({
+  title,
+  subtitle,
+  size = 0.08,
+  gap = 0.08,
+  color = "white",
+}: {
+  title: string;
+  subtitle?: string;
+  size?: number;
+  gap?: number;
+  color?: string;
+}) {
+  return (
+    <group>
+      <Text
+        anchorX="center"
+        anchorY="middle"
+        fontSize={size}
+        lineHeight={1.1}
+        color={color}
+        material-toneMapped={false}
+        material-depthTest={true} // (optional; true by default)
+      >
+        {title}
+      </Text>
+      {subtitle && (
+        <Text
+          anchorX="center"
+          anchorY="middle"
+          fontSize={size * 0.85}
+          position={[0, -gap, 0]}
+          color={color}
+          material-toneMapped={false}
+          material-transparent={true} // needed for opacity < 1
+          material-opacity={0.9}
+          material-depthTest={true} // (optional)
+        >
+          {subtitle}
+        </Text>
+      )}
+    </group>
+  );
+}
+
 function MotherLabels() {
   return (
     <>
@@ -273,14 +318,7 @@ function MotherLabels() {
 
         const Tag = ({ pos }: { pos: Vec3 }) => (
           <group position={pos} rotation={rot}>
-            <Html center transform distanceFactor={1.5}>
-              <div style={tagStyleStrong}>
-                <div style={{ fontSize: 14, opacity: 0.8 }}>{a.label}</div>
-                <div style={{ fontSize: 18 }}>
-                  {a.letter} · Key {a.key}
-                </div>
-              </div>
-            </Html>
+            <Label3D title={`${a.letter} · Key ${a.key}`} subtitle={a.label} />
           </group>
         );
 
@@ -302,28 +340,17 @@ function FaceLabels() {
     <>
       {faces.map((f, i) => (
         <group key={i} position={f.pos} rotation={f.rotation}>
-          <Html center transform distanceFactor={1.5}>
-            <div style={tagStyle}>
-              <div style={{ fontSize: 14, opacity: 0.7 }}>{f.name}</div>
-              <div style={{ fontSize: 18 }}>
-                {f.letter} · Key {f.key}
-              </div>
-            </div>
-          </Html>
+          <Label3D title={`${f.letter} · Key ${f.key}`} subtitle={f.name} />
         </group>
       ))}
 
       {/* Center stays billboarded */}
-      <group position={center.pos}>
-        <Html center transform distanceFactor={1.5}>
-          <div style={tagStyleStrong}>
-            <div style={{ fontSize: 14, opacity: 0.8 }}>{center.name}</div>
-            <div style={{ fontSize: 18 }}>
-              {center.letter} · Key {center.key}
-            </div>
-          </div>
-        </Html>
-      </group>
+      <Billboard position={center.pos}>
+        <Label3D
+          title={`${center.letter} · Key ${center.key}`}
+          subtitle={center.name}
+        />
+      </Billboard>
     </>
   );
 }
@@ -335,12 +362,7 @@ function EdgeLabels() {
         const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
         return (
           <group key={i} position={e.pos} rotation={rot}>
-            <Html center transform distanceFactor={1.5}>
-              <div style={edgeStyle}>
-                <div style={{ fontSize: 14 }}>{e.label}</div>
-                <div style={{ fontSize: 16 }}>{e.letter}</div>
-              </div>
-            </Html>
+            <Label3D title={e.letter} subtitle={e.label} />
           </group>
         );
       })}
@@ -360,9 +382,7 @@ function AxesLines() {
           <group key={i}>
             <Line points={[a.from, a.to]} color={color} lineWidth={lineWidth} />
             <group position={a.pos} rotation={rot}>
-              <Html center transform distanceFactor={1.4}>
-                <div style={axisStyle}>{a.label}</div>
-              </Html>
+              <Label3D title={a.label} />
             </group>
           </group>
         );
@@ -417,42 +437,10 @@ function WireCube({
   );
 }
 
-const noInteract: React.CSSProperties = {
-  pointerEvents: "none", // let OrbitControls receive all pointer events
-  userSelect: "none",
-  WebkitUserSelect: "none",
-  MozUserSelect: "none",
-  msUserSelect: "none",
-};
-
-const tagStyle: React.CSSProperties = {
-  background: "rgba(0,0,0,0.55)",
-  color: "white",
-  padding: "6px 10px",
-  borderRadius: 8,
-  backdropFilter: "blur(4px)",
-  whiteSpace: "nowrap",
-  ...noInteract,
-};
-const tagStyleStrong: React.CSSProperties = {
-  ...tagStyle,
-  background: "rgba(0,0,0,0.7)",
-  border: "1px solid rgba(255,255,255,0.15)",
-};
-const edgeStyle: React.CSSProperties = {
-  ...tagStyle,
-  fontSize: 12,
-  padding: "4px 8px",
-};
-const axisStyle: React.CSSProperties = {
-  ...tagStyle,
-  fontSize: 12,
-  padding: "2px 6px",
-};
-
 export default function CubeOfSpace() {
   return (
     <Canvas
+      dpr={[1, 2]}
       camera={{ position: [4, 3, 6], fov: 50 }}
       onCreated={({ gl }) => {
         gl.domElement.style.userSelect = "none";

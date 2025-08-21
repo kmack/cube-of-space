@@ -1,9 +1,24 @@
 import * as React from "react";
+import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Html, Line } from "@react-three/drei";
 
 // ---- Types ----
 type Vec3 = [number, number, number];
+
+function eulerFromNormalAndTangent(
+  normal: Vec3,
+  tangent: Vec3
+): [number, number, number] {
+  const n = new THREE.Vector3(...normal).normalize(); // z-axis of the label plane
+  const t = new THREE.Vector3(...tangent).normalize(); // x-axis (text baseline) of the label plane
+  const b = new THREE.Vector3().crossVectors(n, t).normalize(); // y-axis, completes the frame
+
+  // Build a basis where columns are [t, b, n]
+  const m = new THREE.Matrix4().makeBasis(t, b, n);
+  const e = new THREE.Euler().setFromRotationMatrix(m, "XYZ");
+  return [e.x, e.y, e.z];
+}
 
 type Face = {
   name: string;
@@ -17,6 +32,8 @@ type Edge = {
   label: string;
   letter: string;
   pos: Vec3;
+  normal: Vec3; // which way the label should face
+  tangent: Vec3; // along-edge direction for the text baseline
 };
 
 type Axis = {
@@ -96,26 +113,98 @@ const southZ = +HALF,
 
 const edges: Edge[] = [
   // verticals at corners
-  { label: "Heh · Aries", letter: "ה", pos: [eastX, 0, northZ] }, // NE vertical
-  { label: "Vav · Taurus", letter: "ו", pos: [eastX, 0, southZ] }, // SE vertical
-  { label: "Lamed · Libra", letter: "ל", pos: [westX, 0, northZ] }, // NW vertical
-  { label: "Nun · Scorpio", letter: "נ", pos: [westX, 0, southZ] }, // SW vertical
+  {
+    label: "Heh · Aries",
+    letter: "ה",
+    pos: [eastX, 0, northZ],
+    normal: [+1, 0, -1],
+    tangent: [0, 1, 0],
+  }, // NE vertical
+  {
+    label: "Vav · Taurus",
+    letter: "ו",
+    pos: [eastX, 0, southZ],
+    normal: [+1, 0, +1],
+    tangent: [0, 1, 0],
+  }, // SE vertical
+  {
+    label: "Lamed · Libra",
+    letter: "ל",
+    pos: [westX, 0, northZ],
+    normal: [-1, 0, -1],
+    tangent: [0, 1, 0],
+  }, // NW vertical
+  {
+    label: "Nun · Scorpio",
+    letter: "נ",
+    pos: [westX, 0, southZ],
+    normal: [-1, 0, +1],
+    tangent: [0, 1, 0],
+  }, // SW vertical
 
   // east face top/bottom edges
-  { label: "Zain · Gemini", letter: "ז", pos: [eastX, topY, 0] }, // East-Above
-  { label: "Cheth · Cancer", letter: "ח", pos: [eastX, botY, 0] }, // East-Below
+  {
+    label: "Zain · Gemini",
+    letter: "ז",
+    pos: [eastX, topY, 0],
+    normal: [+1, 0, 0],
+    tangent: [0, 0, -1],
+  }, // East-Above
+  {
+    label: "Cheth · Cancer",
+    letter: "ח",
+    pos: [eastX, botY, 0],
+    normal: [+1, 0, 0],
+    tangent: [0, 0, -1],
+  }, // East-Below
 
   // north face top/bottom edges
-  { label: "Teth · Leo", letter: "ט", pos: [0, topY, northZ] }, // North-Above
-  { label: "Yod · Virgo", letter: "י", pos: [0, botY, northZ] }, // North-Below
+  {
+    label: "Teth · Leo",
+    letter: "ט",
+    pos: [0, topY, northZ],
+    normal: [0, 0, -1],
+    tangent: [-1, 0, 0],
+  }, // North-Above
+  {
+    label: "Yod · Virgo",
+    letter: "י",
+    pos: [0, botY, northZ],
+    normal: [0, 0, -1],
+    tangent: [-1, 0, 0],
+  }, // North-Below
 
   // west face top/bottom edges
-  { label: "Samekh · Sag.", letter: "ס", pos: [westX, topY, 0] }, // West-Above
-  { label: "Ayin · Capricorn", letter: "ע", pos: [westX, botY, 0] }, // West-Below
+  {
+    label: "Samekh · Sag.",
+    letter: "ס",
+    pos: [westX, topY, 0],
+    normal: [-1, 0, 0],
+    tangent: [0, 0, 1],
+  }, // West-Above
+  {
+    label: "Ayin · Capricorn",
+    letter: "ע",
+    pos: [westX, botY, 0],
+    normal: [-1, 0, 0],
+    tangent: [0, 0, 1],
+  }, // West-Below
 
   // south face top/bottom edges
-  { label: "Tzaddi · Aquarius", letter: "צ", pos: [0, topY, southZ] }, // South-Above
-  { label: "Qoph · Pisces", letter: "ק", pos: [0, botY, southZ] }, // South-Below
+  {
+    label: "Tzaddi · Aquarius",
+    letter: "צ",
+    pos: [0, topY, southZ],
+    normal: [0, 0, +1],
+    tangent: [1, 0, 0],
+  }, // South-Above
+  {
+    label: "Qoph · Pisces",
+    letter: "ק",
+    pos: [0, botY, southZ],
+    normal: [0, 0, +1],
+    tangent: [1, 0, 0],
+  }, // South-Below
 ];
 
 // Mother letters (internal axes)
@@ -164,16 +253,19 @@ function FaceLabels() {
 function EdgeLabels() {
   return (
     <>
-      {edges.map((e, i) => (
-        <group key={i} position={e.pos}>
-          <Html center transform distanceFactor={1.5}>
-            <div style={edgeStyle}>
-              <div style={{ fontSize: 14 }}>{e.label}</div>
-              <div style={{ fontSize: 16 }}>{e.letter}</div>
-            </div>
-          </Html>
-        </group>
-      ))}
+      {edges.map((e, i) => {
+        const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
+        return (
+          <group key={i} position={e.pos} rotation={rot}>
+            <Html center transform distanceFactor={1.5}>
+              <div style={edgeStyle}>
+                <div style={{ fontSize: 14 }}>{e.label}</div>
+                <div style={{ fontSize: 16 }}>{e.letter}</div>
+              </div>
+            </Html>
+          </group>
+        );
+      })}
     </>
   );
 }

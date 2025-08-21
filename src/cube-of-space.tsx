@@ -10,6 +10,7 @@ type Face = {
   letter: string;
   key: string;
   pos: Vec3;
+  rotation: [number, number, number];
 };
 
 type Edge = {
@@ -31,17 +32,48 @@ const HALF = SIZE / 2;
 
 // Faces (double letters / planets)
 const faces: Face[] = [
-  { name: "Beth · Mercury · Key 1", letter: "ב", key: "1", pos: [0, +HALF, 0] }, // Above
-  { name: "Gimel · Moon · Key 2", letter: "ג", key: "2", pos: [0, -HALF, 0] }, // Below
-  { name: "Daleth · Venus · Key 3", letter: "ד", key: "3", pos: [+HALF, 0, 0] }, // East
+  {
+    name: "Beth · Mercury · Key 1",
+    letter: "ב",
+    key: "1",
+    pos: [0, +HALF, 0],
+    rotation: [-Math.PI / 2, 0, 0],
+  },
+  {
+    name: "Gimel · Moon · Key 2",
+    letter: "ג",
+    key: "2",
+    pos: [0, -HALF, 0],
+    rotation: [Math.PI / 2, 0, 0],
+  },
+  {
+    name: "Daleth · Venus · Key 3",
+    letter: "ד",
+    key: "3",
+    pos: [+HALF, 0, 0],
+    rotation: [0, Math.PI / 2, 0],
+  },
   {
     name: "Kaph · Jupiter · Key 10",
     letter: "כ",
     key: "10",
     pos: [-HALF, 0, 0],
-  }, // West
-  { name: "Resh · Sun · Key 19", letter: "ר", key: "19", pos: [0, 0, +HALF] }, // South
-  { name: "Peh · Mars · Key 16", letter: "פ", key: "16", pos: [0, 0, -HALF] }, // North
+    rotation: [0, -Math.PI / 2, 0],
+  },
+  {
+    name: "Resh · Sun · Key 19",
+    letter: "ר",
+    key: "19",
+    pos: [0, 0, +HALF],
+    rotation: [0, 0, 0],
+  },
+  {
+    name: "Peh · Mars · Key 16",
+    letter: "פ",
+    key: "16",
+    pos: [0, 0, -HALF],
+    rotation: [0, Math.PI, 0],
+  },
 ];
 
 // Center
@@ -50,6 +82,7 @@ const center: Face = {
   letter: "ת",
   key: "21",
   pos: [0, 0, 0],
+  rotation: [0, 0, 0],
 };
 
 // Edges (simple letters / zodiac)
@@ -101,7 +134,7 @@ function FaceLabels() {
   return (
     <>
       {faces.map((f, i) => (
-        <group key={i} position={f.pos}>
+        <group key={i} position={f.pos} rotation={f.rotation}>
           <Html center transform distanceFactor={1.5}>
             <div style={tagStyle}>
               <div style={{ fontSize: 14, opacity: 0.7 }}>{f.name}</div>
@@ -112,6 +145,8 @@ function FaceLabels() {
           </Html>
         </group>
       ))}
+
+      {/* Center stays billboarded */}
       <group position={center.pos}>
         <Html center transform distanceFactor={1.5}>
           <div style={tagStyleStrong}>

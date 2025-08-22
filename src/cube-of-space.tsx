@@ -325,6 +325,8 @@ function AxisFacingTag({
       n: new THREE.Vector3(),
       b: new THREE.Vector3(),
       pref: new THREE.Vector3(), // projected reference normal (⊥ axis)
+      camX: new THREE.Vector3(), // camera right (world)
+      rightProj: new THREE.Vector3(), // camera right projected into plane ⟂ t
       m: new THREE.Matrix4(),
       worldPos: new THREE.Vector3(),
     }),
@@ -352,42 +354,56 @@ function AxisFacingTag({
   useFrame(({ camera }) => {
     const { t, view, n, b, pref, m, worldPos } = tmp;
 
-    // axis tangent
+    // --- basis from camera & axis ---
     t.copy(tNorm);
-
-    // world position and view vector
     if (ref.current) ref.current.getWorldPosition(worldPos);
     else worldPos.set(pos[0], pos[1], pos[2]);
     view.copy(camera.position).sub(worldPos);
 
-    // Constrained billboard: n = view projected into plane ⟂ t
+    // n = view projected into plane ⟂ t
     const vdot = view.dot(t);
     n.copy(view).addScaledVector(t, -vdot);
     if (n.lengthSq() < 1e-6) {
-      // camera almost along the axis -> use fallback normal projected into plane
       n.copy(fallback).addScaledVector(t, -fallback.dot(t)).normalize();
     } else {
       n.normalize();
     }
-
-    // In-plane up for text
     b.crossVectors(n, t).normalize();
 
-    // ✅ Flip based on the *perpendicular axis* (not this axis or world up)
+    // --- 1) Canonical baseline (constant) : avoid mirrored default half-plane ---
     if (flipRef) {
-      // Project the other axis tangent into this plane (should already be ⟂ t if horizontal)
+      const rightCanon = pref.copy(UP).cross(flipRef).normalize(); // R = UP × flipRef
+      if (rightCanon.lengthSq() > 1e-6 && t.dot(rightCanon) < 0) {
+        t.multiplyScalar(-1); // 180° around n
+        b.multiplyScalar(-1);
+      }
+    }
+
+    // --- 2) Perpendicular-axis crossing (discrete) : flip baseline when crossing the other axis ---
+    if (flipRef) {
+      // project flipRef into this plane
       pref.copy(flipRef).addScaledVector(t, -flipRef.dot(t));
       if (pref.lengthSq() > 1e-6) {
         pref.normalize();
-        // Flip when camera forward is on the "back" side of the perpendicular axis
         if (n.dot(pref) < -1e-4) {
-          // small hysteresis avoids jitter on the boundary
-          n.multiplyScalar(-1);
+          // small hysteresis
+          t.multiplyScalar(-1); // 180° around n
           b.multiplyScalar(-1);
         }
       }
     }
 
+    // --- 3) Upright parity (discrete) : ensure vertical reads upright (after baseline flips) ---
+    if (Math.abs(t.dot(UP)) < 0.95) {
+      // horizontal mothers only (Mem/Shin)
+      if (b.dot(UP) < -1e-4) {
+        // if label up points down, roll around t
+        b.multiplyScalar(-1); // 180° around t
+        n.multiplyScalar(-1);
+      }
+    }
+
+    // finalize
     m.makeBasis(t, b, n);
     ref.current?.quaternion.setFromRotationMatrix(m);
   });

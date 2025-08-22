@@ -51,6 +51,7 @@ type Axis = {
 const SIZE = 2; // cube side length in world units
 const HALF = SIZE / 2;
 const MOTHER_OFFSET = SIZE * 0.18; // tweak 0.12–0.25 to taste
+const UP = new THREE.Vector3(0, 1, 0);
 
 // Faces (double letters / planets)
 const faces: Face[] = [
@@ -297,7 +298,8 @@ function Label3D({
 function AxisFacingTag({
   pos,
   axisTangent, // [x,y,z]
-  fallbackNormal, // [x,y,z]
+  flipRefTangent, // [x,y,z] for the OTHER horizontal axis (optional)
+  fallbackNormal, // [x,y,z] used only when camera lies exactly on axis
   title,
   subtitle,
   size = 0.08,
@@ -306,6 +308,7 @@ function AxisFacingTag({
 }: {
   pos: Vec3;
   axisTangent: Vec3;
+  flipRefTangent?: Vec3;
   fallbackNormal: Vec3;
   title: string;
   subtitle?: string;
@@ -315,24 +318,24 @@ function AxisFacingTag({
 }) {
   const ref = React.useRef<THREE.Group>(null!);
 
-  // Pre-alloc scratch
   const tmp = React.useMemo(
     () => ({
       t: new THREE.Vector3(),
       view: new THREE.Vector3(),
       n: new THREE.Vector3(),
       b: new THREE.Vector3(),
+      pref: new THREE.Vector3(), // projected reference normal (⊥ axis)
       m: new THREE.Matrix4(),
       worldPos: new THREE.Vector3(),
     }),
     []
   );
 
-  // ✅ Destructure arrays into scalars so the deps are simple & static-checkable
+  // Destructure arrays to simple deps (lint clean)
   const [ax, ay, az] = axisTangent;
   const [fx, fy, fz] = fallbackNormal;
+  const [rx, ry, rz] = flipRefTangent ?? [0, 0, 0];
 
-  // ✅ Recompute only when numbers change (lint clean)
   const tNorm = React.useMemo(
     () => new THREE.Vector3(ax, ay, az).normalize(),
     [ax, ay, az]
@@ -341,35 +344,51 @@ function AxisFacingTag({
     () => new THREE.Vector3(fx, fy, fz).normalize(),
     [fx, fy, fz]
   );
+  const flipRef = React.useMemo(
+    () => (flipRefTangent ? new THREE.Vector3(rx, ry, rz).normalize() : null),
+    [flipRefTangent, rx, ry, rz]
+  );
 
   useFrame(({ camera }) => {
-    const { t, view, n, b, m, worldPos } = tmp;
+    const { t, view, n, b, pref, m, worldPos } = tmp;
 
-    // axis tangent (unit)
+    // axis tangent
     t.copy(tNorm);
 
-    // world position of this label
+    // world position and view vector
     if (ref.current) ref.current.getWorldPosition(worldPos);
     else worldPos.set(pos[0], pos[1], pos[2]);
-
-    // Vector from label to camera
     view.copy(camera.position).sub(worldPos);
 
-    // Project view direction onto plane ⟂ axis
-    const viewDot = view.dot(t);
-    n.copy(view).addScaledVector(t, -viewDot);
-
+    // Constrained billboard: n = view projected into plane ⟂ t
+    const vdot = view.dot(t);
+    n.copy(view).addScaledVector(t, -vdot);
     if (n.lengthSq() < 1e-6) {
-      n.copy(fallback);
-      n.addScaledVector(t, -n.dot(t)).normalize();
+      // camera almost along the axis -> use fallback normal projected into plane
+      n.copy(fallback).addScaledVector(t, -fallback.dot(t)).normalize();
     } else {
       n.normalize();
     }
 
-    // Build basis: columns [t, b = n×t, n]
+    // In-plane up for text
     b.crossVectors(n, t).normalize();
-    m.makeBasis(t, b, n);
 
+    // ✅ Flip based on the *perpendicular axis* (not this axis or world up)
+    if (flipRef) {
+      // Project the other axis tangent into this plane (should already be ⟂ t if horizontal)
+      pref.copy(flipRef).addScaledVector(t, -flipRef.dot(t));
+      if (pref.lengthSq() > 1e-6) {
+        pref.normalize();
+        // Flip when camera forward is on the "back" side of the perpendicular axis
+        if (n.dot(pref) < -1e-4) {
+          // small hysteresis avoids jitter on the boundary
+          n.multiplyScalar(-1);
+          b.multiplyScalar(-1);
+        }
+      }
+    }
+
+    m.makeBasis(t, b, n);
     ref.current?.quaternion.setFromRotationMatrix(m);
   });
 
@@ -387,17 +406,26 @@ function AxisFacingTag({
 }
 
 function MotherLabels() {
+  // Build per-axis tangents and mark horizontals
+  const info = axes.map((a, idx) => {
+    const t = new THREE.Vector3(
+      a.to[0] - a.from[0],
+      a.to[1] - a.from[1],
+      a.to[2] - a.from[2]
+    ).normalize();
+    const horizontal = Math.abs(t.dot(UP)) < 0.95;
+    return { idx, a, t, horizontal };
+  });
+
+  // Extract the two horizontal mother axes (Mem, Shin) by geometry
+  const horizontals = info.filter((i) => i.horizontal);
+  const h0 = horizontals[0];
+  const h1 = horizontals[1];
+
   return (
     <>
-      {axes.map((a, i) => {
-        // axis tangent from endpoints (normalized)
-        const t = new THREE.Vector3(
-          a.to[0] - a.from[0],
-          a.to[1] - a.from[1],
-          a.to[2] - a.from[2]
-        ).normalize();
-
-        // positions: one label near each end, pulled inward by MOTHER_OFFSET
+      {info.map(({ idx, a, t, horizontal }) => {
+        // Inset positions
         const fromPos = new THREE.Vector3(...a.from).add(
           t.clone().multiplyScalar(MOTHER_OFFSET)
         ) as unknown as Vec3;
@@ -405,11 +433,22 @@ function MotherLabels() {
           t.clone().multiplyScalar(-MOTHER_OFFSET)
         ) as unknown as Vec3;
 
+        // For each horizontal axis, use the OTHER horizontal axis as the flip reference
+        const flipRefTangent: Vec3 | undefined =
+          horizontal && h0 && h1
+            ? idx === h0.idx
+              ? ([h1.t.x, h1.t.y, h1.t.z] as Vec3)
+              : idx === h1.idx
+              ? ([h0.t.x, h0.t.y, h0.t.z] as Vec3)
+              : undefined
+            : undefined;
+
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={idx}>
             <AxisFacingTag
               pos={fromPos}
               axisTangent={[t.x, t.y, t.z]}
+              flipRefTangent={flipRefTangent}
               fallbackNormal={a.normal}
               title={`${a.letter} · Key ${a.key}`}
               subtitle={a.label}
@@ -417,6 +456,7 @@ function MotherLabels() {
             <AxisFacingTag
               pos={toPos}
               axisTangent={[t.x, t.y, t.z]}
+              flipRefTangent={flipRefTangent}
               fallbackNormal={a.normal}
               title={`${a.letter} · Key ${a.key}`}
               subtitle={a.label}

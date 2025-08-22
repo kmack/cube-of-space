@@ -506,6 +506,52 @@ function FaceLabels() {
   );
 }
 
+function FacePlanes({ opacity = 0.28 }: { opacity?: number }) {
+  // Map each face (by Key/letter) to its color
+  // Keys from your faces[]:
+  //   Key 1 (Beth)   -> Above  -> Yellow
+  //   Key 2 (Gimel)  -> Below  -> Blue
+  //   Key 3 (Daleth) -> East   -> Green
+  //   Key 10 (Kaph)  -> West   -> Purple
+  //   Key 19 (Resh)  -> South  -> Orange
+  //   Key 16 (Peh)   -> North  -> Red
+  const colorByKey: Record<string, string> = {
+    "1": "#ffd500", // warm yellow
+    "2": "#3b7cff", // vivid blue
+    "3": "#2ec27e", // green
+    "10": "#8a63ff", // purple
+    "16": "#ff4d4f", // red
+    "19": "#ff9a1f", // orange
+  };
+
+  // Slightly shrink planes so edges remain visible,
+  // and use polygon offset to avoid z-fighting with WireCube lines.
+  const planeSize = SIZE - 0.01;
+
+  return (
+    <>
+      {faces.map((f, i) => (
+        <group key={`plane-${i}`} position={f.pos} rotation={f.rotation}>
+          <mesh renderOrder={-1}>
+            <planeGeometry args={[planeSize, planeSize]} />
+            <meshStandardMaterial
+              color={colorByKey[f.key] ?? "#ffffff"}
+              transparent
+              opacity={opacity}
+              depthWrite={false}
+              polygonOffset
+              polygonOffsetFactor={1}
+              polygonOffsetUnits={1}
+              side={THREE.DoubleSide}
+              toneMapped={false}
+            />
+          </mesh>
+        </group>
+      ))}
+    </>
+  );
+}
+
 function EdgeLabels() {
   return (
     <>
@@ -603,6 +649,8 @@ export default function CubeOfSpace() {
         args={[10, 10, "#666", "#333"]}
         position={[0, -HALF - 0.001, 0]}
       />
+      {/* Cube face fills */}
+      <FacePlanes opacity={0.8} />
       {/* Cube */}
       <WireCube />
       {/* Annotations */}

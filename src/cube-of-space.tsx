@@ -45,10 +45,26 @@ type Axis = {
 };
 
 // Standardized text from label-spec.ts
-function labelParts(letter: HebrewLetter): { title: string; subtitle: string } {
-  const full = formatLabel(letter);
-  const [title, ...rest] = full.split("\n");
-  return { title, subtitle: rest.join("\n") };
+function labelParts(letter: HebrewLetter): {
+  title: string;
+  glyph?: string;
+  subtitle: string;
+} {
+  const full = formatLabel(letter); // e.g.
+  const [title, rawSub = ""] = full.split("\n"); // "Key 1 — The Magician" / "Beth |ב|  - Mercury"
+
+  // pull out the glyph between pipes
+  const match = rawSub.match(/\|(.*?)\|/);
+  const glyph = match?.[1];
+
+  // remove the |glyph| token and tidy spaces/dash
+  const subtitle = rawSub
+    .replace(/\s*\|.*?\|\s*/g, " ")
+    .replace(/\s-\s/g, " — ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return { title, glyph, subtitle };
 }
 
 // ---- Config ----
@@ -204,16 +220,25 @@ const axes: Axis[] = [
 function Label3D({
   title,
   subtitle,
+  glyph,
+  hebrewFont = "/fonts/ShlomoStam.ttf",
   size = 0.08,
   gap = 0.08,
   color = "white",
 }: {
   title: string;
   subtitle?: string;
+  glyph?: string;
+  hebrewFont?: string;
   size?: number;
   gap?: number;
   color?: string;
 }) {
+  // vertical positions: title (y=0), glyph below, subtitle below that
+  const glyphSize = size * 1.25;
+  const yGlyph = -(gap + size * 0.9);
+  const ySub = glyph ? yGlyph - (gap + glyphSize * 0.9) : -gap;
+
   return (
     <group>
       <Text
@@ -227,12 +252,25 @@ function Label3D({
       >
         {title}
       </Text>
+      {glyph && (
+        <Text
+          anchorX="center"
+          anchorY="middle"
+          position={[0, yGlyph, 0]}
+          font={hebrewFont}
+          fontSize={glyphSize}
+          color={color}
+          material-toneMapped={false}
+        >
+          {glyph}
+        </Text>
+      )}
       {subtitle && (
         <Text
           anchorX="center"
           anchorY="middle"
+          position={[0, ySub, 0]}
           fontSize={size * 0.85}
-          position={[0, -gap, 0]}
           color={color}
           material-toneMapped={false}
           material-transparent={true} // needed for opacity < 1
@@ -253,6 +291,7 @@ function AxisFacingTag({
   fallbackNormal, // [x,y,z] used only when camera lies exactly on axis
   title,
   subtitle,
+  glyph,
   size = 0.08,
   gap = 0.08,
   color = "white",
@@ -263,6 +302,7 @@ function AxisFacingTag({
   fallbackNormal: Vec3;
   title: string;
   subtitle?: string;
+  glyph?: string;
   size?: number;
   gap?: number;
   color?: string;
@@ -364,6 +404,7 @@ function AxisFacingTag({
       <Label3D
         title={title}
         subtitle={subtitle}
+        glyph={glyph}
         size={size}
         gap={gap}
         color={color}
@@ -417,16 +458,28 @@ function MotherLabels() {
               axisTangent={[t.x, t.y, t.z]}
               flipRefTangent={flipRefTangent}
               fallbackNormal={a.normal}
-              title={labelParts(a.letter).title}
-              subtitle={labelParts(a.letter).subtitle}
+              {...(() => {
+                const lp = labelParts(a.letter);
+                return {
+                  title: lp.title,
+                  subtitle: lp.subtitle,
+                  glyph: lp.glyph,
+                };
+              })()}
             />
             <AxisFacingTag
               pos={toPos}
               axisTangent={[t.x, t.y, t.z]}
               flipRefTangent={flipRefTangent}
               fallbackNormal={a.normal}
-              title={labelParts(a.letter).title}
-              subtitle={labelParts(a.letter).subtitle}
+              {...(() => {
+                const lp = labelParts(a.letter);
+                return {
+                  title: lp.title,
+                  subtitle: lp.subtitle,
+                  glyph: lp.glyph,
+                };
+              })()}
             />
           </React.Fragment>
         );
@@ -444,7 +497,7 @@ function FaceLabels() {
         const lp = labelParts(f.letter);
         return (
           <group key={i} position={f.pos} rotation={f.rotation}>
-            <Label3D title={lp.title} subtitle={lp.subtitle} />
+            <Label3D title={lp.title} subtitle={lp.subtitle} glyph={lp.glyph} />
           </group>
         );
       })}
@@ -453,7 +506,9 @@ function FaceLabels() {
       <Billboard position={center.pos}>
         {(() => {
           const lp = labelParts(center.letter);
-          return <Label3D title={lp.title} subtitle={lp.subtitle} />;
+          return (
+            <Label3D title={lp.title} subtitle={lp.subtitle} glyph={lp.glyph} />
+          );
         })()}
       </Billboard>
     </>
@@ -518,7 +573,7 @@ function EdgeLabels() {
         const lp = labelParts(e.letter);
         return (
           <group key={i} position={e.pos} rotation={rot}>
-            <Label3D title={lp.title} subtitle={lp.subtitle} />
+            <Label3D title={lp.title} subtitle={lp.subtitle} glyph={lp.glyph} />
           </group>
         );
       })}

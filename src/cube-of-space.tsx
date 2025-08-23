@@ -2,6 +2,8 @@ import * as React from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Line, Text, Billboard } from "@react-three/drei";
+import { formatLabel, getSpec } from "./label-spec";
+import type { HebrewLetter } from "./label-spec";
 
 // ---- Types ----
 type Vec3 = [number, number, number];
@@ -21,31 +23,33 @@ function eulerFromNormalAndTangent(
 }
 
 type Face = {
-  name: string;
-  letter: string;
-  key: string;
+  letter: HebrewLetter; // double letters (planets)
   pos: Vec3;
-  rotation: [number, number, number];
+  rotation: Vec3;
 };
 
 type Edge = {
-  label: string;
-  letter: string;
+  letter: HebrewLetter; // simple letters (zodiac)
   pos: Vec3;
   normal: Vec3; // which way the label should face
   tangent: Vec3; // along-edge direction for the text baseline
 };
 
 type Axis = {
-  label: string;
-  letter: string;
-  key: string;
+  letter: HebrewLetter; // mother letters (elements)
   from: Vec3; // axis start
   to: Vec3; // axis end
   pos: Vec3; // where the label sits
   normal: Vec3; // preferred “up/out” direction for label plane
   tangent: Vec3; // along-axis direction for the text baseline
 };
+
+// Standardized text from label-spec.ts
+function labelParts(letter: HebrewLetter): { title: string; subtitle: string } {
+  const full = formatLabel(letter);
+  const [title, ...rest] = full.split("\n");
+  return { title, subtitle: rest.join("\n") };
+}
 
 // ---- Config ----
 const SIZE = 2; // cube side length in world units
@@ -55,55 +59,20 @@ const UP = new THREE.Vector3(0, 1, 0);
 
 // Faces (double letters / planets)
 const faces: Face[] = [
-  {
-    name: "Beth · Mercury · Key 1",
-    letter: "ב",
-    key: "1",
-    pos: [0, +HALF, 0],
-    rotation: [-Math.PI / 2, 0, 0],
-  },
-  {
-    name: "Gimel · Moon · Key 2",
-    letter: "ג",
-    key: "2",
-    pos: [0, -HALF, 0],
-    rotation: [Math.PI / 2, 0, 0],
-  },
-  {
-    name: "Daleth · Venus · Key 3",
-    letter: "ד",
-    key: "3",
-    pos: [+HALF, 0, 0],
-    rotation: [0, Math.PI / 2, 0],
-  },
-  {
-    name: "Kaph · Jupiter · Key 10",
-    letter: "כ",
-    key: "10",
-    pos: [-HALF, 0, 0],
-    rotation: [0, -Math.PI / 2, 0],
-  },
-  {
-    name: "Resh · Sun · Key 19",
-    letter: "ר",
-    key: "19",
-    pos: [0, 0, +HALF],
-    rotation: [0, 0, 0],
-  },
-  {
-    name: "Peh · Mars · Key 16",
-    letter: "פ",
-    key: "16",
-    pos: [0, 0, -HALF],
-    rotation: [0, Math.PI, 0],
-  },
+  // Above / Below
+  { letter: "Beth", pos: [0, +HALF, 0], rotation: [-Math.PI / 2, 0, 0] }, // Mercury
+  { letter: "Gimel", pos: [0, -HALF, 0], rotation: [Math.PI / 2, 0, 0] }, // Moon
+  // East / West
+  { letter: "Daleth", pos: [+HALF, 0, 0], rotation: [0, Math.PI / 2, 0] }, // Venus (East)
+  { letter: "Kaph", pos: [-HALF, 0, 0], rotation: [0, -Math.PI / 2, 0] }, // Jupiter (West)
+  // South / North
+  { letter: "Resh", pos: [0, 0, +HALF], rotation: [0, 0, 0] }, // Sun (South)
+  { letter: "Peh", pos: [0, 0, -HALF], rotation: [0, Math.PI, 0] }, // Mars (North)
 ];
 
 // Center
 const center: Face = {
-  name: "Tav · Saturn · Key 21",
-  letter: "ת",
-  key: "21",
+  letter: "Tav", // Saturn
   pos: [0, 0, 0],
   rotation: [0, 0, 0],
 };
@@ -120,29 +89,25 @@ const southZ = +HALF,
 const edges: Edge[] = [
   // verticals at corners
   {
-    label: "Heh · Aries",
-    letter: "ה",
+    letter: "Heh", // Aries
     pos: [eastX, 0, northZ],
     normal: [+1, 0, -1],
     tangent: [0, 1, 0],
   }, // NE vertical
   {
-    label: "Vav · Taurus",
-    letter: "ו",
+    letter: "Vav", // Taurus
     pos: [eastX, 0, southZ],
     normal: [+1, 0, +1],
     tangent: [0, 1, 0],
   }, // SE vertical
   {
-    label: "Lamed · Libra",
-    letter: "ל",
+    letter: "Lamed", // Libra
     pos: [westX, 0, northZ],
     normal: [-1, 0, -1],
     tangent: [0, 1, 0],
   }, // NW vertical
   {
-    label: "Nun · Scorpio",
-    letter: "נ",
+    letter: "Nun", // Scorpio
     pos: [westX, 0, southZ],
     normal: [-1, 0, +1],
     tangent: [0, 1, 0],
@@ -150,66 +115,58 @@ const edges: Edge[] = [
 
   // east face top/bottom edges
   {
-    label: "Zain · Gemini",
-    letter: "ז",
+    letter: "Zain", // Gemini
     pos: [eastX, topY, 0],
-    normal: [+1, 1, 0],
+    normal: [+1, +1, 0],
     tangent: [0, 0, -1],
   }, // East-Above
   {
-    label: "Cheth · Cancer",
-    letter: "ח",
+    letter: "Cheth", // Cancer
     pos: [eastX, botY, 0],
     normal: [+1, -1, 0],
-    tangent: [0, 0, -1],
+    tangent: [0, 0, +1],
   }, // East-Below
 
   // north face top/bottom edges
   {
-    label: "Teth · Leo",
-    letter: "ט",
+    letter: "Teth", // Leo
     pos: [0, topY, northZ],
     normal: [0, 1, -1],
     tangent: [-1, 0, 0],
   }, // North-Above
   {
-    label: "Yod · Virgo",
-    letter: "י",
+    letter: "Yod", // Virgo
     pos: [0, botY, northZ],
     normal: [0, -1, -1],
-    tangent: [-1, 0, 0],
+    tangent: [+1, 0, 0],
   }, // North-Below
 
   // west face top/bottom edges
   {
-    label: "Samekh · Sag.",
-    letter: "ס",
+    letter: "Samekh", // Sagittarius
     pos: [westX, topY, 0],
-    normal: [-1, 1, 0],
-    tangent: [0, 0, 1],
+    normal: [-1, +1, 0],
+    tangent: [0, 0, +1],
   }, // West-Above
   {
-    label: "Ayin · Capricorn",
-    letter: "ע",
+    letter: "Ayin", // Capricorn
     pos: [westX, botY, 0],
     normal: [-1, -1, 0],
-    tangent: [0, 0, 1],
+    tangent: [0, 0, -1],
   }, // West-Below
 
   // south face top/bottom edges
   {
-    label: "Tzaddi · Aquarius",
-    letter: "צ",
+    letter: "Tzaddi", // Aquarius
     pos: [0, topY, southZ],
-    normal: [0, 1, +1],
-    tangent: [1, 0, 0],
+    normal: [0, +1, +1],
+    tangent: [+1, 0, 0],
   }, // South-Above
   {
-    label: "Qoph · Pisces",
-    letter: "ק",
+    letter: "Qoph", // Pisces
     pos: [0, botY, southZ],
     normal: [0, -1, +1],
-    tangent: [1, 0, 0],
+    tangent: [-1, 0, 0],
   }, // South-Below
 ];
 
@@ -217,9 +174,7 @@ const edges: Edge[] = [
 const axes: Axis[] = [
   // Aleph: Above <-> Below (Y axis)
   {
-    label: "Aleph · Air",
-    letter: "א",
-    key: "0",
+    letter: "Aleph",
     from: [0, -HALF, 0],
     to: [0, +HALF, 0],
     pos: [0, MOTHER_OFFSET, 0], // where the label sits
@@ -228,9 +183,7 @@ const axes: Axis[] = [
   },
   // Mem: East <-> West (X axis)
   {
-    label: "Mem · Water",
-    letter: "מ",
-    key: "12",
+    letter: "Mem",
     from: [-HALF, 0, 0],
     to: [+HALF, 0, 0],
     pos: [MOTHER_OFFSET, 0, 0],
@@ -239,9 +192,7 @@ const axes: Axis[] = [
   },
   // Shin: South <-> North (Z axis)
   {
-    label: "Shin · Fire",
-    letter: "ש",
-    key: "20",
+    letter: "Shin",
     from: [0, 0, -HALF],
     to: [0, 0, +HALF],
     pos: [0, 0, MOTHER_OFFSET], // <- not at the cube center anymore
@@ -466,16 +417,16 @@ function MotherLabels() {
               axisTangent={[t.x, t.y, t.z]}
               flipRefTangent={flipRefTangent}
               fallbackNormal={a.normal}
-              title={`${a.letter} · Key ${a.key}`}
-              subtitle={a.label}
+              title={labelParts(a.letter).title}
+              subtitle={labelParts(a.letter).subtitle}
             />
             <AxisFacingTag
               pos={toPos}
               axisTangent={[t.x, t.y, t.z]}
               flipRefTangent={flipRefTangent}
               fallbackNormal={a.normal}
-              title={`${a.letter} · Key ${a.key}`}
-              subtitle={a.label}
+              title={labelParts(a.letter).title}
+              subtitle={labelParts(a.letter).subtitle}
             />
           </React.Fragment>
         );
@@ -489,18 +440,21 @@ function MotherLabels() {
 function FaceLabels() {
   return (
     <>
-      {faces.map((f, i) => (
-        <group key={i} position={f.pos} rotation={f.rotation}>
-          <Label3D title={`${f.letter} · Key ${f.key}`} subtitle={f.name} />
-        </group>
-      ))}
+      {faces.map((f, i) => {
+        const lp = labelParts(f.letter);
+        return (
+          <group key={i} position={f.pos} rotation={f.rotation}>
+            <Label3D title={lp.title} subtitle={lp.subtitle} />
+          </group>
+        );
+      })}
 
       {/* Center stays billboarded */}
       <Billboard position={center.pos}>
-        <Label3D
-          title={`${center.letter} · Key ${center.key}`}
-          subtitle={center.name}
-        />
+        {(() => {
+          const lp = labelParts(center.letter);
+          return <Label3D title={lp.title} subtitle={lp.subtitle} />;
+        })()}
       </Billboard>
     </>
   );
@@ -508,7 +462,7 @@ function FaceLabels() {
 
 function FacePlanes({ opacity = 0.28 }: { opacity?: number }) {
   // Map each face (by Key/letter) to its color
-  // Keys from your faces[]:
+  // Keys from label-spec:
   //   Key 1 (Beth)   -> Above  -> Yellow
   //   Key 2 (Gimel)  -> Below  -> Blue
   //   Key 3 (Daleth) -> East   -> Green
@@ -530,24 +484,28 @@ function FacePlanes({ opacity = 0.28 }: { opacity?: number }) {
 
   return (
     <>
-      {faces.map((f, i) => (
-        <group key={`plane-${i}`} position={f.pos} rotation={f.rotation}>
-          <mesh renderOrder={-1}>
-            <planeGeometry args={[planeSize, planeSize]} />
-            <meshStandardMaterial
-              color={colorByKey[f.key] ?? "#ffffff"}
-              transparent
-              opacity={opacity}
-              depthWrite={false}
-              polygonOffset
-              polygonOffsetFactor={1}
-              polygonOffsetUnits={1}
-              side={THREE.DoubleSide}
-              toneMapped={false}
-            />
-          </mesh>
-        </group>
-      ))}
+      {faces.map((f, i) => {
+        const keyNum = getSpec(f.letter).keyNumber; // ← tarot key number
+        const faceColor = colorByKey[String(keyNum)] ?? "#ffffff";
+        return (
+          <group key={`plane-${i}`} position={f.pos} rotation={f.rotation}>
+            <mesh renderOrder={-1}>
+              <planeGeometry args={[planeSize, planeSize]} />
+              <meshStandardMaterial
+                color={faceColor}
+                transparent
+                opacity={opacity}
+                depthWrite={false}
+                polygonOffset
+                polygonOffsetFactor={1}
+                polygonOffsetUnits={1}
+                side={THREE.DoubleSide}
+                toneMapped={false}
+              />
+            </mesh>
+          </group>
+        );
+      })}
     </>
   );
 }
@@ -557,9 +515,10 @@ function EdgeLabels() {
     <>
       {edges.map((e, i) => {
         const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
+        const lp = labelParts(e.letter);
         return (
           <group key={i} position={e.pos} rotation={rot}>
-            <Label3D title={e.letter} subtitle={e.label} />
+            <Label3D title={lp.title} subtitle={lp.subtitle} />
           </group>
         );
       })}

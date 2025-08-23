@@ -2,7 +2,7 @@ import * as React from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Line, Text, Billboard } from "@react-three/drei";
-import { formatLabel, getSpec } from "./label-spec";
+import { getSpec } from "./label-spec";
 import type { HebrewLetter } from "./label-spec";
 
 // ---- Types ----
@@ -47,24 +47,16 @@ type Axis = {
 // Standardized text from label-spec.ts
 function labelParts(letter: HebrewLetter): {
   title: string;
-  glyph?: string;
+  glyph: string;
   subtitle: string;
 } {
-  const full = formatLabel(letter); // e.g.
-  const [title, rawSub = ""] = full.split("\n"); // "Key 1 — The Magician" / "Beth |ב|  - Mercury"
-
-  // pull out the glyph between pipes
-  const match = rawSub.match(/\|(.*?)\|/);
-  const glyph = match?.[1];
-
-  // remove the |glyph| token and tidy spaces/dash
-  const subtitle = rawSub
-    .replace(/\s*\|.*?\|\s*/g, " ")
-    .replace(/\s-\s/g, " — ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
-
-  return { title, glyph, subtitle };
+  const d = getSpec(letter);
+  const assoc = d.association.value; // "Air" | "Mercury" | "Aries" etc.
+  return {
+    title: `Key ${d.keyNumber} – ${d.keyName}`,
+    glyph: d.letterChar,
+    subtitle: `${d.letterName} — ${assoc}`,
+  };
 }
 
 // ---- Config ----

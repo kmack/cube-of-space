@@ -1,6 +1,7 @@
 // src/components/label3d.tsx
 import { Text } from "@react-three/drei";
 import * as React from "react";
+import { HEBREW_FONT } from "../data/constants";
 
 export type Label3DProps = {
   title: string;
@@ -16,7 +17,7 @@ export function Label3D({
   title,
   subtitle,
   glyph,
-  hebrewFont = "/fonts/FrankRuhlLibre-VariableFont_wght.ttf",
+  hebrewFont = HEBREW_FONT,
   size = 0.08,
   gap = 0.08,
   color = "white",

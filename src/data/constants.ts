@@ -5,6 +5,7 @@ export const SIZE = 2;
 export const HALF = SIZE / 2;
 export const MOTHER_OFFSET = SIZE * 0.18;
 export const UP = new THREE.Vector3(0, 1, 0);
+export const HEBREW_FONT = "/fonts/FrankRuhlLibre-VariableFont_wght.ttf";
 
 // Face colors keyed by Tarot key number (B.O.T.A.)
 export const FACE_COLOR_BY_KEY: Record<string, string> = {

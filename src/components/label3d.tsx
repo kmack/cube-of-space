@@ -16,7 +16,7 @@ export function Label3D({
   title,
   subtitle,
   glyph,
-  hebrewFont = "/fonts/ShlomoStam.ttf",
+  hebrewFont = "/fonts/FrankRuhlLibre-VariableFont_wght.ttf",
   size = 0.08,
   gap = 0.08,
   color = "white",

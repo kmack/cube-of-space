@@ -226,24 +226,50 @@ function Label3D({
   gap?: number;
   color?: string;
 }) {
-  // vertical positions: title (y=0), glyph below, subtitle below that
+  // Sizes
+  const titleSize = size; // base size
   const glyphSize = size * 1.25;
-  const yGlyph = -(gap + size * 0.9);
-  const ySub = glyph ? yGlyph - (gap + glyphSize * 0.9) : -gap;
+  const subSize = size * 0.85;
+
+  // Approximate line heights (drei Text uses fontSize * lineHeight visually)
+  const titleLH = 1.1;
+  const glyphLH = 1.0;
+  const subLH = 1.0;
+
+  // Half-heights
+  const hTitle = (titleSize * titleLH) / 2;
+  const hGlyph = glyph ? (glyphSize * glyphLH) / 2 : 0;
+  const hSub = subtitle ? (subSize * subLH) / 2 : 0;
+
+  // Total half height of the stack = sum of half-heights + gaps between present lines
+  const gGlyph = glyph ? gap : 0;
+  const gSub = subtitle ? gap : 0;
+
+  const totalHalf =
+    hTitle + (glyph ? gGlyph + hGlyph : 0) + (subtitle ? gSub + hSub : 0);
+
+  // Center each line around y=0 by placing their centers at these Y positions:
+  const yTitle = totalHalf - hTitle;
+  const yGlyph = glyph ? yTitle - (hTitle + gGlyph + hGlyph) : 0;
+  const ySub = subtitle
+    ? glyph
+      ? yGlyph - (hGlyph + gSub + hSub)
+      : yTitle - (hTitle + gSub + hSub)
+    : 0;
 
   return (
     <group>
       <Text
         anchorX="center"
         anchorY="middle"
-        fontSize={size}
-        lineHeight={1.1}
+        fontSize={titleSize}
+        lineHeight={titleLH}
         color={color}
         material-toneMapped={false}
-        material-depthTest={true} // (optional; true by default)
       >
         {title}
       </Text>
+
       {glyph && (
         <Text
           anchorX="center"
@@ -257,17 +283,17 @@ function Label3D({
           {glyph}
         </Text>
       )}
+
       {subtitle && (
         <Text
           anchorX="center"
           anchorY="middle"
           position={[0, ySub, 0]}
-          fontSize={size * 0.85}
+          fontSize={subSize}
           color={color}
           material-toneMapped={false}
-          material-transparent={true} // needed for opacity < 1
+          material-transparent
           material-opacity={0.9}
-          material-depthTest={true} // (optional)
         >
           {subtitle}
         </Text>

@@ -132,7 +132,7 @@ const edges: Edge[] = [
     letter: "Cheth", // Cancer
     pos: [eastX, botY, 0],
     normal: [+1, -1, 0],
-    tangent: [0, 0, +1],
+    tangent: [0, 0, -1],
   }, // East-Below
 
   // north face top/bottom edges
@@ -146,7 +146,7 @@ const edges: Edge[] = [
     letter: "Yod", // Virgo
     pos: [0, botY, northZ],
     normal: [0, -1, -1],
-    tangent: [+1, 0, 0],
+    tangent: [-1, 0, 0],
   }, // North-Below
 
   // west face top/bottom edges
@@ -160,7 +160,7 @@ const edges: Edge[] = [
     letter: "Ayin", // Capricorn
     pos: [westX, botY, 0],
     normal: [-1, -1, 0],
-    tangent: [0, 0, -1],
+    tangent: [0, 0, +1],
   }, // West-Below
 
   // south face top/bottom edges
@@ -174,7 +174,7 @@ const edges: Edge[] = [
     letter: "Qoph", // Pisces
     pos: [0, botY, southZ],
     normal: [0, -1, +1],
-    tangent: [-1, 0, 0],
+    tangent: [+1, 0, 0],
   }, // South-Below
 ];
 

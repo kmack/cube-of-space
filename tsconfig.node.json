@@ -1,17 +1,22 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "composite": true,
+
     "target": "ES2023",
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    /* Bundler-ish resolution for Node ESM tooling */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
+
+    /* Emit rules for composite projects */
+    "outDir": "./node_modules/.tmp/tsbuild/node",
+    "declaration": true,
+    "emitDeclarationOnly": true,
 
     /* Linting */
     "strict": true,

@@ -1,4 +1,4 @@
-// src/labelSpec.ts
+// src/label-spec.ts
 export type HebrewLetter =
   | "Aleph"
   | "Beth"

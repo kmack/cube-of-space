@@ -61,6 +61,57 @@ export type LetterSpec = {
   association: Assoc; // Element / planet / zodiac
 };
 
+const ZODIAC_GLYPHS: Record<
+  Extract<Assoc, { kind: "zodiac" }>["value"],
+  string
+> = {
+  Aries: "♈",
+  Taurus: "♉",
+  Gemini: "♊",
+  Cancer: "♋",
+  Leo: "♌",
+  Virgo: "♍",
+  Libra: "♎",
+  Scorpio: "♏",
+  Sagittarius: "♐",
+  Capricorn: "♑",
+  Aquarius: "♒",
+  Pisces: "♓",
+};
+
+const PLANET_GLYPHS: Record<
+  Extract<Assoc, { kind: "planet" }>["value"],
+  string
+> = {
+  Sun: "☉",
+  Moon: "☽",
+  Mercury: "☿",
+  Venus: "♀",
+  Mars: "♂",
+  Jupiter: "♃",
+  Saturn: "♄",
+};
+
+const ELEMENT_GLYPHS: Record<
+  Extract<Assoc, { kind: "element" }>["value"],
+  string
+> = {
+  Air: "🜁", // alchemical symbol
+  Water: "🜄", // alchemical symbol
+  Fire: "🜂", // alchemical symbol
+};
+
+export function associationToGlyph(a: Assoc): string {
+  switch (a.kind) {
+    case "zodiac":
+      return ZODIAC_GLYPHS[a.value];
+    case "planet":
+      return PLANET_GLYPHS[a.value];
+    case "element":
+      return ELEMENT_GLYPHS[a.value];
+  }
+}
+
 // ————————————
 // Canonical attributions (B.O.T.A. / Golden Dawn):
 // Mothers (elements), Doubles (planets), Simples (zodiac)
@@ -228,16 +279,22 @@ const S: Record<HebrewLetter, LetterSpec> = {
   },
 };
 
-/** Return the 3-line standardized label. */
-export function formatLabel(letter: HebrewLetter): string {
-  const d = S[letter];
-  const assoc =
-    d.association.kind === "element"
-      ? d.association.value
-      : d.association.kind === "planet"
-      ? d.association.value
-      : d.association.value; // zodiac
-  return `Key ${d.keyNumber} – ${d.keyName}\n${d.letterName} |${d.letterChar}|  - ${assoc}`;
+export function getLabelPieces(letter: HebrewLetter): {
+  title: string;
+  subtitleText: string;
+  hebrewChar: string;
+  assocGlyph: string; // zodiac/planet/element symbol
+} {
+  const d = getSpec(letter);
+  const assocGlyph = associationToGlyph(d.association);
+  const assocName = d.association.value; // element/planet/zodiac label
+
+  return {
+    title: `Key ${d.keyNumber} – ${d.keyName}`,
+    subtitleText: `${d.letterName} |${d.letterChar}| – ${assocName}`,
+    hebrewChar: d.letterChar,
+    assocGlyph,
+  };
 }
 
 /** Direct access to specs if you need more than the string. */

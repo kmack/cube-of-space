@@ -1,12 +1,12 @@
 // src/components/label3d.tsx
 import { Text } from "@react-three/drei";
 import * as React from "react";
-import { HEBREW_FONT } from "../data/constants";
+import { HEBREW_FONT, UI_FONT } from "../data/constants";
 
 export type Label3DProps = {
   title: string;
   subtitle?: string;
-  glyph?: string;
+  hebrewLetter?: string;
   hebrewFont?: string;
   size?: number;
   gap?: number;
@@ -16,42 +16,61 @@ export type Label3DProps = {
 export function Label3D({
   title,
   subtitle,
-  glyph,
-  hebrewFont = HEBREW_FONT,
+  hebrewLetter: hebrewLetter,
   size = 0.08,
   gap = 0.08,
   color = "white",
 }: Label3DProps): React.JSX.Element {
   const titleSize = size;
-  const glyphSize = size * 1.25;
+  const hebrewLetterSize = size * 1.25;
   const subSize = size * 0.85;
 
   const titleLH = 1.1,
-    glyphLH = 1.0,
+    hebrewLetterLH = 1.0,
     subLH = 1.0;
   const hTitle = (titleSize * titleLH) / 2;
-  const hGlyph = glyph ? (glyphSize * glyphLH) / 2 : 0;
+  const hHebrewLetter = hebrewLetter
+    ? (hebrewLetterSize * hebrewLetterLH) / 2
+    : 0;
   const hSub = subtitle ? (subSize * subLH) / 2 : 0;
 
-  const gGlyph = glyph ? gap : 0;
+  const gHebrewLetter = hebrewLetter ? gap : 0;
   const gSub = subtitle ? gap : 0;
 
   const totalHalf =
-    hTitle + (glyph ? gGlyph + hGlyph : 0) + (subtitle ? gSub + hSub : 0);
+    hTitle +
+    (hebrewLetter ? gHebrewLetter + hHebrewLetter : 0) +
+    (subtitle ? gSub + hSub : 0);
 
   const yTitle = totalHalf - hTitle;
-  const yGlyph = glyph ? yTitle - (hTitle + gGlyph + hGlyph) : 0;
+  const yHebrewLetter = hebrewLetter
+    ? yTitle - (hTitle + gHebrewLetter + hHebrewLetter)
+    : 0;
   const ySub = subtitle
-    ? glyph
-      ? yGlyph - (hGlyph + gSub + hSub)
+    ? hebrewLetter
+      ? yHebrewLetter - (hHebrewLetter + gSub + hSub)
       : yTitle - (hTitle + gSub + hSub)
     : 0;
 
   return (
     <group>
+      {hebrewLetter && (
+        <Text
+          anchorX="center"
+          anchorY="middle"
+          position={[0, yHebrewLetter, 0]}
+          font={HEBREW_FONT}
+          fontSize={hebrewLetterSize}
+          color={color}
+          material-toneMapped={false}
+        >
+          {hebrewLetter}
+        </Text>
+      )}
       <Text
         anchorX="center"
         anchorY="middle"
+        font={UI_FONT}
         fontSize={titleSize}
         lineHeight={titleLH}
         color={color}
@@ -59,23 +78,11 @@ export function Label3D({
       >
         {title}
       </Text>
-      {glyph && (
-        <Text
-          anchorX="center"
-          anchorY="middle"
-          position={[0, yGlyph, 0]}
-          font={hebrewFont}
-          fontSize={glyphSize}
-          color={color}
-          material-toneMapped={false}
-        >
-          {glyph}
-        </Text>
-      )}
       {subtitle && (
         <Text
           anchorX="center"
           anchorY="middle"
+          font={UI_FONT}
           position={[0, ySub, 0]}
           fontSize={subSize}
           color={color}

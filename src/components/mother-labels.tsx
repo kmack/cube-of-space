@@ -62,7 +62,7 @@ export function MotherLabels(): React.JSX.Element {
               <Label3D
                 title={lp.title}
                 subtitle={lp.subtitle}
-                glyph={lp.glyph}
+                hebrewLetter={lp.glyph}
               />
             </group>
           );

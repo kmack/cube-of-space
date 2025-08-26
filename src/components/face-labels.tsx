@@ -20,7 +20,11 @@ export function FaceLabels(): React.JSX.Element {
         const lp = labelParts(f.letter);
         return (
           <group key={i} position={f.pos} rotation={f.rotation}>
-            <Label3D title={lp.title} subtitle={lp.subtitle} glyph={lp.glyph} />
+            <Label3D
+              title={lp.title}
+              subtitle={lp.subtitle}
+              hebrewLetter={lp.glyph}
+            />
           </group>
         );
       })}

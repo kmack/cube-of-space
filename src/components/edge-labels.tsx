@@ -22,7 +22,11 @@ export function EdgeLabels(): React.JSX.Element {
         const lp = labelParts(e.letter);
         return (
           <group key={i} position={e.pos} rotation={rot}>
-            <Label3D title={lp.title} subtitle={lp.subtitle} glyph={lp.glyph} />
+            <Label3D
+              title={lp.title}
+              subtitle={lp.subtitle}
+              hebrewLetter={lp.glyph}
+            />
           </group>
         );
       })}

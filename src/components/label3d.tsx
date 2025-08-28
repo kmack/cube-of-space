@@ -1,7 +1,7 @@
 // src/components/label3d.tsx
-import { Text } from "@react-three/drei";
-import * as React from "react";
-import { HEBREW_FONT, UI_FONT } from "../data/constants";
+import { Text } from '@react-three/drei';
+import * as React from 'react';
+import { HEBREW_FONT, UI_FONT } from '../data/constants';
 
 export type Label3DProps = {
   title: string;
@@ -19,7 +19,7 @@ export function Label3D({
   hebrewLetter: hebrewLetter,
   size = 0.08,
   gap = 0.08,
-  color = "white",
+  color = 'white',
 }: Label3DProps): React.JSX.Element {
   const titleSize = size;
   const hebrewLetterSize = size * 1.25;

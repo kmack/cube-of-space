@@ -1,11 +1,11 @@
 // src/components/edge-labels.tsx
-import * as React from "react";
-import { edges } from "../data/geometry";
-import { eulerFromNormalAndTangent } from "../utils/orientation";
-import { Label3D } from "./label3d";
-import { getSpec } from "../data/label-spec";
+import * as React from 'react';
+import { edges } from '../data/geometry';
+import { eulerFromNormalAndTangent } from '../utils/orientation';
+import { Label3D } from './label3d';
+import { getSpec } from '../data/label-spec';
 
-function labelParts(letter: import("../data/label-spec").HebrewLetter) {
+function labelParts(letter: import('../data/label-spec').HebrewLetter) {
   const d = getSpec(letter);
   return {
     title: `Key ${d.keyNumber} – ${d.keyName}`,

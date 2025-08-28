@@ -1,22 +1,22 @@
 // src/components/cube-of-space-scene.tsx
-import * as React from "react";
-import { Canvas } from "@react-three/fiber";
-import { Grid, OrbitControls } from "@react-three/drei";
-import { FacePlanes } from "./face-planes";
-import { WireCube } from "./wire-cube";
-import { FaceLabels } from "./face-labels";
-import { EdgeLabels } from "./edge-labels";
-import { MotherLabels } from "./mother-labels";
-import { HALF } from "../data/constants";
+import * as React from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Grid, OrbitControls } from '@react-three/drei';
+import { FacePlanes } from './face-planes';
+import { WireCube } from './wire-cube';
+import { FaceLabels } from './face-labels';
+import { EdgeLabels } from './edge-labels';
+import { MotherLabels } from './mother-labels';
+import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
   return (
     <Canvas
-      style={{ background: "#1a1a1a" }}
+      style={{ background: '#1a1a1a' }}
       dpr={[1, 2]}
       camera={{ position: [4, 3, 6], fov: 50 }}
       onCreated={({ gl }) => {
-        gl.domElement.style.userSelect = "none"; // prevent selection of items
+        gl.domElement.style.userSelect = 'none'; // prevent selection of items
       }}
     >
       <ambientLight intensity={0.5} />
@@ -27,10 +27,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <Grid
         position={[0, -HALF - 0.001, 0]}
         sectionSize={3}
-        sectionColor={"#666"}
+        sectionColor={'#666'}
         sectionThickness={1}
         cellSize={1}
-        cellColor={"#6f6f6f"}
+        cellColor={'#6f6f6f'}
         cellThickness={0.6}
         infiniteGrid
         fadeDistance={20}

@@ -1,7 +1,7 @@
 // src/utils/orientation.ts
-import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
-import { UP } from "../data/constants";
+import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
+import { UP } from '../data/constants';
 
 export function eulerFromNormalAndTangent(
   normal: [number, number, number],
@@ -11,7 +11,7 @@ export function eulerFromNormalAndTangent(
   const t = new THREE.Vector3(...tangent).normalize(); // x
   const b = new THREE.Vector3().crossVectors(n, t).normalize(); // y
   const m = new THREE.Matrix4().makeBasis(t, b, n);
-  const e = new THREE.Euler().setFromRotationMatrix(m, "XYZ");
+  const e = new THREE.Euler().setFromRotationMatrix(m, 'XYZ');
   return [e.x, e.y, e.z];
 }
 

@@ -1,56 +1,56 @@
 // src/label-spec.ts
 export type HebrewLetter =
-  | "Aleph"
-  | "Beth"
-  | "Gimel"
-  | "Daleth"
-  | "Heh"
-  | "Vav"
-  | "Zain"
-  | "Cheth"
-  | "Teth"
-  | "Yod"
-  | "Kaph"
-  | "Lamed"
-  | "Mem"
-  | "Nun"
-  | "Samekh"
-  | "Ayin"
-  | "Peh"
-  | "Tzaddi"
-  | "Qoph"
-  | "Resh"
-  | "Shin"
-  | "Tav";
+  | 'Aleph'
+  | 'Beth'
+  | 'Gimel'
+  | 'Daleth'
+  | 'Heh'
+  | 'Vav'
+  | 'Zain'
+  | 'Cheth'
+  | 'Teth'
+  | 'Yod'
+  | 'Kaph'
+  | 'Lamed'
+  | 'Mem'
+  | 'Nun'
+  | 'Samekh'
+  | 'Ayin'
+  | 'Peh'
+  | 'Tzaddi'
+  | 'Qoph'
+  | 'Resh'
+  | 'Shin'
+  | 'Tav';
 
 type Assoc =
-  | { kind: "element"; value: "Air" | "Water" | "Fire" }
+  | { kind: 'element'; value: 'Air' | 'Water' | 'Fire' }
   | {
-      kind: "planet";
+      kind: 'planet';
       value:
-        | "Saturn"
-        | "Jupiter"
-        | "Mars"
-        | "Sun"
-        | "Venus"
-        | "Mercury"
-        | "Moon";
+        | 'Saturn'
+        | 'Jupiter'
+        | 'Mars'
+        | 'Sun'
+        | 'Venus'
+        | 'Mercury'
+        | 'Moon';
     }
   | {
-      kind: "zodiac";
+      kind: 'zodiac';
       value:
-        | "Aries"
-        | "Taurus"
-        | "Gemini"
-        | "Cancer"
-        | "Leo"
-        | "Virgo"
-        | "Libra"
-        | "Scorpio"
-        | "Sagittarius"
-        | "Capricorn"
-        | "Aquarius"
-        | "Pisces";
+        | 'Aries'
+        | 'Taurus'
+        | 'Gemini'
+        | 'Cancer'
+        | 'Leo'
+        | 'Virgo'
+        | 'Libra'
+        | 'Scorpio'
+        | 'Sagittarius'
+        | 'Capricorn'
+        | 'Aquarius'
+        | 'Pisces';
     };
 
 export type LetterSpec = {
@@ -62,52 +62,52 @@ export type LetterSpec = {
 };
 
 const ZODIAC_GLYPHS: Record<
-  Extract<Assoc, { kind: "zodiac" }>["value"],
+  Extract<Assoc, { kind: 'zodiac' }>['value'],
   string
 > = {
-  Aries: "♈",
-  Taurus: "♉",
-  Gemini: "♊",
-  Cancer: "♋",
-  Leo: "♌",
-  Virgo: "♍",
-  Libra: "♎",
-  Scorpio: "♏",
-  Sagittarius: "♐",
-  Capricorn: "♑",
-  Aquarius: "♒",
-  Pisces: "♓",
+  Aries: '♈',
+  Taurus: '♉',
+  Gemini: '♊',
+  Cancer: '♋',
+  Leo: '♌',
+  Virgo: '♍',
+  Libra: '♎',
+  Scorpio: '♏',
+  Sagittarius: '♐',
+  Capricorn: '♑',
+  Aquarius: '♒',
+  Pisces: '♓',
 };
 
 const PLANET_GLYPHS: Record<
-  Extract<Assoc, { kind: "planet" }>["value"],
+  Extract<Assoc, { kind: 'planet' }>['value'],
   string
 > = {
-  Sun: "☉",
-  Moon: "☽",
-  Mercury: "☿",
-  Venus: "♀",
-  Mars: "♂",
-  Jupiter: "♃",
-  Saturn: "♄",
+  Sun: '☉',
+  Moon: '☽',
+  Mercury: '☿',
+  Venus: '♀',
+  Mars: '♂',
+  Jupiter: '♃',
+  Saturn: '♄',
 };
 
 const ELEMENT_GLYPHS: Record<
-  Extract<Assoc, { kind: "element" }>["value"],
+  Extract<Assoc, { kind: 'element' }>['value'],
   string
 > = {
-  Air: "🜁", // alchemical symbol
-  Water: "🜄", // alchemical symbol
-  Fire: "🜂", // alchemical symbol
+  Air: '🜁', // alchemical symbol
+  Water: '🜄', // alchemical symbol
+  Fire: '🜂', // alchemical symbol
 };
 
 export function associationToGlyph(a: Assoc): string {
   switch (a.kind) {
-    case "zodiac":
+    case 'zodiac':
       return ZODIAC_GLYPHS[a.value];
-    case "planet":
+    case 'planet':
       return PLANET_GLYPHS[a.value];
-    case "element":
+    case 'element':
       return ELEMENT_GLYPHS[a.value];
   }
 }
@@ -120,162 +120,162 @@ export function associationToGlyph(a: Assoc): string {
 const S: Record<HebrewLetter, LetterSpec> = {
   // Mothers
   Aleph: {
-    letterChar: "א",
-    letterName: "Aleph",
+    letterChar: 'א',
+    letterName: 'Aleph',
     keyNumber: 0,
-    keyName: "The Fool",
-    association: { kind: "element", value: "Air" },
+    keyName: 'The Fool',
+    association: { kind: 'element', value: 'Air' },
   },
   Mem: {
-    letterChar: "מ",
-    letterName: "Mem",
+    letterChar: 'מ',
+    letterName: 'Mem',
     keyNumber: 12,
-    keyName: "The Hanged Man",
-    association: { kind: "element", value: "Water" },
+    keyName: 'The Hanged Man',
+    association: { kind: 'element', value: 'Water' },
   },
   Shin: {
-    letterChar: "ש",
-    letterName: "Shin",
+    letterChar: 'ש',
+    letterName: 'Shin',
     keyNumber: 20,
-    keyName: "Judgement",
-    association: { kind: "element", value: "Fire" },
+    keyName: 'Judgement',
+    association: { kind: 'element', value: 'Fire' },
   },
 
   // Doubles (planets)
   Beth: {
-    letterChar: "ב",
-    letterName: "Beth",
+    letterChar: 'ב',
+    letterName: 'Beth',
     keyNumber: 1,
-    keyName: "The Magician",
-    association: { kind: "planet", value: "Mercury" },
+    keyName: 'The Magician',
+    association: { kind: 'planet', value: 'Mercury' },
   },
   Gimel: {
-    letterChar: "ג",
-    letterName: "Gimel",
+    letterChar: 'ג',
+    letterName: 'Gimel',
     keyNumber: 2,
-    keyName: "The High Priestess",
-    association: { kind: "planet", value: "Moon" },
+    keyName: 'The High Priestess',
+    association: { kind: 'planet', value: 'Moon' },
   },
   Daleth: {
-    letterChar: "ד",
-    letterName: "Daleth",
+    letterChar: 'ד',
+    letterName: 'Daleth',
     keyNumber: 3,
-    keyName: "The Empress",
-    association: { kind: "planet", value: "Venus" },
+    keyName: 'The Empress',
+    association: { kind: 'planet', value: 'Venus' },
   },
   Kaph: {
-    letterChar: "כ",
-    letterName: "Kaph",
+    letterChar: 'כ',
+    letterName: 'Kaph',
     keyNumber: 10,
-    keyName: "Wheel of Fortune",
-    association: { kind: "planet", value: "Jupiter" },
+    keyName: 'Wheel of Fortune',
+    association: { kind: 'planet', value: 'Jupiter' },
   },
   Peh: {
-    letterChar: "פ",
-    letterName: "Peh",
+    letterChar: 'פ',
+    letterName: 'Peh',
     keyNumber: 16,
-    keyName: "The Tower",
-    association: { kind: "planet", value: "Mars" },
+    keyName: 'The Tower',
+    association: { kind: 'planet', value: 'Mars' },
   },
   Resh: {
-    letterChar: "ר",
-    letterName: "Resh",
+    letterChar: 'ר',
+    letterName: 'Resh',
     keyNumber: 19,
-    keyName: "The Sun",
-    association: { kind: "planet", value: "Sun" },
+    keyName: 'The Sun',
+    association: { kind: 'planet', value: 'Sun' },
   },
   Tav: {
-    letterChar: "ת",
-    letterName: "Tav",
+    letterChar: 'ת',
+    letterName: 'Tav',
     keyNumber: 21,
-    keyName: "The World",
-    association: { kind: "planet", value: "Saturn" },
+    keyName: 'The World',
+    association: { kind: 'planet', value: 'Saturn' },
   },
 
   // Simples (zodiac)
   Heh: {
-    letterChar: "ה",
-    letterName: "Heh",
+    letterChar: 'ה',
+    letterName: 'Heh',
     keyNumber: 4,
-    keyName: "The Emperor",
-    association: { kind: "zodiac", value: "Aries" },
+    keyName: 'The Emperor',
+    association: { kind: 'zodiac', value: 'Aries' },
   },
   Vav: {
-    letterChar: "ו",
-    letterName: "Vav",
+    letterChar: 'ו',
+    letterName: 'Vav',
     keyNumber: 5,
-    keyName: "The Hierophant",
-    association: { kind: "zodiac", value: "Taurus" },
+    keyName: 'The Hierophant',
+    association: { kind: 'zodiac', value: 'Taurus' },
   },
   Zain: {
-    letterChar: "ז",
-    letterName: "Zain",
+    letterChar: 'ז',
+    letterName: 'Zain',
     keyNumber: 6,
-    keyName: "The Lovers",
-    association: { kind: "zodiac", value: "Gemini" },
+    keyName: 'The Lovers',
+    association: { kind: 'zodiac', value: 'Gemini' },
   },
   Cheth: {
-    letterChar: "ח",
-    letterName: "Cheth",
+    letterChar: 'ח',
+    letterName: 'Cheth',
     keyNumber: 7,
-    keyName: "The Chariot",
-    association: { kind: "zodiac", value: "Cancer" },
+    keyName: 'The Chariot',
+    association: { kind: 'zodiac', value: 'Cancer' },
   },
   Teth: {
-    letterChar: "ט",
-    letterName: "Teth",
+    letterChar: 'ט',
+    letterName: 'Teth',
     keyNumber: 8,
-    keyName: "Strength",
-    association: { kind: "zodiac", value: "Leo" },
+    keyName: 'Strength',
+    association: { kind: 'zodiac', value: 'Leo' },
   },
   Yod: {
-    letterChar: "י",
-    letterName: "Yod",
+    letterChar: 'י',
+    letterName: 'Yod',
     keyNumber: 9,
-    keyName: "The Hermit",
-    association: { kind: "zodiac", value: "Virgo" },
+    keyName: 'The Hermit',
+    association: { kind: 'zodiac', value: 'Virgo' },
   },
   Lamed: {
-    letterChar: "ל",
-    letterName: "Lamed",
+    letterChar: 'ל',
+    letterName: 'Lamed',
     keyNumber: 11,
-    keyName: "Justice",
-    association: { kind: "zodiac", value: "Libra" },
+    keyName: 'Justice',
+    association: { kind: 'zodiac', value: 'Libra' },
   },
   Nun: {
-    letterChar: "נ",
-    letterName: "Nun",
+    letterChar: 'נ',
+    letterName: 'Nun',
     keyNumber: 13,
-    keyName: "Death",
-    association: { kind: "zodiac", value: "Scorpio" },
+    keyName: 'Death',
+    association: { kind: 'zodiac', value: 'Scorpio' },
   },
   Samekh: {
-    letterChar: "ס",
-    letterName: "Samekh",
+    letterChar: 'ס',
+    letterName: 'Samekh',
     keyNumber: 14,
-    keyName: "Temperance",
-    association: { kind: "zodiac", value: "Sagittarius" },
+    keyName: 'Temperance',
+    association: { kind: 'zodiac', value: 'Sagittarius' },
   },
   Ayin: {
-    letterChar: "ע",
-    letterName: "Ayin",
+    letterChar: 'ע',
+    letterName: 'Ayin',
     keyNumber: 15,
-    keyName: "The Devil",
-    association: { kind: "zodiac", value: "Capricorn" },
+    keyName: 'The Devil',
+    association: { kind: 'zodiac', value: 'Capricorn' },
   },
   Tzaddi: {
-    letterChar: "צ",
-    letterName: "Tzaddi",
+    letterChar: 'צ',
+    letterName: 'Tzaddi',
     keyNumber: 17,
-    keyName: "The Star",
-    association: { kind: "zodiac", value: "Aquarius" },
+    keyName: 'The Star',
+    association: { kind: 'zodiac', value: 'Aquarius' },
   },
   Qoph: {
-    letterChar: "ק",
-    letterName: "Qoph",
+    letterChar: 'ק',
+    letterName: 'Qoph',
     keyNumber: 18,
-    keyName: "The Moon",
-    association: { kind: "zodiac", value: "Pisces" },
+    keyName: 'The Moon',
+    association: { kind: 'zodiac', value: 'Pisces' },
   },
 };
 

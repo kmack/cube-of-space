@@ -1,5 +1,5 @@
 // src/utils/types.ts
-import type { HebrewLetter } from "../data/label-spec";
+import type { HebrewLetter } from '../data/label-spec';
 
 export type Vec3 = [number, number, number];
 

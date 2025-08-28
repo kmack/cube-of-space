@@ -1,13 +1,13 @@
 // src/components/mother-labels.tsx
-import * as React from "react";
-import * as THREE from "three";
-import { axes } from "../data/geometry";
-import { Label3D } from "./label3d";
-import { getSpec } from "../data/label-spec";
-import { useAxisFacingQuaternion } from "../utils/orientation";
-import { MOTHER_OFFSET, UP } from "../data/constants";
+import * as React from 'react';
+import * as THREE from 'three';
+import { axes } from '../data/geometry';
+import { Label3D } from './label3d';
+import { getSpec } from '../data/label-spec';
+import { useAxisFacingQuaternion } from '../utils/orientation';
+import { MOTHER_OFFSET, UP } from '../data/constants';
 
-function parts(letter: import("../data/label-spec").HebrewLetter) {
+function parts(letter: import('../data/label-spec').HebrewLetter) {
   const d = getSpec(letter);
   return {
     title: `Key ${d.keyNumber} – ${d.keyName}`,
@@ -49,8 +49,8 @@ export function MotherLabels(): React.JSX.Element {
             ? idx === h0.idx
               ? [h1.t.x, h1.t.y, h1.t.z]
               : idx === h1.idx
-              ? [h0.t.x, h0.t.y, h0.t.z]
-              : undefined
+                ? [h0.t.x, h0.t.y, h0.t.z]
+                : undefined
             : undefined;
 
         const Node = ({ pos }: { pos: [number, number, number] }) => {

@@ -1,18 +1,18 @@
 // src/data/geometry.ts
-import type { Face, Edge, Axis } from "../utils/types";
-import { HALF, MOTHER_OFFSET } from "./constants";
+import type { Face, Edge, Axis } from '../utils/types';
+import { HALF, MOTHER_OFFSET } from './constants';
 
 export const faces: Face[] = [
-  { letter: "Beth", pos: [0, +HALF, 0], rotation: [-Math.PI / 2, 0, 0] }, // Above (Mercury)
-  { letter: "Gimel", pos: [0, -HALF, 0], rotation: [Math.PI / 2, 0, 0] }, // Below (Moon)
-  { letter: "Daleth", pos: [+HALF, 0, 0], rotation: [0, Math.PI / 2, 0] }, // East (Venus)
-  { letter: "Kaph", pos: [-HALF, 0, 0], rotation: [0, -Math.PI / 2, 0] }, // West (Jupiter)
-  { letter: "Resh", pos: [0, 0, +HALF], rotation: [0, 0, 0] }, // South (Sun)
-  { letter: "Peh", pos: [0, 0, -HALF], rotation: [0, Math.PI, 0] }, // North (Mars)
+  { letter: 'Beth', pos: [0, +HALF, 0], rotation: [-Math.PI / 2, 0, 0] }, // Above (Mercury)
+  { letter: 'Gimel', pos: [0, -HALF, 0], rotation: [Math.PI / 2, 0, 0] }, // Below (Moon)
+  { letter: 'Daleth', pos: [+HALF, 0, 0], rotation: [0, Math.PI / 2, 0] }, // East (Venus)
+  { letter: 'Kaph', pos: [-HALF, 0, 0], rotation: [0, -Math.PI / 2, 0] }, // West (Jupiter)
+  { letter: 'Resh', pos: [0, 0, +HALF], rotation: [0, 0, 0] }, // South (Sun)
+  { letter: 'Peh', pos: [0, 0, -HALF], rotation: [0, Math.PI, 0] }, // North (Mars)
 ];
 
 export const center: Face = {
-  letter: "Tav",
+  letter: 'Tav',
   pos: [0, 0, 0],
   rotation: [0, 0, 0], // Saturn
 };
@@ -27,25 +27,25 @@ const southZ = +HALF,
 export const edges: Edge[] = [
   // Corner verticals
   {
-    letter: "Heh",
+    letter: 'Heh',
     pos: [eastX, 0, northZ],
     normal: [+1, 0, -1],
     tangent: [0, 1, 0],
   }, // NE
   {
-    letter: "Vav",
+    letter: 'Vav',
     pos: [eastX, 0, southZ],
     normal: [+1, 0, +1],
     tangent: [0, 1, 0],
   }, // SE
   {
-    letter: "Lamed",
+    letter: 'Lamed',
     pos: [westX, 0, northZ],
     normal: [-1, 0, -1],
     tangent: [0, 1, 0],
   }, // NW
   {
-    letter: "Nun",
+    letter: 'Nun',
     pos: [westX, 0, southZ],
     normal: [-1, 0, +1],
     tangent: [0, 1, 0],
@@ -53,13 +53,13 @@ export const edges: Edge[] = [
 
   // East face (top/bottom)
   {
-    letter: "Zain",
+    letter: 'Zain',
     pos: [eastX, topY, 0],
     normal: [+1, +1, 0],
     tangent: [0, 0, -1],
   }, // East-Above
   {
-    letter: "Cheth",
+    letter: 'Cheth',
     pos: [eastX, botY, 0],
     normal: [+1, -1, 0],
     tangent: [0, 0, -1],
@@ -67,13 +67,13 @@ export const edges: Edge[] = [
 
   // North face (top/bottom)
   {
-    letter: "Teth",
+    letter: 'Teth',
     pos: [0, topY, northZ],
     normal: [0, 1, -1],
     tangent: [-1, 0, 0],
   }, // North-Above
   {
-    letter: "Yod",
+    letter: 'Yod',
     pos: [0, botY, northZ],
     normal: [0, -1, -1],
     tangent: [-1, 0, 0],
@@ -81,13 +81,13 @@ export const edges: Edge[] = [
 
   // West face (top/bottom)
   {
-    letter: "Samekh",
+    letter: 'Samekh',
     pos: [westX, topY, 0],
     normal: [-1, +1, 0],
     tangent: [0, 0, +1],
   }, // West-Above
   {
-    letter: "Ayin",
+    letter: 'Ayin',
     pos: [westX, botY, 0],
     normal: [-1, -1, 0],
     tangent: [0, 0, +1],
@@ -95,13 +95,13 @@ export const edges: Edge[] = [
 
   // South face (top/bottom)
   {
-    letter: "Tzaddi",
+    letter: 'Tzaddi',
     pos: [0, topY, southZ],
     normal: [0, +1, +1],
     tangent: [+1, 0, 0],
   }, // South-Above
   {
-    letter: "Qoph",
+    letter: 'Qoph',
     pos: [0, botY, southZ],
     normal: [0, -1, +1],
     tangent: [+1, 0, 0],
@@ -110,7 +110,7 @@ export const edges: Edge[] = [
 
 export const axes: Axis[] = [
   {
-    letter: "Aleph",
+    letter: 'Aleph',
     from: [0, -HALF, 0],
     to: [0, +HALF, 0],
     pos: [0, MOTHER_OFFSET, 0],
@@ -118,7 +118,7 @@ export const axes: Axis[] = [
     normal: [0, 0, 1],
   },
   {
-    letter: "Mem",
+    letter: 'Mem',
     from: [-HALF, 0, 0],
     to: [+HALF, 0, 0],
     pos: [MOTHER_OFFSET, 0, 0],
@@ -126,7 +126,7 @@ export const axes: Axis[] = [
     normal: [0, 1, 0],
   },
   {
-    letter: "Shin",
+    letter: 'Shin',
     from: [0, 0, -HALF],
     to: [0, 0, +HALF],
     pos: [0, 0, MOTHER_OFFSET],

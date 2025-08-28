@@ -1,9 +1,9 @@
 // src/components/face-planes.tsx
-import * as THREE from "three";
-import * as React from "react";
-import { faces } from "../data/geometry";
-import { FACE_COLOR_BY_KEY, SIZE } from "../data/constants";
-import { getSpec } from "../data/label-spec";
+import * as THREE from 'three';
+import * as React from 'react';
+import { faces } from '../data/geometry';
+import { FACE_COLOR_BY_KEY, SIZE } from '../data/constants';
+import { getSpec } from '../data/label-spec';
 
 export function FacePlanes({
   opacity = 0.28,
@@ -15,7 +15,7 @@ export function FacePlanes({
     <>
       {faces.map((f, i) => {
         const keyNum = String(getSpec(f.letter).keyNumber);
-        const faceColor = FACE_COLOR_BY_KEY[keyNum] ?? "#ffffff";
+        const faceColor = FACE_COLOR_BY_KEY[keyNum] ?? '#ffffff';
         return (
           <group key={`plane-${i}`} position={f.pos} rotation={f.rotation}>
             <mesh renderOrder={-1}>

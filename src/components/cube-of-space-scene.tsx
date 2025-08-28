@@ -1,7 +1,7 @@
 // src/components/cube-of-space-scene.tsx
 import * as React from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Grid, OrbitControls } from "@react-three/drei";
 import { FacePlanes } from "./face-planes";
 import { WireCube } from "./wire-cube";
 import { FaceLabels } from "./face-labels";
@@ -24,9 +24,17 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <OrbitControls enableDamping dampingFactor={0.15} rotateSpeed={0.9} />
 
       {/* Ground grid */}
-      <gridHelper
-        args={[10, 10, "#666", "#333"]}
+      <Grid
         position={[0, -HALF - 0.001, 0]}
+        sectionSize={3}
+        sectionColor={"#666"}
+        sectionThickness={1}
+        cellSize={1}
+        cellColor={"#6f6f6f"}
+        cellThickness={0.6}
+        infiniteGrid
+        fadeDistance={20}
+        fadeStrength={1.5}
       />
 
       {/* Geometry */}

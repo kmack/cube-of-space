@@ -17,12 +17,14 @@ export const center: Face = {
   rotation: [0, 0, 0], // Saturn
 };
 
-const topY = +HALF,
-  botY = -HALF;
-const eastX = +HALF,
-  westX = -HALF;
-const southZ = +HALF,
-  northZ = -HALF;
+const topY = +HALF;
+const botY = -HALF;
+
+const eastX = +HALF;
+const westX = -HALF;
+
+const southZ = +HALF;
+const northZ = -HALF;
 
 export const edges: Edge[] = [
   // Corner verticals

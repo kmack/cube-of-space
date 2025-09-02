@@ -6,8 +6,15 @@ import { Label3D } from './label3d';
 import { getSpec } from '../data/label-spec';
 import { useAxisFacingQuaternion } from '../utils/orientation';
 import { MOTHER_OFFSET, UP } from '../data/constants';
+import type { HebrewLetter } from '../data/label-spec';
 
-function parts(letter: import('../data/label-spec').HebrewLetter) {
+type LabelParts = {
+  title: string;
+  glyph: string;
+  subtitle: string;
+};
+
+function parts(letter: HebrewLetter): LabelParts {
   const d = getSpec(letter);
   return {
     title: `Key ${d.keyNumber} – ${d.keyName}`,
@@ -28,8 +35,8 @@ export function MotherLabels(): React.JSX.Element {
     return { idx, a, t, horizontal };
   });
   const horizontals = info.filter((i) => i.horizontal);
-  const h0 = horizontals[0],
-    h1 = horizontals[1];
+  const h0 = horizontals[0];
+  const h1 = horizontals[1];
 
   return (
     <>
@@ -53,7 +60,11 @@ export function MotherLabels(): React.JSX.Element {
                 : undefined
             : undefined;
 
-        const Node = ({ pos }: { pos: [number, number, number] }) => {
+        const Node = ({
+          pos,
+        }: {
+          pos: [number, number, number];
+        }): React.JSX.Element => {
           const ref = React.useRef<THREE.Group>(null!);
           const lp = parts(a.letter);
           useAxisFacingQuaternion(ref, pos, [t.x, t.y, t.z], flipRef, a.normal);

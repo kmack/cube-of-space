@@ -25,9 +25,9 @@ export function Label3D({
   const hebrewLetterSize = size * 1.25;
   const subSize = size * 0.85;
 
-  const titleLH = 1.1,
-    hebrewLetterLH = 1.0,
-    subLH = 1.0;
+  const titleLH = 1.1;
+  const hebrewLetterLH = 1.0;
+  const subLH = 1.0;
   const hTitle = (titleSize * titleLH) / 2;
   const hHebrewLetter = hebrewLetter
     ? (hebrewLetterSize * hebrewLetterLH) / 2

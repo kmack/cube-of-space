@@ -20,6 +20,12 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Show Ground Grid',
     },
   });
+  const { showAxesHelper } = useControls({
+    showAxesHelper: {
+      value: false,
+      label: 'Show Axes Helper',
+    },
+  });
 
   return (
     <Canvas
@@ -49,6 +55,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
           fadeStrength={1.5}
         />
       )}
+      {showAxesHelper && <axesHelper args={[5]} />}
 
       {/* Geometry */}
       <FacePlanes opacity={0.8} />

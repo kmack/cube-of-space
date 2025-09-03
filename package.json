@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.app.json && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --no-cache",
     "preview": "vite preview",
     "deploy": "vercel --prod"
   },

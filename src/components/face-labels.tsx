@@ -3,8 +3,15 @@ import * as React from 'react';
 import { faces, center } from '../data/geometry';
 import { Label3D } from './label3d';
 import { getSpec } from '../data/label-spec';
+import type { HebrewLetter } from '../data/label-spec';
 
-function labelParts(letter: import('../data/label-spec').HebrewLetter) {
+type LabelParts = {
+  title: string;
+  glyph: string;
+  subtitle: string;
+};
+
+function labelParts(letter: HebrewLetter): LabelParts {
   const d = getSpec(letter);
   return {
     title: `Key ${d.keyNumber} – ${d.keyName}`,

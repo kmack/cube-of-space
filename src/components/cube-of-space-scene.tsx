@@ -14,13 +14,12 @@ import { MotherLabels } from './mother-labels';
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
-  const { showGrid } = useControls({
+  // UI Controls
+  const { showGrid, showAxesHelper } = useControls({
     showGrid: {
       value: false,
       label: 'Show Ground Grid',
     },
-  });
-  const { showAxesHelper } = useControls({
     showAxesHelper: {
       value: false,
       label: 'Show Axes Helper',

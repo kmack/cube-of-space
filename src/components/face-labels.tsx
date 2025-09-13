@@ -1,5 +1,6 @@
 // src/components/face-labels.tsx
 import * as React from 'react';
+import { Billboard } from '@react-three/drei';
 import { faces, center } from '../data/geometry';
 import { RichLabel } from './rich-label';
 import { getSpec } from '../data/label-spec';
@@ -24,9 +25,12 @@ function labelParts(letter: HebrewLetter): LabelParts & { imagePath: string } {
 }
 
 export function FaceLabels(): React.JSX.Element {
+  const centerLp = labelParts(center.letter);
+
   return (
     <>
-      {[...faces, center].map((f, i) => {
+      {/* Regular face labels */}
+      {faces.map((f, i) => {
         const lp = labelParts(f.letter);
         return (
           <group key={i} position={f.pos} rotation={f.rotation}>
@@ -43,6 +47,26 @@ export function FaceLabels(): React.JSX.Element {
           </group>
         );
       })}
+
+      {/* Center label as billboard - always faces viewer */}
+      <Billboard
+        follow={true}
+        lockX={false}
+        lockY={false}
+        lockZ={false}
+        position={center.pos}
+      >
+        <RichLabel
+          title={centerLp.title}
+          subtitle={centerLp.subtitle}
+          hebrewLetter={centerLp.glyph}
+          imagePath={centerLp.imagePath}
+          scale={LABEL_SCALE}
+          background={FACE_LABEL_BACKGROUND}
+          hebrewFont="FrankRuhlLibre, serif"
+          uiFont="Inter, sans-serif"
+        />
+      </Billboard>
     </>
   );
 }

@@ -76,13 +76,13 @@ export function MotherLabels(): React.JSX.Element {
                 hebrewLetter={lp.glyph}
                 scale={0.375} // Reduced to 0.75 of previous scale
                 background={{
-                  color: 'rgba(128, 128, 128, 0.425)', // Neutral gray for mother axes
+                  color: 'rgba(96, 96, 96, 0.4)',
                   opacity: 0.475,
                   borderRadius: 8,
                   padding: 12,
                   border: {
                     width: 1,
-                    color: 'rgba(255, 255, 255, 0.15)',
+                    color: 'rgba(255, 255, 255, 0.8)',
                   },
                 }}
                 hebrewFont="FrankRuhlLibre, serif"

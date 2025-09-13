@@ -33,10 +33,14 @@ export function FaceLabels(): React.JSX.Element {
               hebrewLetter={lp.glyph}
               scale={0.375} // Reduced to 0.75 of previous scale
               background={{
-                color: 'rgba(128, 128, 128, 0.35)',
+                color: 'rgba(96, 96, 96, 0.4)',
                 opacity: 0.45,
                 borderRadius: 8,
                 padding: 12,
+                border: {
+                  width: 1,
+                  color: 'rgba(255, 255, 255, 0.8)',
+                },
               }}
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"

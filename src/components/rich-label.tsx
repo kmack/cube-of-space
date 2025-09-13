@@ -9,6 +9,7 @@ export type RichLabelProps = {
   title: string;
   subtitle?: string;
   hebrewLetter?: string;
+  imagePath?: string; // Path to Tarot image
   images?: Array<{
     src: string;
     width: number;
@@ -38,11 +39,12 @@ export function RichLabel({
   title,
   subtitle,
   hebrewLetter,
+  imagePath,
   images: _images, // Prefixed with _ to indicate intentionally unused for now
   color = 'white',
   background,
   width = 512,
-  height = 256,
+  height = 320, // Increased default height for images
   scale = 1,
   hebrewFont,
   uiFont,
@@ -67,6 +69,7 @@ export function RichLabel({
             background,
             hebrewFont,
             uiFont,
+            imagePath,
           }
         );
 
@@ -83,7 +86,7 @@ export function RichLabel({
     return () => {
       mounted = false;
     };
-  }, [title, subtitle, hebrewLetter, color, width, height, background, hebrewFont, uiFont, canvasConfig]);
+  }, [title, subtitle, hebrewLetter, imagePath, color, width, height, background, hebrewFont, uiFont, canvasConfig]);
 
   if (!texture) {
     return <group />; // Return empty group while loading

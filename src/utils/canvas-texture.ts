@@ -28,6 +28,11 @@ export type ImageConfig = {
   height: number;
   x: number;
   y: number;
+  // Optional source cropping parameters
+  sourceX?: number;
+  sourceY?: number;
+  sourceWidth?: number;
+  sourceHeight?: number;
 };
 
 export type CanvasLabelConfig = {
@@ -81,7 +86,19 @@ export function createCanvasTexture(config: CanvasLabelConfig): Promise<THREE.Ca
         // Draw images
         loadedImages.forEach((img, index) => {
           const imgConfig = config.images![index];
-          ctx.drawImage(img, imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height);
+
+          if (imgConfig.sourceX !== undefined && imgConfig.sourceY !== undefined &&
+              imgConfig.sourceWidth !== undefined && imgConfig.sourceHeight !== undefined) {
+            // Draw with source cropping
+            ctx.drawImage(
+              img,
+              imgConfig.sourceX, imgConfig.sourceY, imgConfig.sourceWidth, imgConfig.sourceHeight, // Source crop
+              imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height // Destination
+            );
+          } else {
+            // Draw entire image
+            ctx.drawImage(img, imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height);
+          }
         });
 
         // Draw text elements
@@ -188,66 +205,151 @@ export function createHebrewLabelTexture(
     uiFont?: string;
     color?: string;
     background?: BackgroundStyle;
+    imagePath?: string;
   } = {}
 ): Promise<THREE.CanvasTexture> {
-  const width = options.width || 512;
-  const height = options.height || 256;
+  const width = options.width || (options.imagePath ? 1024 : 512); // Wider canvas for side-by-side layout
+  const height = options.height || (options.imagePath ? 512 : 320); // Full height for image
   const color = options.color || 'white';
   const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
   const uiFont = options.uiFont || 'Inter, sans-serif';
 
   const texts: CanvasLabelConfig['texts'] = [];
+  const images: ImageConfig[] = [];
 
-  let currentY = 60;
+  if (options.imagePath) {
+    // Side-by-side layout: Image on left, text on right
+    const borderPadding = (options.background?.padding || 12) * 2; // Top + bottom padding
+    const imageHeight = height - borderPadding; // Available height minus padding
 
-  // Hebrew letter (larger, at top)
-  texts.push({
-    content: hebrewLetter,
-    x: width / 2,
-    y: currentY,
-    style: {
-      fontSize: 48,
-      fontFamily: hebrewFont,
-      color,
-      textAlign: 'center',
-      textBaseline: 'middle',
-    }
-  });
+    // Source image crop area (x96-x416 = 320px wide, y0-y512 = 512px tall)
+    const sourceWidth = 416 - 96; // 320px
+    const sourceHeight = 512 - 0; // 512px
+    const aspectRatio = sourceWidth / sourceHeight; // 320/512 = 0.625
 
-  currentY += 70;
+    const imageWidth = Math.floor(imageHeight * aspectRatio); // Maintain aspect ratio
+    const textAreaX = imageWidth + 40; // Text starts after image + padding
+    const textAreaWidth = width - textAreaX - 40; // Remaining width minus padding
 
-  // Title
-  texts.push({
-    content: title,
-    x: width / 2,
-    y: currentY,
-    style: {
-      fontSize: 28,
-      fontFamily: uiFont,
-      color,
-      textAlign: 'center',
-      textBaseline: 'middle',
-      fontWeight: '500',
-    }
-  });
+    // Cropped and sized image on the left
+    images.push({
+      src: options.imagePath,
+      x: 0,
+      y: borderPadding / 2, // Account for top padding
+      width: imageWidth,
+      height: imageHeight,
+      // Add crop parameters for the relevant portion of the source image
+      sourceX: 96,
+      sourceY: 0,
+      sourceWidth: sourceWidth,
+      sourceHeight: sourceHeight,
+    });
 
-  currentY += 45;
+    // Text positioned on the right side
+    let textY = 120; // Start text in upper portion
 
-  // Subtitle (if provided)
-  if (subtitle) {
+    // Hebrew letter (reduced size)
     texts.push({
-      content: subtitle,
-      x: width / 2,
-      y: currentY,
+      content: hebrewLetter,
+      x: textAreaX + textAreaWidth / 2,
+      y: textY,
       style: {
-        fontSize: 20,
+        fontSize: 48, // Reduced from 64
+        fontFamily: hebrewFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+      }
+    });
+
+    textY += 70; // Reduced spacing
+
+    // Title
+    texts.push({
+      content: title,
+      x: textAreaX + textAreaWidth / 2,
+      y: textY,
+      style: {
+        fontSize: 24, // Reduced from 36
         fontFamily: uiFont,
         color,
         textAlign: 'center',
         textBaseline: 'middle',
-        opacity: 0.9,
+        fontWeight: '500',
       }
     });
+
+    textY += 40; // Reduced spacing
+
+    // Subtitle (if provided)
+    if (subtitle) {
+      texts.push({
+        content: subtitle,
+        x: textAreaX + textAreaWidth / 2,
+        y: textY,
+        style: {
+          fontSize: 18, // Reduced from 28
+          fontFamily: uiFont,
+          color,
+          textAlign: 'center',
+          textBaseline: 'middle',
+          opacity: 0.9,
+        }
+      });
+    }
+  } else {
+    // Original centered layout for labels without images
+    let currentY = 60;
+
+    // Hebrew letter
+    texts.push({
+      content: hebrewLetter,
+      x: width / 2,
+      y: currentY,
+      style: {
+        fontSize: 48,
+        fontFamily: hebrewFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+      }
+    });
+
+    currentY += 70;
+
+    // Title
+    texts.push({
+      content: title,
+      x: width / 2,
+      y: currentY,
+      style: {
+        fontSize: 28,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+        fontWeight: '500',
+      }
+    });
+
+    currentY += 45;
+
+    // Subtitle (if provided)
+    if (subtitle) {
+      texts.push({
+        content: subtitle,
+        x: width / 2,
+        y: currentY,
+        style: {
+          fontSize: 20,
+          fontFamily: uiFont,
+          color,
+          textAlign: 'center',
+          textBaseline: 'middle',
+          opacity: 0.9,
+        }
+      });
+    }
   }
 
   return createCanvasTexture({
@@ -255,5 +357,6 @@ export function createHebrewLabelTexture(
     height,
     background: options.background,
     texts,
+    images,
   });
 }

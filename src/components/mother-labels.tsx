@@ -7,6 +7,7 @@ import { getSpec } from '../data/label-spec';
 import { useAxisFacingQuaternion } from '../utils/orientation';
 import { MOTHER_OFFSET, UP } from '../data/constants';
 import { MOTHER_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
+import { getTarotImagePath } from '../utils/tarot-images';
 import type { HebrewLetter } from '../data/label-spec';
 
 type LabelParts = {
@@ -15,12 +16,13 @@ type LabelParts = {
   subtitle: string;
 };
 
-function parts(letter: HebrewLetter): LabelParts {
+function parts(letter: HebrewLetter): LabelParts & { imagePath: string } {
   const d = getSpec(letter);
   return {
     title: `Key ${d.keyNumber} – ${d.keyName}`,
     glyph: d.letterChar,
     subtitle: `${d.letterName} — ${d.association.value}`,
+    imagePath: getTarotImagePath(d.keyNumber),
   };
 }
 
@@ -75,6 +77,7 @@ export function MotherLabels(): React.JSX.Element {
                 title={lp.title}
                 subtitle={lp.subtitle}
                 hebrewLetter={lp.glyph}
+                imagePath={lp.imagePath}
                 scale={LABEL_SCALE}
                 background={MOTHER_LABEL_BACKGROUND}
                 hebrewFont="FrankRuhlLibre, serif"

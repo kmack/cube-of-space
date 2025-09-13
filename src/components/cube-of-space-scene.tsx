@@ -10,6 +10,7 @@ import { WireCube } from './wire-cube';
 import { FaceLabels } from './face-labels';
 import { EdgeLabels } from './edge-labels';
 import { MotherLabels } from './mother-labels';
+import { DebugRichLabel } from './debug-rich-label';
 
 import { HALF } from '../data/constants';
 
@@ -59,6 +60,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {/* Geometry */}
       <FacePlanes opacity={0.8} />
       <WireCube />
+      <DebugRichLabel />
       <FaceLabels />
       <EdgeLabels />
       <MotherLabels />

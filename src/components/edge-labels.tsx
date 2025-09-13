@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { edges } from '../data/geometry';
 import { eulerFromNormalAndTangent } from '../utils/orientation';
-import { Label3D } from './label3d';
+import { RichLabel } from './rich-label';
 import { getSpec } from '../data/label-spec';
 import type { HebrewLetter } from '../data/label-spec';
 
@@ -25,14 +25,23 @@ export function EdgeLabels(): React.JSX.Element {
   return (
     <>
       {edges.map((e, i) => {
-        const rot = eulerFromNormalAndTangent(e.normal, e.tangent); // your existing math
+        const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
         const lp = labelParts(e.letter);
         return (
           <group key={i} position={e.pos} rotation={rot}>
-            <Label3D
+            <RichLabel
               title={lp.title}
               subtitle={lp.subtitle}
               hebrewLetter={lp.glyph}
+              scale={0.375} // Reduced to 0.75 of previous scale
+              background={{
+                color: 'rgba(20, 20, 40, 0.8)', // Slightly different color for edges
+                opacity: 0.9,
+                borderRadius: 6,
+                padding: 10,
+              }}
+              hebrewFont="FrankRuhlLibre, serif"
+              uiFont="Inter, sans-serif"
             />
           </group>
         );

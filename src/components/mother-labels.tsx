@@ -2,7 +2,7 @@
 import * as React from 'react';
 import * as THREE from 'three';
 import { axes } from '../data/geometry';
-import { Label3D } from './label3d';
+import { RichLabel } from './rich-label';
 import { getSpec } from '../data/label-spec';
 import { useAxisFacingQuaternion } from '../utils/orientation';
 import { MOTHER_OFFSET, UP } from '../data/constants';
@@ -70,10 +70,23 @@ export function MotherLabels(): React.JSX.Element {
           useAxisFacingQuaternion(ref, pos, [t.x, t.y, t.z], flipRef, a.normal);
           return (
             <group ref={ref} position={pos}>
-              <Label3D
+              <RichLabel
                 title={lp.title}
                 subtitle={lp.subtitle}
                 hebrewLetter={lp.glyph}
+                scale={0.375} // Reduced to 0.75 of previous scale
+                background={{
+                  color: 'rgba(40, 20, 60, 0.85)', // Distinctive color for mother axes
+                  opacity: 0.95,
+                  borderRadius: 8,
+                  padding: 12,
+                  border: {
+                    width: 1,
+                    color: 'rgba(255, 255, 255, 0.3)',
+                  },
+                }}
+                hebrewFont="FrankRuhlLibre, serif"
+                uiFont="Inter, sans-serif"
               />
             </group>
           );

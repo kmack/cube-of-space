@@ -1,7 +1,7 @@
 // src/components/face-labels.tsx
 import * as React from 'react';
 import { faces, center } from '../data/geometry';
-import { Label3D } from './label3d';
+import { RichLabel } from './rich-label';
 import { getSpec } from '../data/label-spec';
 import type { HebrewLetter } from '../data/label-spec';
 
@@ -27,10 +27,19 @@ export function FaceLabels(): React.JSX.Element {
         const lp = labelParts(f.letter);
         return (
           <group key={i} position={f.pos} rotation={f.rotation}>
-            <Label3D
+            <RichLabel
               title={lp.title}
               subtitle={lp.subtitle}
               hebrewLetter={lp.glyph}
+              scale={0.375} // Reduced to 0.75 of previous scale
+              background={{
+                color: 'rgba(0, 0, 0, 0.7)',
+                opacity: 0.9,
+                borderRadius: 8,
+                padding: 12,
+              }}
+              hebrewFont="FrankRuhlLibre, serif"
+              uiFont="Inter, sans-serif"
             />
           </group>
         );

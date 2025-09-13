@@ -105,6 +105,7 @@ export default [
             'polygonOffsetUnits',
             'side',
             'toneMapped',
+            'map',
           ],
         },
       ],

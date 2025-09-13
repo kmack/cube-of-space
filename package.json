@@ -23,6 +23,12 @@
     "three": "^0.179.1",
     "vercel": "^46.0.2"
   },
+  "overrides": {
+    "@radix-ui/*": {
+      "react": "^19.1.1",
+      "react-dom": "^19.1.1"
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@types/react": "^19.1.11",

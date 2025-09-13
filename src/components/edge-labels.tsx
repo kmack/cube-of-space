@@ -35,8 +35,8 @@ export function EdgeLabels(): React.JSX.Element {
               hebrewLetter={lp.glyph}
               scale={0.375} // Reduced to 0.75 of previous scale
               background={{
-                color: 'rgba(20, 20, 40, 0.8)', // Slightly different color for edges
-                opacity: 0.9,
+                color: 'rgba(128, 128, 128, 0.4)', // Neutral gray for edges
+                opacity: 0.45,
                 borderRadius: 6,
                 padding: 10,
               }}

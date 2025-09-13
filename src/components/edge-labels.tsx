@@ -4,6 +4,7 @@ import { edges } from '../data/geometry';
 import { eulerFromNormalAndTangent } from '../utils/orientation';
 import { RichLabel } from './rich-label';
 import { getSpec } from '../data/label-spec';
+import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import type { HebrewLetter } from '../data/label-spec';
 
 type LabelParts = {
@@ -33,17 +34,8 @@ export function EdgeLabels(): React.JSX.Element {
               title={lp.title}
               subtitle={lp.subtitle}
               hebrewLetter={lp.glyph}
-              scale={0.375} // Reduced to 0.75 of previous scale
-              background={{
-                color: 'rgba(96, 96, 96, 0.4)',
-                opacity: 0.45,
-                borderRadius: 6,
-                padding: 10,
-                border: {
-                  width: 1,
-                  color: 'rgba(255, 255, 255, 0.8)',
-                },
-              }}
+              scale={LABEL_SCALE}
+              background={EDGE_LABEL_BACKGROUND}
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
             />

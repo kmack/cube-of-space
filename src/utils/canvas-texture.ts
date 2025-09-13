@@ -188,25 +188,40 @@ export function createHebrewLabelTexture(
     uiFont?: string;
     color?: string;
     background?: BackgroundStyle;
+    imagePath?: string;
   } = {}
 ): Promise<THREE.CanvasTexture> {
   const width = options.width || 512;
-  const height = options.height || 256;
+  const height = options.height || 320; // Increased height for image
   const color = options.color || 'white';
   const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
   const uiFont = options.uiFont || 'Inter, sans-serif';
 
   const texts: CanvasLabelConfig['texts'] = [];
+  const images: ImageConfig[] = [];
 
-  let currentY = 60;
+  let currentY = 40;
 
-  // Hebrew letter (larger, at top)
+  // Add Tarot image if provided
+  if (options.imagePath) {
+    const imageSize = 80;
+    images.push({
+      src: options.imagePath,
+      x: (width - imageSize) / 2,
+      y: currentY,
+      width: imageSize,
+      height: imageSize,
+    });
+    currentY += imageSize + 15;
+  }
+
+  // Hebrew letter
   texts.push({
     content: hebrewLetter,
     x: width / 2,
     y: currentY,
     style: {
-      fontSize: 48,
+      fontSize: options.imagePath ? 32 : 48, // Smaller if image present
       fontFamily: hebrewFont,
       color,
       textAlign: 'center',
@@ -214,7 +229,7 @@ export function createHebrewLabelTexture(
     }
   });
 
-  currentY += 70;
+  currentY += options.imagePath ? 45 : 70;
 
   // Title
   texts.push({
@@ -222,7 +237,7 @@ export function createHebrewLabelTexture(
     x: width / 2,
     y: currentY,
     style: {
-      fontSize: 28,
+      fontSize: options.imagePath ? 22 : 28, // Smaller if image present
       fontFamily: uiFont,
       color,
       textAlign: 'center',
@@ -231,7 +246,7 @@ export function createHebrewLabelTexture(
     }
   });
 
-  currentY += 45;
+  currentY += options.imagePath ? 35 : 45;
 
   // Subtitle (if provided)
   if (subtitle) {
@@ -240,7 +255,7 @@ export function createHebrewLabelTexture(
       x: width / 2,
       y: currentY,
       style: {
-        fontSize: 20,
+        fontSize: options.imagePath ? 16 : 20, // Smaller if image present
         fontFamily: uiFont,
         color,
         textAlign: 'center',
@@ -255,5 +270,6 @@ export function createHebrewLabelTexture(
     height,
     background: options.background,
     texts,
+    images,
   });
 }

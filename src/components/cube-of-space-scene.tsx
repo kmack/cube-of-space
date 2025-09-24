@@ -60,7 +60,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Energy Particles',
     },
     showEdgePositions: {
-      value: false,
+      value: true,
       label: 'Show Edge Positions',
     },
   });

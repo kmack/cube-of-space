@@ -1,7 +1,7 @@
 // src/components/edge-position-labels.tsx
 import * as React from 'react';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei';
+import { Text, Billboard } from '@react-three/drei';
 import { edges } from '../data/geometry';
 
 // Map Hebrew letters to their geometric position descriptions
@@ -61,21 +61,24 @@ export function EdgePositionLabels({
         // For edge labels, we'll use a slight offset from the normal direction
 
         return (
-          <Text
+          <Billboard
             key={`${edge.letter}-position`}
             position={labelPos.toArray() as [number, number, number]}
-            fontSize={fontSize}
-            color={color}
-            anchorX="center"
-            anchorY="middle"
-            font="/fonts/Inter-VariableFont_opsz,wght.ttf"
-            // Slightly rotate text to be more readable from typical viewing angles
-            rotation={[0, 0, 0]}
-            // Make text face the camera
-            lookAt={[0, 0, 10]}
+            follow={true}
+            lockX={false}
+            lockY={false}
+            lockZ={false}
           >
-            {positionText}
-          </Text>
+            <Text
+              fontSize={fontSize}
+              color={color}
+              anchorX="center"
+              anchorY="middle"
+              font="/fonts/Inter-VariableFont_opsz,wght.ttf"
+            >
+              {positionText}
+            </Text>
+          </Billboard>
         );
       })}
     </group>

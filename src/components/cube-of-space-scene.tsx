@@ -11,6 +11,7 @@ import { FaceLabels } from './face-labels';
 import { EdgeLabels } from './edge-labels';
 import { MotherLabels } from './mother-labels';
 import { EdgeEnergyFlows } from './edge-energy-flows';
+import { EdgePositionLabels } from './edge-position-labels';
 
 import { HALF } from '../data/constants';
 
@@ -22,7 +23,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showEnergyFlow,
     energySpeed,
     energyOpacity,
-    energyParticles
+    energyParticles,
+    showEdgePositions
   } = useControls({
     showGrid: {
       value: false,
@@ -56,6 +58,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       max: 16,
       step: 2,
       label: 'Energy Particles',
+    },
+    showEdgePositions: {
+      value: false,
+      label: 'Show Edge Positions',
     },
   });
 
@@ -102,6 +108,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
+      />
+
+      {/* Edge Position Labels */}
+      <EdgePositionLabels
+        visible={showEdgePositions}
+        fontSize={0.06}
+        color="#999999"
+        offset={0.35}
       />
     </Canvas>
   );

@@ -8,17 +8,17 @@ import { HALF } from '../data/constants';
 // Define energy flow directions based on specified directional requirements
 const FLOW_DIRECTIONS: Record<string, FlowDirection> = {
   // Corner verticals
-  'Heh': 'positive',    // NE - (not specified, keeping positive)
+  'Heh': 'negative',    // NE - Above to Below (negative = downward)
   'Vav': 'positive',    // SE - Below to Above (positive = upward)
   'Lamed': 'negative',  // NW - Above to Below (negative = downward)
   'Nun': 'positive',    // SW - Below to Above (positive = upward)
 
   // Face edges - horizontal flows
   'Zain': 'negative',   // East Above - South to North (negative along Z tangent [0,0,-1])
-  'Cheth': 'negative',  // East Below - (not specified, keeping negative)
+  'Cheth': 'positive',  // East Below - North to South (positive along Z tangent [0,0,-1])
 
   'Teth': 'negative',   // North Above - East to West (negative along X tangent [-1,0,0])
-  'Yod': 'positive',    // North Below - (not specified, keeping positive)
+  'Yod': 'negative',    // North Below - East to West (negative along X tangent [-1,0,0])
 
   'Samekh': 'positive', // West Above - North to South (positive along Z tangent [0,0,+1])
   'Ayin': 'positive',   // West Below - North to South (positive along Z tangent [0,0,+1])

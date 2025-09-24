@@ -10,12 +10,20 @@ import { WireCube } from './wire-cube';
 import { FaceLabels } from './face-labels';
 import { EdgeLabels } from './edge-labels';
 import { MotherLabels } from './mother-labels';
+import { EdgeEnergyFlows } from './edge-energy-flows';
 
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
   // UI Controls
-  const { showGrid, showAxesHelper } = useControls({
+  const {
+    showGrid,
+    showAxesHelper,
+    showEnergyFlow,
+    energySpeed,
+    energyOpacity,
+    energyParticles
+  } = useControls({
     showGrid: {
       value: false,
       label: 'Show Ground Grid',
@@ -23,6 +31,31 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showAxesHelper: {
       value: false,
       label: 'Show Axes Helper',
+    },
+    showEnergyFlow: {
+      value: true,
+      label: 'Show Energy Flow',
+    },
+    energySpeed: {
+      value: 1.0,
+      min: 0.1,
+      max: 3.0,
+      step: 0.1,
+      label: 'Energy Speed',
+    },
+    energyOpacity: {
+      value: 0.6,
+      min: 0.1,
+      max: 1.0,
+      step: 0.1,
+      label: 'Energy Opacity',
+    },
+    energyParticles: {
+      value: 8,
+      min: 4,
+      max: 16,
+      step: 2,
+      label: 'Energy Particles',
     },
   });
 
@@ -62,6 +95,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <FaceLabels />
       <EdgeLabels />
       <MotherLabels />
+
+      {/* Energy Flow */}
+      <EdgeEnergyFlows
+        visible={showEnergyFlow}
+        speed={energySpeed}
+        particleCount={energyParticles}
+        opacity={energyOpacity}
+      />
     </Canvas>
   );
 }

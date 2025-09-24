@@ -83,12 +83,23 @@ export function EdgeEnergyFlows({
           endPos = [edge.pos[0], +HALF, edge.pos[2]];
         } else {
           // Horizontal edge - flow along tangent
-          const tangentLength = HALF; // Flow along half the cube width
-          const startOffset = tangent.clone().multiplyScalar(-tangentLength);
-          const endOffset = tangent.clone().multiplyScalar(tangentLength);
-
-          startPos = edgePos.clone().add(startOffset).toArray() as [number, number, number];
-          endPos = edgePos.clone().add(endOffset).toArray() as [number, number, number];
+          // Calculate proper edge positions based on cube geometry
+          if (Math.abs(tangent.x) > 0.9) {
+            // Edge runs along X axis (East-West direction)
+            startPos = [-HALF, edge.pos[1], edge.pos[2]];
+            endPos = [+HALF, edge.pos[1], edge.pos[2]];
+          } else if (Math.abs(tangent.z) > 0.9) {
+            // Edge runs along Z axis (North-South direction)
+            startPos = [edge.pos[0], edge.pos[1], -HALF];
+            endPos = [edge.pos[0], edge.pos[1], +HALF];
+          } else {
+            // Fallback - use original tangent calculation with smaller length
+            const tangentLength = HALF * 0.8; // Reduce overflow
+            const startOffset = tangent.clone().multiplyScalar(-tangentLength);
+            const endOffset = tangent.clone().multiplyScalar(tangentLength);
+            startPos = edgePos.clone().add(startOffset).toArray() as [number, number, number];
+            endPos = edgePos.clone().add(endOffset).toArray() as [number, number, number];
+          }
         }
 
         return (

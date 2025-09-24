@@ -47,15 +47,19 @@ export function EnergyFlow({
 
       // Calculate animated position along the edge
       const baseProgress = i / particleCount;
-      let animatedProgress = baseProgress + ((timeRef.current * 0.5) % 1);
+      const timeOffset = (timeRef.current * 0.5) % 1;
 
-      // Reverse direction if needed
+      let animatedProgress: number;
       if (direction === 'negative') {
-        animatedProgress = 1 - animatedProgress;
+        // For negative direction, flow from 1 to 0
+        animatedProgress = (1 - baseProgress - timeOffset + 2) % 1;
+      } else {
+        // For positive direction, flow from 0 to 1
+        animatedProgress = (baseProgress + timeOffset) % 1;
       }
 
-      // Wrap around
-      animatedProgress = animatedProgress % 1;
+      // Ensure progress stays within [0, 1] bounds
+      animatedProgress = Math.max(0, Math.min(1, animatedProgress));
 
       // Calculate position along edge
       const currentPos = new THREE.Vector3(...startPosition).add(

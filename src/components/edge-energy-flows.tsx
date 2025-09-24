@@ -30,22 +30,29 @@ const FLOW_DIRECTIONS: Record<string, FlowDirection> = {
   'Qoph': 'negative',   // South-Below - leftward
 };
 
-// Color coding based on energy types
+// Color coding based on Hebrew letter dimensional correspondences
 const FLOW_COLORS: Record<string, string> = {
-  // Corner verticals - violet/spiritual energy
-  'Heh': '#9966ff',   'Vav': '#9966ff',   'Lamed': '#9966ff',   'Nun': '#9966ff',
+  // Corner verticals (edges)
+  'Heh': '#ff0000',      // Red (Northeastern Edge)
+  'Vav': '#ff4500',      // Red-Orange (Southeastern Edge)
+  'Lamed': '#00ff00',    // Green (Northwestern Edge)
+  'Nun': '#00ffaa',      // Blue-Green (Southwestern Edge)
 
-  // East face - golden/solar energy
-  'Zain': '#ffcc00',  'Cheth': '#ffcc00',
+  // East face edges
+  'Zain': '#ffa500',     // Orange (East Above Edge)
+  'Cheth': '#ffcc00',    // Yellow-Orange (East Below Edge)
 
-  // North face - cyan/air energy
-  'Teth': '#00ffff',  'Yod': '#00ffff',
+  // North face edges
+  'Teth': '#ffff00',     // Yellow (North Above Edge)
+  'Yod': '#aaff00',      // Yellow-Green (North Below Edge)
 
-  // West face - blue/lunar energy
-  'Samekh': '#4444ff', 'Ayin': '#4444ff',
+  // West face edges
+  'Samekh': '#0000ff',   // Blue (West Above Edge)
+  'Ayin': '#4400ff',     // Blue-Violet (West Below Edge)
 
-  // South face - red/fire energy
-  'Tzaddi': '#ff4444', 'Qoph': '#ff4444',
+  // South face edges
+  'Tzaddi': '#8800ff',   // Violet (South Above Edge)
+  'Qoph': '#ff00aa',     // Red-Violet (South Below Edge)
 };
 
 type EdgeEnergyFlowsProps = {

@@ -5,29 +5,26 @@ import { EnergyFlow, type FlowDirection } from './energy-flow';
 import { edges } from '../data/geometry';
 import { HALF } from '../data/constants';
 
-// Define energy flow directions based on Hebrew letter correspondences and mystical principles
+// Define energy flow directions based on specified directional requirements
 const FLOW_DIRECTIONS: Record<string, FlowDirection> = {
-  // Corner verticals (upward energy - aspiration)
-  'Heh': 'positive',   // NE - ascension
-  'Vav': 'positive',   // SE - ascension
-  'Lamed': 'positive', // NW - ascension
-  'Nun': 'positive',   // SW - ascension
+  // Corner verticals
+  'Heh': 'positive',    // NE - (not specified, keeping positive)
+  'Vav': 'positive',    // SE - Below to Above (positive = upward)
+  'Lamed': 'negative',  // NW - Above to Below (negative = downward)
+  'Nun': 'positive',    // SW - Below to Above (positive = upward)
 
-  // East face edges (solar/active energy - clockwise when viewed from outside)
-  'Zain': 'positive',  // East-Above - rightward
-  'Cheth': 'negative', // East-Below - leftward
+  // Face edges - horizontal flows
+  'Zain': 'negative',   // East Above - South to North (negative along Z tangent [0,0,-1])
+  'Cheth': 'negative',  // East Below - (not specified, keeping negative)
 
-  // North face edges (mental/air energy - rightward flow)
-  'Teth': 'positive',  // North-Above - rightward
-  'Yod': 'positive',   // North-Below - rightward
+  'Teth': 'negative',   // North Above - East to West (negative along X tangent [-1,0,0])
+  'Yod': 'positive',    // North Below - (not specified, keeping positive)
 
-  // West face edges (passive/reflective energy - counter-clockwise)
-  'Samekh': 'negative', // West-Above - leftward
-  'Ayin': 'positive',   // West-Below - rightward
+  'Samekh': 'positive', // West Above - North to South (positive along Z tangent [0,0,+1])
+  'Ayin': 'positive',   // West Below - North to South (positive along Z tangent [0,0,+1])
 
-  // South face edges (emotional/fire energy - leftward flow)
-  'Tzaddi': 'negative', // South-Above - leftward
-  'Qoph': 'negative',   // South-Below - leftward
+  'Tzaddi': 'positive', // South Above - West to East (positive along X tangent [+1,0,0])
+  'Qoph': 'positive',   // South Below - West to East (positive along X tangent [+1,0,0])
 };
 
 // Color coding based on Hebrew letter dimensional correspondences

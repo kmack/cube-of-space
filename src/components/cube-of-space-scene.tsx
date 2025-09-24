@@ -67,11 +67,12 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
   return (
     <Canvas
-      style={{ background: '#1a1a1a' }}
+      style={{ background: 'transparent' }}
       dpr={[1, 2]}
       camera={{ position: [4, 3, 6], fov: 50 }}
       onCreated={({ gl }) => {
         gl.domElement.style.userSelect = 'none'; // prevent selection of items
+        gl.setClearColor(0x000000, 0); // transparent clear color
       }}
     >
       <ambientLight intensity={0.5} />

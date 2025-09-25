@@ -10,7 +10,7 @@ import { MOTHER_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
 
 
-export function MotherLabels(): React.JSX.Element {
+function MotherLabelsComponent(): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
   const info = axes.map((a, idx) => {
     const t = new THREE.Vector3(
@@ -65,9 +65,11 @@ export function MotherLabels(): React.JSX.Element {
             baseOffsetPos[1] += LABEL_OFFSET;
           }
 
-          // Dynamic positioning for Aleph (vertical axis) labels
+          // Dynamic positioning for all mother letter labels
           useFrame(({ camera }) => {
             if (!ref.current) return;
+
+            let finalPos: [number, number, number];
 
             if (a.letter === 'Aleph') {
               // Vertical axis (Y) - offset toward camera dynamically
@@ -79,27 +81,30 @@ export function MotherLabels(): React.JSX.Element {
               toCamera.normalize();
 
               // Calculate dynamic offset position
-              const dynamicOffsetPos: [number, number, number] = [
+              finalPos = [
                 pos[0] + toCamera.x * LABEL_OFFSET,
                 pos[1],
                 pos[2] + toCamera.z * LABEL_OFFSET,
               ];
-
-              // Update the group position
-              ref.current.position.set(...dynamicOffsetPos);
+            } else {
+              // Use the pre-calculated base offset position for other axes
+              finalPos = baseOffsetPos;
             }
+
+            // Update the group position
+            ref.current.position.set(...finalPos);
           });
 
           useAxisFacingQuaternion(
             ref,
-            baseOffsetPos,
+            pos, // Just pass the base position since the hook reads worldPosition anyway
             [t.x, t.y, t.z],
             flipRef,
             a.normal
           );
 
           return (
-            <group ref={ref} position={baseOffsetPos}>
+            <group ref={ref}>
               <RichLabel
                 title={labelData.title}
                 subtitle={labelData.subtitle}
@@ -124,3 +129,5 @@ export function MotherLabels(): React.JSX.Element {
     </>
   );
 }
+
+export const MotherLabels = React.memo(MotherLabelsComponent);

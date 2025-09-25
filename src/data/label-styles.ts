@@ -32,5 +32,5 @@ export const MOTHER_LABEL_BACKGROUND: BackgroundStyle = {
   opacity: 0.475, // Slightly higher opacity for mother labels
 };
 
-// Shared scale for all labels
-export const LABEL_SCALE = 0.375;
+// Shared scale for all labels - increased for larger card display
+export const LABEL_SCALE = 0.6;

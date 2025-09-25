@@ -1,56 +1,13 @@
 // src/components/edge-energy-flows.tsx
 import * as React from 'react';
 import * as THREE from 'three';
-import { EnergyFlow, type FlowDirection } from './energy-flow';
+import { EnergyFlow } from './energy-flow';
 import { edges } from '../data/geometry';
 import { HALF } from '../data/constants';
-
-// Define energy flow directions based on specified directional requirements
-const FLOW_DIRECTIONS: Record<string, FlowDirection> = {
-  // Corner verticals
-  'Heh': 'negative',    // NE - Above to Below (negative = downward)
-  'Vav': 'positive',    // SE - Below to Above (positive = upward)
-  'Lamed': 'negative',  // NW - Above to Below (negative = downward)
-  'Nun': 'positive',    // SW - Below to Above (positive = upward)
-
-  // Face edges - horizontal flows
-  'Zain': 'negative',   // East Above - South to North (negative along Z tangent [0,0,-1])
-  'Cheth': 'positive',  // East Below - North to South (positive along Z tangent [0,0,-1])
-
-  'Teth': 'negative',   // North Above - East to West (negative along X tangent [-1,0,0])
-  'Yod': 'negative',    // North Below - East to West (negative along X tangent [-1,0,0])
-
-  'Samekh': 'positive', // West Above - North to South (positive along Z tangent [0,0,+1])
-  'Ayin': 'positive',   // West Below - North to South (positive along Z tangent [0,0,+1])
-
-  'Tzaddi': 'positive', // South Above - West to East (positive along X tangent [+1,0,0])
-  'Qoph': 'positive',   // South Below - West to East (positive along X tangent [+1,0,0])
-};
-
-// Color coding based on Hebrew letter dimensional correspondences
-const FLOW_COLORS: Record<string, string> = {
-  // Corner verticals (edges)
-  'Heh': '#ff0000',      // Red (Northeastern Edge)
-  'Vav': '#ff4500',      // Red-Orange (Southeastern Edge)
-  'Lamed': '#00ff00',    // Green (Northwestern Edge)
-  'Nun': '#00ffaa',      // Blue-Green (Southwestern Edge)
-
-  // East face edges
-  'Zain': '#ffa500',     // Orange (East Above Edge)
-  'Cheth': '#ffcc00',    // Yellow-Orange (East Below Edge)
-
-  // North face edges
-  'Teth': '#ffff00',     // Yellow (North Above Edge)
-  'Yod': '#aaff00',      // Yellow-Green (North Below Edge)
-
-  // West face edges
-  'Samekh': '#0000ff',   // Blue (West Above Edge)
-  'Ayin': '#4400ff',     // Blue-Violet (West Below Edge)
-
-  // South face edges
-  'Tzaddi': '#8800ff',   // Violet (South Above Edge)
-  'Qoph': '#ff00aa',     // Red-Violet (South Below Edge)
-};
+import {
+  ENERGY_FLOW_CONFIG,
+  type EdgeHebrewLetter,
+} from '../data/energy-flow-config';
 
 type EdgeEnergyFlowsProps = {
   visible?: boolean;
@@ -101,8 +58,16 @@ export function EdgeEnergyFlows({
             const tangentLength = HALF * 0.8; // Reduce overflow
             const startOffset = tangent.clone().multiplyScalar(-tangentLength);
             const endOffset = tangent.clone().multiplyScalar(tangentLength);
-            startPos = edgePos.clone().add(startOffset).toArray() as [number, number, number];
-            endPos = edgePos.clone().add(endOffset).toArray() as [number, number, number];
+            startPos = edgePos.clone().add(startOffset).toArray() as [
+              number,
+              number,
+              number,
+            ];
+            endPos = edgePos.clone().add(endOffset).toArray() as [
+              number,
+              number,
+              number,
+            ];
           }
         }
 
@@ -111,8 +76,10 @@ export function EdgeEnergyFlows({
             key={edge.letter}
             startPosition={startPos}
             endPosition={endPos}
-            direction={FLOW_DIRECTIONS[edge.letter]}
-            color={FLOW_COLORS[edge.letter]}
+            direction={ENERGY_FLOW_CONFIG.getDirection(
+              edge.letter as EdgeHebrewLetter
+            )}
+            color={ENERGY_FLOW_CONFIG.getColor(edge.letter as EdgeHebrewLetter)}
             particleCount={particleCount}
             speed={speed}
             opacity={opacity}

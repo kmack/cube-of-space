@@ -74,7 +74,7 @@ export function MotherLabels(): React.JSX.Element {
           const { camera } = useThree();
 
           // Calculate axis-specific offset to avoid z-fighting with axis lines
-          let offsetPos: [number, number, number] = [...pos];
+          const offsetPos: [number, number, number] = [...pos];
           if (a.letter === 'Aleph') {
             // Vertical axis (Y) - offset toward camera dynamically
             const labelPos = new THREE.Vector3(...pos);
@@ -93,7 +93,13 @@ export function MotherLabels(): React.JSX.Element {
             offsetPos[1] += LABEL_OFFSET;
           }
 
-          useAxisFacingQuaternion(ref, offsetPos, [t.x, t.y, t.z], flipRef, a.normal);
+          useAxisFacingQuaternion(
+            ref,
+            offsetPos,
+            [t.x, t.y, t.z],
+            flipRef,
+            a.normal
+          );
           return (
             <group ref={ref} position={offsetPos}>
               <RichLabel

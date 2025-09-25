@@ -52,7 +52,9 @@ export type CanvasLabelConfig = {
 /**
  * Creates a canvas texture with rich content (text + images)
  */
-export function createCanvasTexture(config: CanvasLabelConfig): Promise<THREE.CanvasTexture> {
+export function createCanvasTexture(
+  config: CanvasLabelConfig
+): Promise<THREE.CanvasTexture> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -87,23 +89,45 @@ export function createCanvasTexture(config: CanvasLabelConfig): Promise<THREE.Ca
         loadedImages.forEach((img, index) => {
           const imgConfig = config.images![index];
 
-          if (imgConfig.sourceX !== undefined && imgConfig.sourceY !== undefined &&
-              imgConfig.sourceWidth !== undefined && imgConfig.sourceHeight !== undefined) {
+          if (
+            imgConfig.sourceX !== undefined &&
+            imgConfig.sourceY !== undefined &&
+            imgConfig.sourceWidth !== undefined &&
+            imgConfig.sourceHeight !== undefined
+          ) {
             // Draw with source cropping
             ctx.drawImage(
               img,
-              imgConfig.sourceX, imgConfig.sourceY, imgConfig.sourceWidth, imgConfig.sourceHeight, // Source crop
-              imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height // Destination
+              imgConfig.sourceX,
+              imgConfig.sourceY,
+              imgConfig.sourceWidth,
+              imgConfig.sourceHeight, // Source crop
+              imgConfig.x,
+              imgConfig.y,
+              imgConfig.width,
+              imgConfig.height // Destination
             );
           } else {
             // Draw entire image
-            ctx.drawImage(img, imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height);
+            ctx.drawImage(
+              img,
+              imgConfig.x,
+              imgConfig.y,
+              imgConfig.width,
+              imgConfig.height
+            );
           }
         });
 
         // Draw text elements
         config.texts?.forEach((textConfig) => {
-          drawText(ctx, textConfig.content, textConfig.x, textConfig.y, textConfig.style);
+          drawText(
+            ctx,
+            textConfig.content,
+            textConfig.x,
+            textConfig.y,
+            textConfig.style
+          );
         });
 
         // Create and return texture
@@ -132,7 +156,13 @@ function drawBackground(
       const radius = bg.borderRadius;
 
       ctx.beginPath();
-      ctx.roundRect(padding, padding, width - 2 * padding, height - 2 * padding, radius);
+      ctx.roundRect(
+        padding,
+        padding,
+        width - 2 * padding,
+        height - 2 * padding,
+        radius
+      );
       ctx.fillStyle = bg.color;
       ctx.fill();
 
@@ -174,7 +204,9 @@ function drawText(
   ctx.restore();
 }
 
-async function loadImages(imageConfigs: ImageConfig[]): Promise<HTMLImageElement[]> {
+async function loadImages(
+  imageConfigs: ImageConfig[]
+): Promise<HTMLImageElement[]> {
   if (imageConfigs.length === 0) {
     return [];
   }
@@ -218,9 +250,6 @@ export function createHebrewLabelTexture(
   const images: ImageConfig[] = [];
 
   if (options.imagePath) {
-    // Vertical layout: Title above, large card in center, additional info below
-    const padding = options.background?.padding || 20;
-
     // Source image crop area (x96-x416 = 320px wide, y0-y512 = 512px tall)
     const sourceWidth = 416 - 96; // 320px
     const sourceHeight = 512 - 0; // 512px
@@ -258,7 +287,7 @@ export function createHebrewLabelTexture(
         textAlign: 'center',
         textBaseline: 'middle',
         fontWeight: '600',
-      }
+      },
     });
 
     // Hebrew letter and subtitle below the card
@@ -276,7 +305,7 @@ export function createHebrewLabelTexture(
         textAlign: 'center',
         textBaseline: 'middle',
         opacity: 0.9,
-      }
+      },
     });
 
     // Subtitle (right side below card, next to Hebrew letter)
@@ -292,7 +321,7 @@ export function createHebrewLabelTexture(
           textAlign: 'center',
           textBaseline: 'middle',
           opacity: 0.8,
-        }
+        },
       });
     }
   } else {
@@ -310,7 +339,7 @@ export function createHebrewLabelTexture(
         color,
         textAlign: 'center',
         textBaseline: 'middle',
-      }
+      },
     });
 
     currentY += 70;
@@ -327,7 +356,7 @@ export function createHebrewLabelTexture(
         textAlign: 'center',
         textBaseline: 'middle',
         fontWeight: '500',
-      }
+      },
     });
 
     currentY += 45;
@@ -345,7 +374,7 @@ export function createHebrewLabelTexture(
           textAlign: 'center',
           textBaseline: 'middle',
           opacity: 0.9,
-        }
+        },
       });
     }
   }

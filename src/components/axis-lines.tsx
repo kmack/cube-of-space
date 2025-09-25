@@ -11,7 +11,6 @@ interface AxisLinesProps {
 export const AxisLines: FC<AxisLinesProps> = ({
   opacity = 0.6,
   color = '#ffffff',
-  lineWidth = 2
 }) => {
   // Define the three major axes connecting opposite face centers
   const axes = [
@@ -19,20 +18,20 @@ export const AxisLines: FC<AxisLinesProps> = ({
     {
       start: [0, +HALF, 0] as [number, number, number],
       end: [0, -HALF, 0] as [number, number, number],
-      name: 'vertical'
+      name: 'vertical',
     },
     // East-West axis: East (Daleth) ↔ West (Kaph)
     {
       start: [+HALF, 0, 0] as [number, number, number],
       end: [-HALF, 0, 0] as [number, number, number],
-      name: 'east-west'
+      name: 'east-west',
     },
     // North-South axis: South (Resh) ↔ North (Peh)
     {
       start: [0, 0, +HALF] as [number, number, number],
       end: [0, 0, -HALF] as [number, number, number],
-      name: 'north-south'
-    }
+      name: 'north-south',
+    },
   ];
 
   return (
@@ -41,18 +40,23 @@ export const AxisLines: FC<AxisLinesProps> = ({
         // Create geometry for the line
         const points = [
           new THREE.Vector3(...axis.start),
-          new THREE.Vector3(...axis.end)
+          new THREE.Vector3(...axis.end),
         ];
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
         return (
           <primitive
             key={`axis-${axis.name}-${index}`}
-            object={new THREE.Line(geometry, new THREE.LineBasicMaterial({
-              color: color,
-              transparent: true,
-              opacity: opacity
-            }))}
+            object={
+              new THREE.Line(
+                geometry,
+                new THREE.LineBasicMaterial({
+                  color: color,
+                  transparent: true,
+                  opacity: opacity,
+                })
+              )
+            }
           />
         );
       })}

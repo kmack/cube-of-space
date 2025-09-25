@@ -4,28 +4,11 @@ import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { axes } from '../data/geometry';
 import { RichLabel } from './rich-label';
-import { getSpec } from '../data/label-spec';
 import { useAxisFacingQuaternion } from '../utils/orientation';
 import { MOTHER_OFFSET, UP, LABEL_OFFSET } from '../data/constants';
 import { MOTHER_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
-import { getTarotImagePath } from '../utils/tarot-images';
-import type { HebrewLetter } from '../data/label-spec';
+import { createLabelData } from '../utils/label-factory';
 
-type LabelParts = {
-  title: string;
-  glyph: string;
-  subtitle: string;
-};
-
-function parts(letter: HebrewLetter): LabelParts & { imagePath: string } {
-  const d = getSpec(letter);
-  return {
-    title: `Key ${d.keyNumber} – ${d.keyName}`,
-    glyph: d.letterChar,
-    subtitle: `${d.letterName} — ${d.association.value}`,
-    imagePath: getTarotImagePath(d.keyNumber),
-  };
-}
 
 export function MotherLabels(): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
@@ -70,7 +53,7 @@ export function MotherLabels(): React.JSX.Element {
           pos: [number, number, number];
         }): React.JSX.Element => {
           const ref = React.useRef<THREE.Group>(null!);
-          const lp = parts(a.letter);
+          const labelData = createLabelData(a.letter);
 
           // Calculate axis-specific offset to avoid z-fighting with axis lines
           const baseOffsetPos: [number, number, number] = [...pos];
@@ -118,10 +101,10 @@ export function MotherLabels(): React.JSX.Element {
           return (
             <group ref={ref} position={baseOffsetPos}>
               <RichLabel
-                title={lp.title}
-                subtitle={lp.subtitle}
-                hebrewLetter={lp.glyph}
-                imagePath={lp.imagePath}
+                title={labelData.title}
+                subtitle={labelData.subtitle}
+                hebrewLetter={labelData.glyph}
+                imagePath={labelData.imagePath}
                 scale={LABEL_SCALE}
                 background={MOTHER_LABEL_BACKGROUND}
                 hebrewFont="FrankRuhlLibre, serif"

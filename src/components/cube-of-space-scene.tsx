@@ -7,6 +7,7 @@ import { useControls } from 'leva';
 
 import { FacePlanes } from './face-planes';
 import { WireCube } from './wire-cube';
+import { AxisLines } from './axis-lines';
 import { FaceLabels } from './face-labels';
 import { EdgeLabels } from './edge-labels';
 import { MotherLabels } from './mother-labels';
@@ -20,6 +21,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   const {
     showGrid,
     showAxesHelper,
+    showAxisLines,
     showEnergyFlow,
     energySpeed,
     energyOpacity,
@@ -33,6 +35,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showAxesHelper: {
       value: false,
       label: 'Show Axes Helper',
+    },
+    showAxisLines: {
+      value: true,
+      label: 'Show Axis Lines',
     },
     showEnergyFlow: {
       value: true,
@@ -99,6 +105,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {/* Geometry */}
       <FacePlanes opacity={0.8} />
       <WireCube />
+      {showAxisLines && <AxisLines opacity={0.7} color="#88ccff" />}
       <FaceLabels />
       <EdgeLabels />
       <MotherLabels />

@@ -1,8 +1,14 @@
 // src/components/rich-label.tsx
 import * as React from 'react';
 import * as THREE from 'three';
-import { createHebrewLabelTexture, createCanvasTexture } from '../utils/canvas-texture';
-import type { CanvasLabelConfig, BackgroundStyle } from '../utils/canvas-texture';
+import {
+  createHebrewLabelTexture,
+  createCanvasTexture,
+} from '../utils/canvas-texture';
+import type {
+  CanvasLabelConfig,
+  BackgroundStyle,
+} from '../utils/canvas-texture';
 
 export type RichLabelProps = {
   // Content
@@ -43,8 +49,8 @@ export function RichLabel({
   images: _images, // Prefixed with _ to indicate intentionally unused for now
   color = 'white',
   background,
-  width = 512,
-  height = 320, // Increased default height for images
+  width = 800,
+  height = 900, // Increased default height for vertical layout
   scale = 1,
   hebrewFont,
   uiFont,
@@ -58,20 +64,15 @@ export function RichLabel({
     // Use custom canvas config if provided, otherwise use Hebrew label helper
     const texturePromise = canvasConfig
       ? createCanvasTexture(canvasConfig)
-      : createHebrewLabelTexture(
-          hebrewLetter || '',
-          title,
-          subtitle,
-          {
-            width,
-            height,
-            color,
-            background,
-            hebrewFont,
-            uiFont,
-            imagePath,
-          }
-        );
+      : createHebrewLabelTexture(hebrewLetter || '', title, subtitle, {
+          width,
+          height,
+          color,
+          background,
+          hebrewFont,
+          uiFont,
+          imagePath,
+        });
 
     texturePromise
       .then((tex) => {
@@ -86,7 +87,19 @@ export function RichLabel({
     return () => {
       mounted = false;
     };
-  }, [title, subtitle, hebrewLetter, imagePath, color, width, height, background, hebrewFont, uiFont, canvasConfig]);
+  }, [
+    title,
+    subtitle,
+    hebrewLetter,
+    imagePath,
+    color,
+    width,
+    height,
+    background,
+    hebrewFont,
+    uiFont,
+    canvasConfig,
+  ]);
 
   if (!texture) {
     return <group />; // Return empty group while loading
@@ -98,7 +111,7 @@ export function RichLabel({
   const finalScale: [number, number, number] = [
     scaleArray[0] * aspectRatio,
     scaleArray[1],
-    1
+    1,
   ];
 
   return (
@@ -143,7 +156,7 @@ export function ComplexRichLabel({
         texture.dispose();
       }
     };
-  }, [canvasConfig]);
+  }, [canvasConfig, texture]);
 
   if (!texture) {
     return <group />;
@@ -154,7 +167,7 @@ export function ComplexRichLabel({
   const finalScale: [number, number, number] = [
     scaleArray[0] * aspectRatio,
     scaleArray[1],
-    1
+    1,
   ];
 
   return (

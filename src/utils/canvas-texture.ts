@@ -52,7 +52,9 @@ export type CanvasLabelConfig = {
 /**
  * Creates a canvas texture with rich content (text + images)
  */
-export function createCanvasTexture(config: CanvasLabelConfig): Promise<THREE.CanvasTexture> {
+export function createCanvasTexture(
+  config: CanvasLabelConfig
+): Promise<THREE.CanvasTexture> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -87,23 +89,45 @@ export function createCanvasTexture(config: CanvasLabelConfig): Promise<THREE.Ca
         loadedImages.forEach((img, index) => {
           const imgConfig = config.images![index];
 
-          if (imgConfig.sourceX !== undefined && imgConfig.sourceY !== undefined &&
-              imgConfig.sourceWidth !== undefined && imgConfig.sourceHeight !== undefined) {
+          if (
+            imgConfig.sourceX !== undefined &&
+            imgConfig.sourceY !== undefined &&
+            imgConfig.sourceWidth !== undefined &&
+            imgConfig.sourceHeight !== undefined
+          ) {
             // Draw with source cropping
             ctx.drawImage(
               img,
-              imgConfig.sourceX, imgConfig.sourceY, imgConfig.sourceWidth, imgConfig.sourceHeight, // Source crop
-              imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height // Destination
+              imgConfig.sourceX,
+              imgConfig.sourceY,
+              imgConfig.sourceWidth,
+              imgConfig.sourceHeight, // Source crop
+              imgConfig.x,
+              imgConfig.y,
+              imgConfig.width,
+              imgConfig.height // Destination
             );
           } else {
             // Draw entire image
-            ctx.drawImage(img, imgConfig.x, imgConfig.y, imgConfig.width, imgConfig.height);
+            ctx.drawImage(
+              img,
+              imgConfig.x,
+              imgConfig.y,
+              imgConfig.width,
+              imgConfig.height
+            );
           }
         });
 
         // Draw text elements
         config.texts?.forEach((textConfig) => {
-          drawText(ctx, textConfig.content, textConfig.x, textConfig.y, textConfig.style);
+          drawText(
+            ctx,
+            textConfig.content,
+            textConfig.x,
+            textConfig.y,
+            textConfig.style
+          );
         });
 
         // Create and return texture
@@ -132,7 +156,13 @@ function drawBackground(
       const radius = bg.borderRadius;
 
       ctx.beginPath();
-      ctx.roundRect(padding, padding, width - 2 * padding, height - 2 * padding, radius);
+      ctx.roundRect(
+        padding,
+        padding,
+        width - 2 * padding,
+        height - 2 * padding,
+        radius
+      );
       ctx.fillStyle = bg.color;
       ctx.fill();
 
@@ -174,7 +204,9 @@ function drawText(
   ctx.restore();
 }
 
-async function loadImages(imageConfigs: ImageConfig[]): Promise<HTMLImageElement[]> {
+async function loadImages(
+  imageConfigs: ImageConfig[]
+): Promise<HTMLImageElement[]> {
   if (imageConfigs.length === 0) {
     return [];
   }
@@ -208,8 +240,8 @@ export function createHebrewLabelTexture(
     imagePath?: string;
   } = {}
 ): Promise<THREE.CanvasTexture> {
-  const width = options.width || (options.imagePath ? 1024 : 512); // Wider canvas for side-by-side layout
-  const height = options.height || (options.imagePath ? 512 : 320); // Full height for image
+  const width = options.width || (options.imagePath ? 800 : 512); // Optimal width for vertical layout
+  const height = options.height || (options.imagePath ? 900 : 320); // Taller canvas for vertical layout
   const color = options.color || 'white';
   const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
   const uiFont = options.uiFont || 'Inter, sans-serif';
@@ -218,83 +250,78 @@ export function createHebrewLabelTexture(
   const images: ImageConfig[] = [];
 
   if (options.imagePath) {
-    // Side-by-side layout: Image on left, text on right
-    const borderPadding = (options.background?.padding || 12) * 2; // Top + bottom padding
-    const imageHeight = height - borderPadding; // Available height minus padding
-
     // Source image crop area (x96-x416 = 320px wide, y0-y512 = 512px tall)
     const sourceWidth = 416 - 96; // 320px
     const sourceHeight = 512 - 0; // 512px
     const aspectRatio = sourceWidth / sourceHeight; // 320/512 = 0.625
 
-    const imageWidth = Math.floor(imageHeight * aspectRatio); // Maintain aspect ratio
-    const textAreaX = imageWidth + 40; // Text starts after image + padding
-    const textAreaWidth = width - textAreaX - 40; // Remaining width minus padding
+    // Calculate card size - much larger now, taking up most of the canvas
+    const cardHeight = height - 160; // Reserve space for title above and subtitle below
+    const cardWidth = Math.floor(cardHeight * aspectRatio);
+    const cardX = (width - cardWidth) / 2; // Center horizontally
+    const cardY = 80; // Position below title area
 
-    // Cropped and sized image on the left
+    // Large centered Tarot card
     images.push({
       src: options.imagePath,
-      x: 0,
-      y: borderPadding / 2, // Account for top padding
-      width: imageWidth,
-      height: imageHeight,
-      // Add crop parameters for the relevant portion of the source image
+      x: cardX,
+      y: cardY,
+      width: cardWidth,
+      height: cardHeight,
+      // Crop parameters for the relevant portion of the source image
       sourceX: 96,
       sourceY: 0,
       sourceWidth: sourceWidth,
       sourceHeight: sourceHeight,
     });
 
-    // Text positioned on the right side
-    let textY = 120; // Start text in upper portion
-
-    // Hebrew letter (reduced size)
-    texts.push({
-      content: hebrewLetter,
-      x: textAreaX + textAreaWidth / 2,
-      y: textY,
-      style: {
-        fontSize: 48, // Reduced from 64
-        fontFamily: hebrewFont,
-        color,
-        textAlign: 'center',
-        textBaseline: 'middle',
-      }
-    });
-
-    textY += 70; // Reduced spacing
-
-    // Title
+    // Title above the card
     texts.push({
       content: title,
-      x: textAreaX + textAreaWidth / 2,
-      y: textY,
+      x: width / 2,
+      y: 40,
       style: {
-        fontSize: 24, // Reduced from 36
+        fontSize: 32,
         fontFamily: uiFont,
         color,
         textAlign: 'center',
         textBaseline: 'middle',
-        fontWeight: '500',
-      }
+        fontWeight: '600',
+      },
     });
 
-    textY += 40; // Reduced spacing
+    // Hebrew letter and subtitle below the card
+    const belowCardY = cardY + cardHeight + 40;
 
-    // Subtitle (if provided)
+    // Hebrew letter (left side below card)
+    texts.push({
+      content: hebrewLetter,
+      x: width / 2 - 60,
+      y: belowCardY,
+      style: {
+        fontSize: 32,
+        fontFamily: hebrewFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+        opacity: 0.9,
+      },
+    });
+
+    // Subtitle (right side below card, next to Hebrew letter)
     if (subtitle) {
       texts.push({
         content: subtitle,
-        x: textAreaX + textAreaWidth / 2,
-        y: textY,
+        x: width / 2 + 60,
+        y: belowCardY,
         style: {
-          fontSize: 18, // Reduced from 28
+          fontSize: 22,
           fontFamily: uiFont,
           color,
           textAlign: 'center',
           textBaseline: 'middle',
-          opacity: 0.9,
-        }
+          opacity: 0.8,
+        },
       });
     }
   } else {
@@ -312,7 +339,7 @@ export function createHebrewLabelTexture(
         color,
         textAlign: 'center',
         textBaseline: 'middle',
-      }
+      },
     });
 
     currentY += 70;
@@ -329,7 +356,7 @@ export function createHebrewLabelTexture(
         textAlign: 'center',
         textBaseline: 'middle',
         fontWeight: '500',
-      }
+      },
     });
 
     currentY += 45;
@@ -347,7 +374,7 @@ export function createHebrewLabelTexture(
           textAlign: 'center',
           textBaseline: 'middle',
           opacity: 0.9,
-        }
+        },
       });
     }
   }

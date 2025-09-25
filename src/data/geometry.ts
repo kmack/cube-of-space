@@ -1,6 +1,6 @@
 // src/data/geometry.ts
 import type { Face, Edge, Axis } from '../utils/types';
-import { HALF, MOTHER_OFFSET } from './constants';
+import { HALF, MOTHER_OFFSET, LABEL_OFFSET } from './constants';
 
 export const faces: Face[] = [
   { letter: 'Beth', pos: [0, +HALF, 0], rotation: [-Math.PI / 2, 0, 0] }, // Above (Mercury)

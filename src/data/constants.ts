@@ -4,6 +4,7 @@ import * as THREE from 'three';
 export const SIZE = 2;
 export const HALF = SIZE / 2;
 export const MOTHER_OFFSET = SIZE * 0.18;
+export const LABEL_OFFSET = 0.02; // Distance to move labels away from cube center
 export const UP = new THREE.Vector3(0, 1, 0);
 export const UI_FONT = '/fonts/Inter-VariableFont_opsz,wght.ttf';
 export const HEBREW_FONT = '/fonts/FrankRuhlLibre-VariableFont_wght.ttf';

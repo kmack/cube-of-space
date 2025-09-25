@@ -1,7 +1,7 @@
 // src/components/mother-labels.tsx
 import * as React from 'react';
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { axes } from '../data/geometry';
 import { RichLabel } from './rich-label';
 import { getSpec } from '../data/label-spec';
@@ -71,37 +71,52 @@ export function MotherLabels(): React.JSX.Element {
         }): React.JSX.Element => {
           const ref = React.useRef<THREE.Group>(null!);
           const lp = parts(a.letter);
-          const { camera } = useThree();
 
           // Calculate axis-specific offset to avoid z-fighting with axis lines
-          const offsetPos: [number, number, number] = [...pos];
-          if (a.letter === 'Aleph') {
-            // Vertical axis (Y) - offset toward camera dynamically
-            const labelPos = new THREE.Vector3(...pos);
-            const cameraPos = camera.position.clone();
-            const toCamera = cameraPos.sub(labelPos).normalize();
-            // Project the camera direction onto the horizontal plane (remove Y component)
-            toCamera.y = 0;
-            toCamera.normalize();
-            offsetPos[0] += toCamera.x * LABEL_OFFSET;
-            offsetPos[2] += toCamera.z * LABEL_OFFSET;
-          } else if (a.letter === 'Mem') {
+          const baseOffsetPos: [number, number, number] = [...pos];
+          if (a.letter === 'Mem') {
             // East-West axis (X) - offset upward (positive Y)
-            offsetPos[1] += LABEL_OFFSET;
+            baseOffsetPos[1] += LABEL_OFFSET;
           } else if (a.letter === 'Shin') {
             // North-South axis (Z) - offset upward (positive Y)
-            offsetPos[1] += LABEL_OFFSET;
+            baseOffsetPos[1] += LABEL_OFFSET;
           }
+
+          // Dynamic positioning for Aleph (vertical axis) labels
+          useFrame(({ camera }) => {
+            if (!ref.current) return;
+
+            if (a.letter === 'Aleph') {
+              // Vertical axis (Y) - offset toward camera dynamically
+              const labelPos = new THREE.Vector3(...pos);
+              const cameraPos = camera.position.clone();
+              const toCamera = cameraPos.sub(labelPos).normalize();
+              // Project the camera direction onto the horizontal plane (remove Y component)
+              toCamera.y = 0;
+              toCamera.normalize();
+
+              // Calculate dynamic offset position
+              const dynamicOffsetPos: [number, number, number] = [
+                pos[0] + toCamera.x * LABEL_OFFSET,
+                pos[1],
+                pos[2] + toCamera.z * LABEL_OFFSET,
+              ];
+
+              // Update the group position
+              ref.current.position.set(...dynamicOffsetPos);
+            }
+          });
 
           useAxisFacingQuaternion(
             ref,
-            offsetPos,
+            baseOffsetPos,
             [t.x, t.y, t.z],
             flipRef,
             a.normal
           );
+
           return (
-            <group ref={ref} position={offsetPos}>
+            <group ref={ref} position={baseOffsetPos}>
               <RichLabel
                 title={lp.title}
                 subtitle={lp.subtitle}

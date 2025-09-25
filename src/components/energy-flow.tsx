@@ -2,8 +2,7 @@
 import * as React from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-
-export type FlowDirection = 'positive' | 'negative'; // Along or against the tangent vector
+import type { FlowDirection } from '../data/energy-flow-config';
 
 export type EnergyFlowProps = {
   startPosition: [number, number, number];

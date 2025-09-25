@@ -8,13 +8,12 @@ import {
   ENERGY_FLOW_CONFIG,
   type EdgeHebrewLetter,
 } from '../data/energy-flow-config';
+import type { BaseVisualizationProps } from '../types/component-props';
 
-type EdgeEnergyFlowsProps = {
-  visible?: boolean;
+interface EdgeEnergyFlowsProps extends BaseVisualizationProps {
   speed?: number;
   particleCount?: number;
-  opacity?: number;
-};
+}
 
 export function EdgeEnergyFlows({
   visible = true,

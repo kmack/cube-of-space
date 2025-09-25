@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as THREE from 'three';
 import { Text, Billboard } from '@react-three/drei';
 import { edges } from '../data/geometry';
+import type { PositionedComponentProps } from '../types/component-props';
 
 // Map Hebrew letters to their geometric position descriptions
 const POSITION_LABELS: Record<string, string> = {
@@ -29,12 +30,9 @@ const POSITION_LABELS: Record<string, string> = {
   'Qoph': 'South Below',
 };
 
-type EdgePositionLabelsProps = {
-  visible?: boolean;
-  fontSize?: number;
-  color?: string;
-  offset?: number;
-};
+interface EdgePositionLabelsProps extends PositionedComponentProps {
+  // All props inherited from PositionedComponentProps
+}
 
 export function EdgePositionLabels({
   visible = true,

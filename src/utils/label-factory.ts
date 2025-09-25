@@ -2,13 +2,7 @@
 import { getSpec } from '../data/label-spec';
 import { getTarotImagePath } from './tarot-images';
 import type { HebrewLetter } from '../data/label-spec';
-
-export type LabelData = {
-  title: string;
-  glyph: string;
-  subtitle: string;
-  imagePath: string;
-};
+import type { LabelData } from '../types/component-props';
 
 /**
  * Creates standardized label data for any Hebrew letter.

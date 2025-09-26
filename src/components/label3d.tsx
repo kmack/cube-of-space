@@ -2,6 +2,7 @@
 import { Text } from '@react-three/drei';
 import * as React from 'react';
 import { HEBREW_FONT, UI_FONT } from '../data/constants';
+import { DEVICE_CAPS } from '../utils/device-detection';
 
 export type Label3DProps = {
   title: string;
@@ -52,9 +53,24 @@ export function Label3D({
       : yTitle - (hTitle + gSub + hSub)
     : 0;
 
+  // Mobile optimizations for text rendering
+  const textProps = React.useMemo(() => {
+    if (DEVICE_CAPS.isMobile) {
+      return {
+        // Reduce text resolution on mobile to prevent crashes
+        'characters': 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>? אבגדהוזחטיכלמנסעפצקרשת',
+        'limit': 100, // Limit character set to reduce memory
+        'material-depthWrite': false, // Optimize transparency
+      };
+    }
+    return {
+      'material-depthWrite': false,
+    };
+  }, []);
+
   return (
     <group>
-      {hebrewLetter && (
+      {hebrewLetter && !DEVICE_CAPS.isLowEnd && (
         <Text
           anchorX="center"
           anchorY="middle"
@@ -63,6 +79,7 @@ export function Label3D({
           fontSize={hebrewLetterSize}
           color={color}
           material-toneMapped={false}
+          {...textProps}
         >
           {hebrewLetter}
         </Text>
@@ -75,10 +92,11 @@ export function Label3D({
         lineHeight={titleLH}
         color={color}
         material-toneMapped={false}
+        {...textProps}
       >
         {title}
       </Text>
-      {subtitle && (
+      {subtitle && !DEVICE_CAPS.isLowEnd && (
         <Text
           anchorX="center"
           anchorY="middle"
@@ -89,6 +107,7 @@ export function Label3D({
           material-toneMapped={false}
           material-transparent
           material-opacity={0.9}
+          {...textProps}
         >
           {subtitle}
         </Text>

@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import type { FlowDirection } from '../data/energy-flow-config';
+import { DEVICE_CAPS } from '../utils/device-detection';
 
 export type EnergyFlowProps = {
   startPosition: [number, number, number];
@@ -36,8 +37,16 @@ export function EnergyFlow({
     return end.sub(start);
   }, [startPosition, endPosition]);
 
+  // Mobile optimization: reduce update frequency
+  const frameSkip = React.useRef(0);
+  const updateFrequency = DEVICE_CAPS.isMobile ? 2 : 1; // Update every 2nd frame on mobile
+
   useFrame((_, delta) => {
     if (!meshRef.current) return;
+
+    // Skip frames on mobile devices to reduce CPU load
+    frameSkip.current++;
+    if (frameSkip.current % updateFrequency !== 0) return;
 
     timeRef.current += delta * speed;
 
@@ -80,14 +89,21 @@ export function EnergyFlow({
     meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
+  // Optimize geometry for mobile devices
+  const sphereGeometry = React.useMemo(() => {
+    const segments = DEVICE_CAPS.isMobile ? 4 : 6; // Fewer segments on mobile
+    return [1, segments, segments] as const;
+  }, []);
+
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, particleCount]}>
-      <sphereGeometry args={[1, 8, 6]} />
+      <sphereGeometry args={sphereGeometry} />
       <meshBasicMaterial
         color={color}
         transparent
         opacity={opacity}
         toneMapped={false}
+        depthWrite={false} // Optimize transparency rendering
       />
     </instancedMesh>
   );

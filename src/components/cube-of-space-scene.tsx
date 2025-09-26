@@ -31,7 +31,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
   // Device-aware defaults
   const defaultParticles = DEVICE_CAPS.maxParticles;
-  const defaultEnergyFlow = !DEVICE_CAPS.shouldReduceAnimations;
+  // const defaultEnergyFlow = !DEVICE_CAPS.shouldReduceAnimations; // Disabled for debugging
 
   // UI Controls with mobile-optimized defaults
   const {
@@ -57,7 +57,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Show Axis Lines',
     },
     showEnergyFlow: {
-      value: defaultEnergyFlow,
+      value: false, // Temporarily disabled for iOS debugging
       label: 'Show Energy Flow',
     },
     energySpeed: {
@@ -82,7 +82,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Energy Particles',
     },
     showEdgePositions: {
-      value: !DEVICE_CAPS.isLowEnd,
+      value: false, // Temporarily disabled for iOS debugging
       label: 'Show Edge Positions',
     },
   });

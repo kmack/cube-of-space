@@ -65,7 +65,7 @@ export function RichLabel({
   uiFont,
   canvasConfig,
   useMemoryOptimization = true, // Enable by default for iOS compatibility
-  useUpscalingShader = true,
+  useUpscalingShader = false,
   customSharpness,
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);

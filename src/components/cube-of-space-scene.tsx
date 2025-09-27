@@ -77,7 +77,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Memory Optimization',
     },
     useUpscalingShader: {
-      value: true,
+      value: false,
       label: 'Use Upscaling Shader',
     },
   });

@@ -1,33 +1,35 @@
 // src/components/edge-position-labels.tsx
 import * as React from 'react';
 import * as THREE from 'three';
-import { Text, Billboard } from '@react-three/drei';
+import { Billboard } from '@react-three/drei';
 import { edges } from '../data/geometry';
 import type { PositionedComponentProps } from '../types/component-props';
+import { RichLabel } from './rich-label';
+import { LABEL_SCALE } from '../data/label-styles';
 
 // Map Hebrew letters to their geometric position descriptions
 const POSITION_LABELS: Record<string, string> = {
   // Corner verticals
-  'Heh': 'Northeast',
-  'Vav': 'Southeast',
-  'Lamed': 'Northwest',
-  'Nun': 'Southwest',
+  Heh: 'Northeast',
+  Vav: 'Southeast',
+  Lamed: 'Northwest',
+  Nun: 'Southwest',
 
   // East face edges
-  'Zain': 'East Above',
-  'Cheth': 'East Below',
+  Zain: 'East Above',
+  Cheth: 'East Below',
 
   // North face edges
-  'Teth': 'North Above',
-  'Yod': 'North Below',
+  Teth: 'North Above',
+  Yod: 'North Below',
 
   // West face edges
-  'Samekh': 'West Above',
-  'Ayin': 'West Below',
+  Samekh: 'West Above',
+  Ayin: 'West Below',
 
   // South face edges
-  'Tzaddi': 'South Above',
-  'Qoph': 'South Below',
+  Tzaddi: 'South Above',
+  Qoph: 'South Below',
 };
 
 interface EdgePositionLabelsProps extends PositionedComponentProps {
@@ -36,7 +38,7 @@ interface EdgePositionLabelsProps extends PositionedComponentProps {
 
 export function EdgePositionLabels({
   visible = true,
-  fontSize = 0.08,
+  fontSize: _fontSize = 0.08,
   color = '#cccccc',
   offset = 0.3,
 }: EdgePositionLabelsProps): React.JSX.Element {
@@ -55,8 +57,8 @@ export function EdgePositionLabels({
         const normal = new THREE.Vector3(...edge.normal).normalize();
         const labelPos = edgePos.clone().add(normal.multiplyScalar(offset));
 
-        // Calculate rotation to face the camera optimally
-        // For edge labels, we'll use a slight offset from the normal direction
+        // Adjust Y position to center labels better (lower them slightly)
+        labelPos.y -= 0.1;
 
         return (
           <Billboard
@@ -67,15 +69,13 @@ export function EdgePositionLabels({
             lockY={false}
             lockZ={false}
           >
-            <Text
-              fontSize={fontSize}
+            <RichLabel
+              title={positionText}
               color={color}
-              anchorX="center"
-              anchorY="middle"
-              font="/fonts/Inter-VariableFont_opsz,wght.ttf"
-            >
-              {positionText}
-            </Text>
+              scale={LABEL_SCALE * 2.5}
+              background={{ color: 'transparent' }}
+              uiFont="Inter, sans-serif"
+            />
           </Billboard>
         );
       })}

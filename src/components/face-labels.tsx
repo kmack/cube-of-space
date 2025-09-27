@@ -8,7 +8,15 @@ import { LABEL_OFFSET } from '../data/constants';
 import { createLabelData } from '../utils/label-factory';
 
 
-export function FaceLabels(): React.JSX.Element {
+interface FaceLabelsProps {
+  useMemoryOptimization?: boolean;
+  useUpscalingShader?: boolean;
+}
+
+export function FaceLabels({
+  useMemoryOptimization = true,
+  useUpscalingShader = true,
+}: FaceLabelsProps): React.JSX.Element {
   const centerLabelData = createLabelData(center.letter);
 
   return (
@@ -33,6 +41,8 @@ export function FaceLabels(): React.JSX.Element {
               background={FACE_LABEL_BACKGROUND}
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
+              useMemoryOptimization={useMemoryOptimization}
+              useUpscalingShader={useUpscalingShader}
             />
           </group>
         );
@@ -55,6 +65,8 @@ export function FaceLabels(): React.JSX.Element {
           background={FACE_LABEL_BACKGROUND}
           hebrewFont="FrankRuhlLibre, serif"
           uiFont="Inter, sans-serif"
+          useMemoryOptimization={useMemoryOptimization}
+          useUpscalingShader={useUpscalingShader}
         />
       </Billboard>
     </>

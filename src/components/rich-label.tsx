@@ -9,6 +9,10 @@ import type {
   CanvasLabelConfig,
   BackgroundStyle,
 } from '../utils/canvas-texture';
+import {
+  createUpscalingMaterial,
+  calculateOptimalSharpness,
+} from '../utils/upscaling-shader';
 
 export type RichLabelProps = {
   // Content
@@ -39,6 +43,11 @@ export type RichLabelProps = {
 
   // Advanced canvas config for complex layouts
   canvasConfig?: CanvasLabelConfig;
+
+  // Memory optimization options
+  useMemoryOptimization?: boolean;
+  useUpscalingShader?: boolean;
+  customSharpness?: number;
 };
 
 export function RichLabel({
@@ -49,21 +58,34 @@ export function RichLabel({
   images: _images, // Prefixed with _ to indicate intentionally unused for now
   color = 'white',
   background,
-  width = 512,
-  height = 320,
+  width = 900,
+  height = 800,
   scale = 1,
   hebrewFont,
   uiFont,
   canvasConfig,
+  useMemoryOptimization = true, // Enable by default for iOS compatibility
+  useUpscalingShader = true,
+  customSharpness,
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
+  const [material, setMaterial] = React.useState<THREE.Material | null>(null);
 
   React.useEffect(() => {
     let mounted = true;
 
     // Use custom canvas config if provided, otherwise use Hebrew label helper
     const texturePromise = canvasConfig
-      ? createCanvasTexture(canvasConfig)
+      ? createCanvasTexture({
+          ...canvasConfig,
+          useOptimizedFormat: useMemoryOptimization,
+          targetResolution: useMemoryOptimization
+            ? {
+                width: Math.min(canvasConfig.width, 600),
+                height: Math.min(canvasConfig.height, 480),
+              }
+            : undefined,
+        })
       : createHebrewLabelTexture(hebrewLetter || '', title, subtitle, {
           width,
           height,
@@ -72,12 +94,37 @@ export function RichLabel({
           hebrewFont,
           uiFont,
           imagePath,
+          useMemoryOptimization,
         });
 
     texturePromise
       .then((tex) => {
         if (mounted) {
           setTexture(tex);
+
+          // Create appropriate material based on optimization settings
+          if (useUpscalingShader && useMemoryOptimization) {
+            const targetRes = { width, height };
+            const sourceRes = canvasConfig?.targetResolution || {
+              width: Math.min(width, 600),
+              height: Math.min(height, 480),
+            };
+
+            const sharpness =
+              customSharpness ??
+              calculateOptimalSharpness(sourceRes, targetRes);
+            const upscalingMat = createUpscalingMaterial(tex, { sharpness });
+            setMaterial(upscalingMat);
+          } else {
+            // Use basic material
+            const basicMat = new THREE.MeshBasicMaterial({
+              map: tex,
+              transparent: true,
+              side: THREE.BackSide,
+              toneMapped: false,
+            });
+            setMaterial(basicMat);
+          }
         }
       })
       .catch((error) => {
@@ -86,6 +133,13 @@ export function RichLabel({
 
     return () => {
       mounted = false;
+      // Clean up materials and textures
+      if (material) {
+        material.dispose();
+      }
+      if (texture) {
+        texture.dispose();
+      }
     };
   }, [
     title,
@@ -99,9 +153,12 @@ export function RichLabel({
     hebrewFont,
     uiFont,
     canvasConfig,
+    useMemoryOptimization,
+    useUpscalingShader,
+    customSharpness,
   ]);
 
-  if (!texture) {
+  if (!texture || !material) {
     return <group />; // Return empty group while loading
   }
 
@@ -115,14 +172,8 @@ export function RichLabel({
   ];
 
   return (
-    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]}>
+    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} material={material}>
       <planeGeometry args={[1, 1]} />
-      <meshBasicMaterial
-        map={texture}
-        transparent
-        side={THREE.BackSide}
-        toneMapped={false}
-      />
     </mesh>
   );
 }

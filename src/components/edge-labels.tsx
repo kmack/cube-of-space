@@ -8,7 +8,15 @@ import { LABEL_OFFSET } from '../data/constants';
 import { createLabelData } from '../utils/label-factory';
 
 
-export function EdgeLabels(): React.JSX.Element {
+interface EdgeLabelsProps {
+  useMemoryOptimization?: boolean;
+  useUpscalingShader?: boolean;
+}
+
+export function EdgeLabels({
+  useMemoryOptimization = true,
+  useUpscalingShader = true,
+}: EdgeLabelsProps): React.JSX.Element {
   return (
     <>
       {edges.map((e, i) => {
@@ -31,6 +39,8 @@ export function EdgeLabels(): React.JSX.Element {
               background={EDGE_LABEL_BACKGROUND}
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
+              useMemoryOptimization={useMemoryOptimization}
+              useUpscalingShader={useUpscalingShader}
             />
           </group>
         );

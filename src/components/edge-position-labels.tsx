@@ -1,6 +1,5 @@
 // src/components/edge-position-labels.tsx
 import * as React from 'react';
-import * as THREE from 'three';
 import { Billboard } from '@react-three/drei';
 import { edges } from '../data/geometry';
 import type { PositionedComponentProps } from '../types/component-props';
@@ -52,18 +51,17 @@ export function EdgePositionLabels({
         const positionText = POSITION_LABELS[edge.letter];
         if (!positionText) return null;
 
-        // Calculate label position offset from the edge
-        const edgePos = new THREE.Vector3(...edge.pos);
-        const normal = new THREE.Vector3(...edge.normal).normalize();
-        const labelPos = edgePos.clone().add(normal.multiplyScalar(offset));
-
-        // Adjust Y position to center labels better (lower them slightly)
-        labelPos.y -= 0.1;
+        // Calculate offset position - push label outward from center like regular edge labels
+        const offsetPos: [number, number, number] = [
+          edge.pos[0] + (edge.pos[0] > 0 ? offset : edge.pos[0] < 0 ? -offset : 0),
+          edge.pos[1] + (edge.pos[1] > 0 ? offset : edge.pos[1] < 0 ? -offset : 0),
+          edge.pos[2] + (edge.pos[2] > 0 ? offset : edge.pos[2] < 0 ? -offset : 0),
+        ];
 
         return (
           <Billboard
             key={`${edge.letter}-position`}
-            position={labelPos.toArray() as [number, number, number]}
+            position={offsetPos}
             follow={true}
             lockX={false}
             lockY={false}

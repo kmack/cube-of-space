@@ -143,7 +143,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         visible={showEdgePositions}
         fontSize={0.06}
         color="#999999"
-        offset={0.35}
+        offset={0.15}
       />
     </Canvas>
   );

@@ -253,10 +253,10 @@ export function createHebrewLabelTexture(
     if (isLargeCard) {
       // Large cards: render at 75% resolution for memory safety
       return {
-        renderWidth: 600,   // Render resolution (for memory)
-        renderHeight: 675,  // Render resolution (for memory)
-        displayWidth: 800,  // Display size (for consistency)
-        displayHeight: 900  // Display size (for consistency)
+        renderWidth: 512, // Render resolution (for memory)
+        renderHeight: 320, // Render resolution (for memory)
+        displayWidth: 800, // Display size (for consistency)
+        displayHeight: 900, // Display size (for consistency)
       };
     } else {
       // Small labels: keep original resolution
@@ -264,7 +264,7 @@ export function createHebrewLabelTexture(
         renderWidth: 512,
         renderHeight: 320,
         displayWidth: 512,
-        displayHeight: 320
+        displayHeight: 320,
       };
     }
   };

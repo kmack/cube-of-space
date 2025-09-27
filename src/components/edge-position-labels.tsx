@@ -51,11 +51,13 @@ export function EdgePositionLabels({
         const positionText = POSITION_LABELS[edge.letter];
         if (!positionText) return null;
 
-        // Calculate offset position - push label outward from center like regular edge labels
+        // Calculate offset position - push label outward horizontally, but down vertically
         const offsetPos: [number, number, number] = [
-          edge.pos[0] + (edge.pos[0] > 0 ? offset : edge.pos[0] < 0 ? -offset : 0),
-          edge.pos[1] + (edge.pos[1] > 0 ? offset : edge.pos[1] < 0 ? -offset : 0),
-          edge.pos[2] + (edge.pos[2] > 0 ? offset : edge.pos[2] < 0 ? -offset : 0),
+          edge.pos[0] +
+            (edge.pos[0] > 0 ? offset : edge.pos[0] < 0 ? -offset : 0),
+          edge.pos[1] - offset * 3.3, // Always push down to avoid labels appearing too high
+          edge.pos[2] +
+            (edge.pos[2] > 0 ? offset : edge.pos[2] < 0 ? -offset : 0),
         ];
 
         return (

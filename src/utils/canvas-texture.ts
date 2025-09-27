@@ -240,8 +240,38 @@ export function createHebrewLabelTexture(
     imagePath?: string;
   } = {}
 ): Promise<THREE.CanvasTexture> {
-  const width = options.width || (options.imagePath ? 800 : 512); // Optimal width for vertical layout
-  const height = options.height || (options.imagePath ? 900 : 320); // Taller canvas for vertical layout
+  // CSS scaling strategy: render at reduced resolution, display at full size
+  // This reduces memory usage by ~44% while maintaining visual consistency
+  const getOptimalDimensions = (): {
+    renderWidth: number;
+    renderHeight: number;
+    displayWidth: number;
+    displayHeight: number;
+  } => {
+    const isLargeCard = options.imagePath;
+
+    if (isLargeCard) {
+      // Large cards: render at 75% resolution for memory safety
+      return {
+        renderWidth: 600,   // Render resolution (for memory)
+        renderHeight: 675,  // Render resolution (for memory)
+        displayWidth: 800,  // Display size (for consistency)
+        displayHeight: 900  // Display size (for consistency)
+      };
+    } else {
+      // Small labels: keep original resolution
+      return {
+        renderWidth: 512,
+        renderHeight: 320,
+        displayWidth: 512,
+        displayHeight: 320
+      };
+    }
+  };
+
+  const dimensions = getOptimalDimensions();
+  const width = options.width || dimensions.renderWidth;
+  const height = options.height || dimensions.renderHeight;
   const color = options.color || 'white';
   const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
   const uiFont = options.uiFont || 'Inter, sans-serif';

@@ -49,8 +49,8 @@ export function RichLabel({
   images: _images, // Prefixed with _ to indicate intentionally unused for now
   color = 'white',
   background,
-  width = 512,
-  height = 320,
+  width = 800,  // Display size for consistency
+  height = 900, // Display size for consistency
   scale = 1,
   hebrewFont,
   uiFont,
@@ -86,6 +86,8 @@ export function RichLabel({
 
     return () => {
       mounted = false;
+      // Note: texture disposal is handled in the component cleanup below
+      // We don't dispose here because texture is from the previous render
     };
   }, [
     title,
@@ -101,15 +103,27 @@ export function RichLabel({
     canvasConfig,
   ]);
 
+  // Dispose previous texture when component unmounts or texture changes
+  React.useEffect(() => {
+    return () => {
+      if (texture) {
+        texture.dispose();
+      }
+    };
+  }, [texture]);
+
   if (!texture) {
     return <group />; // Return empty group while loading
   }
 
-  // Calculate scale - support both uniform and non-uniform scaling
+  // Calculate scale accounting for CSS scaling strategy
   const scaleArray = Array.isArray(scale) ? scale : [scale, scale];
-  const aspectRatio = width / height;
+
+  // For large cards with images, we render at 600x675 but display at 800x900
+  const displayAspectRatio = width / height;
+
   const finalScale: [number, number, number] = [
-    scaleArray[0] * aspectRatio,
+    scaleArray[0] * displayAspectRatio,
     scaleArray[1],
     1,
   ];

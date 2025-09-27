@@ -237,7 +237,7 @@ export function createLuminanceAlphaTexture(
     data,
     width,
     height,
-    THREE.LuminanceAlphaFormat,
+    THREE.RGFormat,
     THREE.UnsignedByteType
   );
 

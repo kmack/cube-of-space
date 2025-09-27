@@ -49,8 +49,8 @@ export function RichLabel({
   images: _images, // Prefixed with _ to indicate intentionally unused for now
   color = 'white',
   background,
-  width = 800,
-  height = 900, // Increased default height for vertical layout
+  width = 512,
+  height = 320,
   scale = 1,
   hebrewFont,
   uiFont,

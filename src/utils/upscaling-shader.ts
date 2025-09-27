@@ -6,7 +6,7 @@ import * as THREE from 'three';
  * Provides better quality than linear filtering for upscaled textures
  */
 export class UpscalingMaterial extends THREE.ShaderMaterial {
-  constructor(texture: THREE.Texture, targetAspectRatio: number = 1) {
+  constructor(texture: THREE.Texture, _targetAspectRatio: number = 1) {
     const vertexShader = `
       varying vec2 vUv;
       void main() {
@@ -120,14 +120,14 @@ export class UpscalingMaterial extends THREE.ShaderMaterial {
   /**
    * Update the sharpness level (0 = no sharpening, 1 = maximum sharpening)
    */
-  setSharpness(value: number) {
+  setSharpness(value: number): void {
     this.uniforms.sharpness.value = Math.max(0, Math.min(1, value));
   }
 
   /**
    * Toggle between bicubic and enhanced linear interpolation
    */
-  setBicubic(enabled: boolean) {
+  setBicubic(enabled: boolean): void {
     this.uniforms.useBicubic.value = enabled;
   }
 }

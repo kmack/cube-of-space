@@ -133,13 +133,8 @@ export function RichLabel({
 
     return () => {
       mounted = false;
-      // Clean up materials and textures
-      if (material) {
-        material.dispose();
-      }
-      if (texture) {
-        texture.dispose();
-      }
+      // Cleanup will be handled by the next effect run
+      // Don't dispose here as it could interfere with React's lifecycle
     };
   }, [
     title,
@@ -157,6 +152,18 @@ export function RichLabel({
     useUpscalingShader,
     customSharpness,
   ]);
+
+  // Separate cleanup effect for proper disposal
+  React.useEffect(() => {
+    return () => {
+      if (material) {
+        material.dispose();
+      }
+      if (texture) {
+        texture.dispose();
+      }
+    };
+  }, [material, texture]);
 
   if (!texture || !material) {
     return <group />; // Return empty group while loading

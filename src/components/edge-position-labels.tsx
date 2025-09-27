@@ -5,6 +5,7 @@ import { edges } from '../data/geometry';
 import type { PositionedComponentProps } from '../types/component-props';
 import { RichLabel } from './rich-label';
 import { LABEL_SCALE } from '../data/label-styles';
+import { LABEL_OFFSET } from '../data/constants';
 
 // Map Hebrew letters to their geometric position descriptions
 const POSITION_LABELS: Record<string, string> = {
@@ -39,7 +40,6 @@ export function EdgePositionLabels({
   visible = true,
   fontSize: _fontSize = 0.08,
   color = '#cccccc',
-  offset = 0.3,
 }: EdgePositionLabelsProps): React.JSX.Element {
   if (!visible) {
     return <></>;
@@ -51,13 +51,13 @@ export function EdgePositionLabels({
         const positionText = POSITION_LABELS[edge.letter];
         if (!positionText) return null;
 
-        // Calculate offset position - push label outward horizontally, but down vertically
+        // Calculate position from a lower origin to move labels down
+        const positionOffset = LABEL_OFFSET * 10; // Larger offset to avoid overlap with edge labels
+        const originY = -0.5; // Lower origin point for positioning
         const offsetPos: [number, number, number] = [
-          edge.pos[0] +
-            (edge.pos[0] > 0 ? offset : edge.pos[0] < 0 ? -offset : 0),
-          edge.pos[1] - offset * 3.3, // Always push down to avoid labels appearing too high
-          edge.pos[2] +
-            (edge.pos[2] > 0 ? offset : edge.pos[2] < 0 ? -offset : 0),
+          edge.pos[0] + (edge.pos[0] > 0 ? positionOffset : edge.pos[0] < 0 ? -positionOffset : 0),
+          originY + edge.pos[1] + (edge.pos[1] > 0 ? positionOffset : edge.pos[1] < 0 ? -positionOffset : 0),
+          edge.pos[2] + (edge.pos[2] > 0 ? positionOffset : edge.pos[2] < 0 ? -positionOffset : 0),
         ];
 
         return (

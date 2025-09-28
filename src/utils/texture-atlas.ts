@@ -255,19 +255,15 @@ export function createAlphaMaskTexture(
 ): THREE.DataTexture {
   const hasRGSupport = supportsRGFormat();
 
-  let finalData = data;
+  const finalData = data;
   let format: THREE.PixelFormat;
 
   if (hasRGSupport) {
     format = THREE.RGFormat;
   } else {
-    // Extract only alpha channel for ALPHA format compatibility
-    const alphaData = new Uint8Array(width * height);
-    for (let i = 0; i < width * height; i++) {
-      alphaData[i] = data[i * 2 + 1]; // Extract alpha from RG data
-    }
-    finalData = alphaData;
-    format = THREE.AlphaFormat;
+    // Use LuminanceAlpha format for WebGL1 compatibility (preserves both channels, 2 bytes/pixel)
+    // Note: LuminanceAlphaFormat was removed from Three.js, using raw WebGL constant
+    format = 0x190A as THREE.PixelFormat; // WebGL LUMINANCE_ALPHA constant
   }
 
   const texture = new THREE.DataTexture(

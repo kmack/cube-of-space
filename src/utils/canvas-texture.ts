@@ -1,5 +1,11 @@
 // src/utils/canvas-texture.ts
 import * as THREE from 'three';
+import { createOptimizedCanvas, createAlphaMaskTexture } from './texture-atlas';
+
+/**
+ * Module-level image cache to avoid repeated loading and decoding
+ */
+const imageCache = new Map<string, Promise<HTMLImageElement>>();
 
 export type TextStyle = {
   fontSize: number;
@@ -47,6 +53,9 @@ export type CanvasLabelConfig = {
   }>;
   images?: ImageConfig[];
   devicePixelRatio?: number;
+  // Memory optimization options
+  useOptimizedFormat?: boolean; // Use LUMINANCE_ALPHA for B&W images
+  targetResolution?: { width: number; height: number }; // Render at lower res for upscaling
 };
 
 /**
@@ -54,38 +63,49 @@ export type CanvasLabelConfig = {
  */
 export function createCanvasTexture(
   config: CanvasLabelConfig
-): Promise<THREE.CanvasTexture> {
+): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    // Use target resolution for memory optimization if specified
+    const renderWidth = config.targetResolution?.width || config.width;
+    const renderHeight = config.targetResolution?.height || config.height;
 
-    if (!ctx) {
-      reject(new Error('Could not get canvas context'));
-      return;
-    }
+    // Determine if this is a B&W image based on content
+    const isBlackAndWhite = config.useOptimizedFormat ||
+      (config.images?.some(img => img.src.includes('major-arcana')) &&
+       (!config.background?.color || config.background.color === 'transparent'));
+
+    const { canvas, ctx, getOptimizedImageData } = createOptimizedCanvas(
+      renderWidth,
+      renderHeight,
+      isBlackAndWhite
+    );
 
     const dpr = config.devicePixelRatio || window.devicePixelRatio || 1;
 
     // Set canvas dimensions with device pixel ratio for crisp rendering
-    canvas.width = config.width * dpr;
-    canvas.height = config.height * dpr;
-    canvas.style.width = `${config.width}px`;
-    canvas.style.height = `${config.height}px`;
+    canvas.width = renderWidth * dpr;
+    canvas.height = renderHeight * dpr;
+    canvas.style.width = `${renderWidth}px`;
+    canvas.style.height = `${renderHeight}px`;
 
     ctx.scale(dpr, dpr);
 
     // Clear canvas
-    ctx.clearRect(0, 0, config.width, config.height);
+    ctx.clearRect(0, 0, renderWidth, renderHeight);
+
+    // Calculate scale factors for target resolution rendering
+    const scaleX = renderWidth / config.width;
+    const scaleY = renderHeight / config.height;
 
     // Draw background if specified
     if (config.background) {
-      drawBackground(ctx, config.background, config.width, config.height);
+      drawBackground(ctx, config.background, renderWidth, renderHeight);
     }
 
     // Load and draw images, then draw text
     loadImages(config.images || [])
       .then((loadedImages) => {
-        // Draw images
+        // Draw images with scaling
         loadedImages.forEach((img, index) => {
           const imgConfig = config.images![index];
 
@@ -95,46 +115,102 @@ export function createCanvasTexture(
             imgConfig.sourceWidth !== undefined &&
             imgConfig.sourceHeight !== undefined
           ) {
-            // Draw with source cropping
+            // Draw with source cropping and scaling
             ctx.drawImage(
               img,
               imgConfig.sourceX,
               imgConfig.sourceY,
               imgConfig.sourceWidth,
               imgConfig.sourceHeight, // Source crop
-              imgConfig.x,
-              imgConfig.y,
-              imgConfig.width,
-              imgConfig.height // Destination
+              imgConfig.x * scaleX,
+              imgConfig.y * scaleY,
+              imgConfig.width * scaleX,
+              imgConfig.height * scaleY // Destination scaled
             );
           } else {
-            // Draw entire image
+            // Draw entire image with scaling
             ctx.drawImage(
               img,
-              imgConfig.x,
-              imgConfig.y,
-              imgConfig.width,
-              imgConfig.height
+              imgConfig.x * scaleX,
+              imgConfig.y * scaleY,
+              imgConfig.width * scaleX,
+              imgConfig.height * scaleY
             );
           }
         });
 
-        // Draw text elements
+        // Draw text elements with scaling
         config.texts?.forEach((textConfig) => {
+          const scaledStyle = {
+            ...textConfig.style,
+            fontSize: textConfig.style.fontSize * Math.min(scaleX, scaleY)
+          };
           drawText(
             ctx,
             textConfig.content,
-            textConfig.x,
-            textConfig.y,
-            textConfig.style
+            textConfig.x * scaleX,
+            textConfig.y * scaleY,
+            scaledStyle
           );
         });
 
-        // Create and return texture
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.needsUpdate = true;
-        texture.flipY = false; // Prevent text from being flipped
-        resolve(texture);
+        // Create optimized texture based on format
+        if (isBlackAndWhite && getOptimizedImageData) {
+          try {
+            const luminanceData = getOptimizedImageData();
+            const texture = createAlphaMaskTexture(
+              luminanceData,
+              renderWidth,
+              renderHeight
+            );
+            resolve(texture);
+          } catch (error) {
+            // Fallback to regular canvas texture if optimization fails
+            console.warn('Failed to create optimized texture, falling back to canvas texture:', error);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            texture.flipY = false;
+
+            // Set proper filter settings for upscaling shader compatibility
+            texture.magFilter = THREE.LinearFilter;
+
+            // Check if texture dimensions are power of two for mipmap support
+            const isPowerOfTwo = (canvas.width & (canvas.width - 1)) === 0 &&
+                                (canvas.height & (canvas.height - 1)) === 0;
+
+            if (isPowerOfTwo) {
+              texture.minFilter = THREE.LinearMipmapLinearFilter;
+              texture.generateMipmaps = true;
+            } else {
+              texture.minFilter = THREE.LinearFilter;
+              texture.generateMipmaps = false;
+            }
+
+            resolve(texture);
+          }
+        } else {
+          // Create regular canvas texture
+          const texture = new THREE.CanvasTexture(canvas);
+          texture.needsUpdate = true;
+          texture.flipY = false;
+
+          // Set proper filter settings for consistency
+          texture.magFilter = THREE.LinearFilter;
+
+          // Check if texture dimensions are power of two for mipmap support
+          const isPowerOfTwo = (canvas.width & (canvas.width - 1)) === 0 &&
+                              (canvas.height & (canvas.height - 1)) === 0;
+
+          if (isPowerOfTwo) {
+            texture.minFilter = THREE.LinearMipmapLinearFilter;
+            texture.generateMipmaps = true;
+          } else {
+            texture.minFilter = THREE.LinearFilter;
+            texture.generateMipmaps = false;
+          }
+
+          resolve(texture);
+        }
       })
       .catch(reject);
   });
@@ -212,12 +288,21 @@ async function loadImages(
   }
 
   const promises = imageConfigs.map((config) => {
-    return new Promise<HTMLImageElement>((resolve, reject) => {
+    // Check cache first
+    if (imageCache.has(config.src)) {
+      return imageCache.get(config.src)!;
+    }
+
+    // Create and cache the promise
+    const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve(img);
       img.onerror = reject;
       img.src = config.src;
     });
+
+    imageCache.set(config.src, imagePromise);
+    return imagePromise;
   });
 
   return Promise.all(promises);
@@ -238,16 +323,27 @@ export function createHebrewLabelTexture(
     color?: string;
     background?: BackgroundStyle;
     imagePath?: string;
+    useMemoryOptimization?: boolean;
   } = {}
-): Promise<THREE.CanvasTexture> {
-  const width = options.width || (options.imagePath ? 800 : 512); // Optimal width for vertical layout
-  const height = options.height || (options.imagePath ? 900 : 320); // Taller canvas for vertical layout
+): Promise<THREE.CanvasTexture | THREE.DataTexture> {
+  // Apply memory optimization defaults
+  const useOptimization = options.useMemoryOptimization !== false; // Default to true
+  const width = options.width || (options.imagePath ? 900 : 512); // Target display size
+  const height = options.height || (options.imagePath ? 800 : 320); // Target display size
+
+  // Reduce render resolution for memory optimization while maintaining aspect ratio
+  const targetWidth = useOptimization ? Math.min(width, 600) : width;
+  const targetHeight = useOptimization ? Math.min(height, 480) : height;
   const color = options.color || 'white';
   const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
   const uiFont = options.uiFont || 'Inter, sans-serif';
 
   const texts: CanvasLabelConfig['texts'] = [];
   const images: ImageConfig[] = [];
+
+  // Determine if this is a B&W image for LUMINANCE_ALPHA optimization
+  const hasBlackWhiteImage = !!options.imagePath?.includes('major-arcana');
+  const hasTransparentBackground = !options.background?.color || options.background.color === 'transparent';
 
   if (options.imagePath) {
     // Source image crop area (x96-x416 = 320px wide, y0-y512 = 512px tall)
@@ -385,5 +481,8 @@ export function createHebrewLabelTexture(
     background: options.background,
     texts,
     images,
+    // Memory optimization settings
+    useOptimizedFormat: useOptimization && hasBlackWhiteImage && hasTransparentBackground,
+    targetResolution: useOptimization ? { width: targetWidth, height: targetHeight } : undefined,
   });
 }

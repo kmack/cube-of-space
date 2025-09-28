@@ -10,7 +10,15 @@ import { MOTHER_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
 
 
-function MotherLabelsComponent(): React.JSX.Element {
+interface MotherLabelsProps {
+  useMemoryOptimization?: boolean;
+  useUpscalingShader?: boolean;
+}
+
+function MotherLabelsComponent({
+  useMemoryOptimization = true,
+  useUpscalingShader = true,
+}: MotherLabelsProps): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
   const info = axes.map((a, idx) => {
     const t = new THREE.Vector3(
@@ -114,6 +122,8 @@ function MotherLabelsComponent(): React.JSX.Element {
                 background={MOTHER_LABEL_BACKGROUND}
                 hebrewFont="FrankRuhlLibre, serif"
                 uiFont="Inter, sans-serif"
+                useMemoryOptimization={useMemoryOptimization}
+                useUpscalingShader={useUpscalingShader}
               />
             </group>
           );

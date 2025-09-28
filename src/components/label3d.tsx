@@ -63,6 +63,7 @@ export function Label3D({
           fontSize={hebrewLetterSize}
           color={color}
           material-toneMapped={false}
+          sdfGlyphSize={16}
         >
           {hebrewLetter}
         </Text>
@@ -75,6 +76,7 @@ export function Label3D({
         lineHeight={titleLH}
         color={color}
         material-toneMapped={false}
+        sdfGlyphSize={16}
       >
         {title}
       </Text>
@@ -89,6 +91,7 @@ export function Label3D({
           material-toneMapped={false}
           material-transparent
           material-opacity={0.9}
+          sdfGlyphSize={16}
         >
           {subtitle}
         </Text>

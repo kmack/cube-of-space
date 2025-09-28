@@ -226,21 +226,37 @@ export function createOptimizedCanvas(
 }
 
 /**
+ * Cached result of RG format support check
+ */
+let rgFormatSupported: boolean | null = null;
+
+/**
  * Check if RG format is supported (WebGL2 or EXT_texture_rg extension)
+ * Cached after first call to avoid repeated context creation
  */
 function supportsRGFormat(): boolean {
+  if (rgFormatSupported !== null) {
+    return rgFormatSupported;
+  }
+
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl2');
-    if (gl) return true; // WebGL2 supports RG format
+    if (gl) {
+      rgFormatSupported = true;
+      return true; // WebGL2 supports RG format
+    }
 
     const gl1 = canvas.getContext('webgl');
     if (gl1) {
       const ext = gl1.getExtension('EXT_texture_rg');
-      return ext !== null;
+      rgFormatSupported = ext !== null;
+      return rgFormatSupported;
     }
+    rgFormatSupported = false;
     return false;
   } catch {
+    rgFormatSupported = false;
     return false;
   }
 }

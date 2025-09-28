@@ -2,6 +2,11 @@
 import * as THREE from 'three';
 import { createOptimizedCanvas, createAlphaMaskTexture } from './texture-atlas';
 
+/**
+ * Module-level image cache to avoid repeated loading and decoding
+ */
+const imageCache = new Map<string, Promise<HTMLImageElement>>();
+
 export type TextStyle = {
   fontSize: number;
   fontFamily: string;
@@ -283,12 +288,21 @@ async function loadImages(
   }
 
   const promises = imageConfigs.map((config) => {
-    return new Promise<HTMLImageElement>((resolve, reject) => {
+    // Check cache first
+    if (imageCache.has(config.src)) {
+      return imageCache.get(config.src)!;
+    }
+
+    // Create and cache the promise
+    const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve(img);
       img.onerror = reject;
       img.src = config.src;
     });
+
+    imageCache.set(config.src, imagePromise);
+    return imagePromise;
   });
 
   return Promise.all(promises);

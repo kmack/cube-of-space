@@ -1,6 +1,6 @@
 // src/utils/canvas-texture.ts
 import * as THREE from 'three';
-import { createOptimizedCanvas, createLuminanceAlphaTexture } from './texture-atlas';
+import { createOptimizedCanvas, createAlphaMaskTexture } from './texture-atlas';
 
 export type TextStyle = {
   fontSize: number;
@@ -153,7 +153,7 @@ export function createCanvasTexture(
         if (isBlackAndWhite && getOptimizedImageData) {
           try {
             const luminanceData = getOptimizedImageData();
-            const texture = createLuminanceAlphaTexture(
+            const texture = createAlphaMaskTexture(
               luminanceData,
               renderWidth,
               renderHeight
@@ -165,6 +165,22 @@ export function createCanvasTexture(
             const texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
             texture.flipY = false;
+
+            // Set proper filter settings for upscaling shader compatibility
+            texture.magFilter = THREE.LinearFilter;
+
+            // Check if texture dimensions are power of two for mipmap support
+            const isPowerOfTwo = (canvas.width & (canvas.width - 1)) === 0 &&
+                                (canvas.height & (canvas.height - 1)) === 0;
+
+            if (isPowerOfTwo) {
+              texture.minFilter = THREE.LinearMipmapLinearFilter;
+              texture.generateMipmaps = true;
+            } else {
+              texture.minFilter = THREE.LinearFilter;
+              texture.generateMipmaps = false;
+            }
+
             resolve(texture);
           }
         } else {
@@ -172,6 +188,22 @@ export function createCanvasTexture(
           const texture = new THREE.CanvasTexture(canvas);
           texture.needsUpdate = true;
           texture.flipY = false;
+
+          // Set proper filter settings for consistency
+          texture.magFilter = THREE.LinearFilter;
+
+          // Check if texture dimensions are power of two for mipmap support
+          const isPowerOfTwo = (canvas.width & (canvas.width - 1)) === 0 &&
+                              (canvas.height & (canvas.height - 1)) === 0;
+
+          if (isPowerOfTwo) {
+            texture.minFilter = THREE.LinearMipmapLinearFilter;
+            texture.generateMipmaps = true;
+          } else {
+            texture.minFilter = THREE.LinearFilter;
+            texture.generateMipmaps = false;
+          }
+
           resolve(texture);
         }
       })

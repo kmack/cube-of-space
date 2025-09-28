@@ -226,26 +226,73 @@ export function createOptimizedCanvas(
 }
 
 /**
- * Create a Three.js texture from LUMINANCE_ALPHA data for memory efficiency
+ * Check if RG format is supported (WebGL2 or EXT_texture_rg extension)
  */
-export function createLuminanceAlphaTexture(
+function supportsRGFormat(): boolean {
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl2');
+    if (gl) return true; // WebGL2 supports RG format
+
+    const gl1 = canvas.getContext('webgl');
+    if (gl1) {
+      const ext = gl1.getExtension('EXT_texture_rg');
+      return ext !== null;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Create a Three.js texture from alpha mask data for memory efficiency
+ */
+export function createAlphaMaskTexture(
   data: Uint8Array,
   width: number,
   height: number
 ): THREE.DataTexture {
+  const hasRGSupport = supportsRGFormat();
+
+  let finalData = data;
+  let format: THREE.PixelFormat;
+
+  if (hasRGSupport) {
+    format = THREE.RGFormat;
+  } else {
+    // Extract only alpha channel for ALPHA format compatibility
+    const alphaData = new Uint8Array(width * height);
+    for (let i = 0; i < width * height; i++) {
+      alphaData[i] = data[i * 2 + 1]; // Extract alpha from RG data
+    }
+    finalData = alphaData;
+    format = THREE.AlphaFormat;
+  }
+
   const texture = new THREE.DataTexture(
-    data,
+    finalData,
     width,
     height,
-    THREE.RGFormat,
+    format,
     THREE.UnsignedByteType
   );
 
   texture.needsUpdate = true;
   texture.flipY = false;
   texture.magFilter = THREE.LinearFilter;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.generateMipmaps = true;
+
+  // Check if texture dimensions are power of two
+  const isPowerOfTwo = (width & (width - 1)) === 0 && (height & (height - 1)) === 0;
+
+  if (isPowerOfTwo) {
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.generateMipmaps = true;
+  } else {
+    // NPOT textures: disable mipmaps for WebGL1 compatibility
+    texture.minFilter = THREE.LinearFilter;
+    texture.generateMipmaps = false;
+  }
 
   return texture;
 }

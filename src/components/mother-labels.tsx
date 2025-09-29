@@ -12,12 +12,10 @@ import { createLabelData } from '../utils/label-factory';
 
 interface MotherLabelsProps {
   useMemoryOptimization?: boolean;
-  useUpscalingShader?: boolean;
 }
 
 function MotherLabelsComponent({
   useMemoryOptimization = true,
-  useUpscalingShader = true,
 }: MotherLabelsProps): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
   const info = axes.map((a, idx) => {
@@ -123,7 +121,6 @@ function MotherLabelsComponent({
                 hebrewFont="FrankRuhlLibre, serif"
                 uiFont="Inter, sans-serif"
                 useMemoryOptimization={useMemoryOptimization}
-                useUpscalingShader={useUpscalingShader}
               />
             </group>
           );

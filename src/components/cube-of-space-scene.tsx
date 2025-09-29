@@ -27,8 +27,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     energyOpacity,
     energyParticles,
     showEdgePositions,
-    useMemoryOptimization,
-    useUpscalingShader
+    useMemoryOptimization
   } = useControls({
     showGrid: {
       value: false,
@@ -76,10 +75,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       value: true,
       label: 'Memory Optimization',
     },
-    useUpscalingShader: {
-      value: false,
-      label: 'Use Upscaling Shader',
-    },
   });
 
   return (
@@ -117,18 +112,9 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <FacePlanes opacity={0.8} />
       <WireCube />
       {showAxisLines && <AxisLines opacity={0.7} color="#88ccff" />}
-      <FaceLabels
-        useMemoryOptimization={useMemoryOptimization}
-        useUpscalingShader={useUpscalingShader}
-      />
-      <EdgeLabels
-        useMemoryOptimization={useMemoryOptimization}
-        useUpscalingShader={useUpscalingShader}
-      />
-      <MotherLabels
-        useMemoryOptimization={useMemoryOptimization}
-        useUpscalingShader={useUpscalingShader}
-      />
+      <FaceLabels useMemoryOptimization={useMemoryOptimization} />
+      <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
+      <MotherLabels useMemoryOptimization={useMemoryOptimization} />
 
       {/* Energy Flow */}
       <EdgeEnergyFlows

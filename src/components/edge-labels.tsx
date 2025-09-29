@@ -10,12 +10,10 @@ import { createLabelData } from '../utils/label-factory';
 
 interface EdgeLabelsProps {
   useMemoryOptimization?: boolean;
-  useUpscalingShader?: boolean;
 }
 
 export function EdgeLabels({
   useMemoryOptimization = true,
-  useUpscalingShader = true,
 }: EdgeLabelsProps): React.JSX.Element {
   return (
     <>
@@ -40,7 +38,6 @@ export function EdgeLabels({
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
               useMemoryOptimization={useMemoryOptimization}
-              useUpscalingShader={useUpscalingShader}
             />
           </group>
         );

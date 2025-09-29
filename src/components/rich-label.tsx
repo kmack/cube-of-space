@@ -1,6 +1,7 @@
 // src/components/rich-label.tsx
 import * as React from 'react';
 import * as THREE from 'three';
+import { useThree } from '@react-three/fiber';
 import {
   createHebrewLabelTexture,
   createCanvasTexture,
@@ -9,10 +10,6 @@ import type {
   CanvasLabelConfig,
   BackgroundStyle,
 } from '../utils/canvas-texture';
-import {
-  createUpscalingMaterial,
-  calculateOptimalSharpness,
-} from '../utils/upscaling-shader';
 
 export type RichLabelProps = {
   // Content
@@ -46,8 +43,6 @@ export type RichLabelProps = {
 
   // Memory optimization options
   useMemoryOptimization?: boolean;
-  useUpscalingShader?: boolean;
-  customSharpness?: number;
 
   // Render order for transparency sorting
   renderOrder?: number;
@@ -68,12 +63,10 @@ export function RichLabel({
   uiFont,
   canvasConfig,
   useMemoryOptimization = true, // Enable by default for iOS compatibility
-  useUpscalingShader = false,
-  customSharpness,
   renderOrder = 0,
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
-  const [material, setMaterial] = React.useState<THREE.Material | null>(null);
+  const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
     let mounted = true;
@@ -104,32 +97,10 @@ export function RichLabel({
     texturePromise
       .then((tex) => {
         if (mounted) {
+          // Enable anisotropic filtering for better quality on scaled textures
+          const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
+          tex.anisotropy = Math.min(4, maxAnisotropy); // Use up to 4x anisotropic filtering
           setTexture(tex);
-
-          // Create appropriate material based on optimization settings
-          if (useUpscalingShader && useMemoryOptimization) {
-            const targetRes = { width, height };
-            const sourceRes = canvasConfig?.targetResolution || {
-              width: Math.min(width, 600),
-              height: Math.min(height, 480),
-            };
-
-            const sharpness =
-              customSharpness ??
-              calculateOptimalSharpness(sourceRes, targetRes);
-            const upscalingMat = createUpscalingMaterial(tex, { sharpness });
-            setMaterial(upscalingMat);
-          } else {
-            // Use basic material with proper transparency settings
-            const basicMat = new THREE.MeshBasicMaterial({
-              map: tex,
-              transparent: true,
-              side: THREE.BackSide,
-              toneMapped: false,
-              depthWrite: false, // Prevent depth buffer writes for proper transparency
-            });
-            setMaterial(basicMat);
-          }
         }
       })
       .catch((error) => {
@@ -138,8 +109,6 @@ export function RichLabel({
 
     return () => {
       mounted = false;
-      // Cleanup will be handled by the next effect run
-      // Don't dispose here as it could interfere with React's lifecycle
     };
   }, [
     title,
@@ -154,23 +123,19 @@ export function RichLabel({
     uiFont,
     canvasConfig,
     useMemoryOptimization,
-    useUpscalingShader,
-    customSharpness,
+    gl,
   ]);
 
   // Separate cleanup effect for proper disposal
   React.useEffect(() => {
     return () => {
-      if (material) {
-        material.dispose();
-      }
       if (texture) {
         texture.dispose();
       }
     };
-  }, [material, texture]);
+  }, [texture]);
 
-  if (!texture || !material) {
+  if (!texture) {
     return <group />; // Return empty group while loading
   }
 
@@ -184,13 +149,15 @@ export function RichLabel({
   ];
 
   return (
-    <mesh
-      scale={finalScale}
-      rotation={[Math.PI, 0, 0]}
-      material={material}
-      renderOrder={renderOrder}
-    >
+    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} renderOrder={renderOrder}>
       <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial
+        map={texture}
+        transparent
+        side={THREE.BackSide}
+        toneMapped={false}
+        depthWrite={false}
+      />
     </mesh>
   );
 }
@@ -199,11 +166,14 @@ export function RichLabel({
 export function ComplexRichLabel({
   canvasConfig,
   scale = 1,
+  renderOrder = 0,
 }: {
   canvasConfig: CanvasLabelConfig;
   scale?: number | [number, number];
+  renderOrder?: number;
 }): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
+  const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
     let mounted = true;
@@ -211,6 +181,9 @@ export function ComplexRichLabel({
     createCanvasTexture(canvasConfig)
       .then((tex) => {
         if (mounted) {
+          // Enable anisotropic filtering for better quality
+          const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
+          tex.anisotropy = Math.min(4, maxAnisotropy);
           setTexture(tex);
         }
       })
@@ -224,7 +197,7 @@ export function ComplexRichLabel({
         texture.dispose();
       }
     };
-  }, [canvasConfig, texture]);
+  }, [canvasConfig, texture, gl]);
 
   if (!texture) {
     return <group />;
@@ -239,7 +212,7 @@ export function ComplexRichLabel({
   ];
 
   return (
-    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} renderOrder={0}>
+    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} renderOrder={renderOrder}>
       <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={texture}

@@ -10,12 +10,10 @@ import { createLabelData } from '../utils/label-factory';
 
 interface FaceLabelsProps {
   useMemoryOptimization?: boolean;
-  useUpscalingShader?: boolean;
 }
 
 export function FaceLabels({
   useMemoryOptimization = true,
-  useUpscalingShader = true,
 }: FaceLabelsProps): React.JSX.Element {
   const centerLabelData = createLabelData(center.letter);
 
@@ -42,7 +40,6 @@ export function FaceLabels({
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
               useMemoryOptimization={useMemoryOptimization}
-              useUpscalingShader={useUpscalingShader}
             />
           </group>
         );
@@ -66,7 +63,6 @@ export function FaceLabels({
           hebrewFont="FrankRuhlLibre, serif"
           uiFont="Inter, sans-serif"
           useMemoryOptimization={useMemoryOptimization}
-          useUpscalingShader={useUpscalingShader}
         />
       </Billboard>
     </>

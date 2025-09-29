@@ -48,6 +48,9 @@ export type RichLabelProps = {
   useMemoryOptimization?: boolean;
   useUpscalingShader?: boolean;
   customSharpness?: number;
+
+  // Render order for transparency sorting
+  renderOrder?: number;
 };
 
 export function RichLabel({
@@ -67,6 +70,7 @@ export function RichLabel({
   useMemoryOptimization = true, // Enable by default for iOS compatibility
   useUpscalingShader = false,
   customSharpness,
+  renderOrder = 0,
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
   const [material, setMaterial] = React.useState<THREE.Material | null>(null);
@@ -116,12 +120,13 @@ export function RichLabel({
             const upscalingMat = createUpscalingMaterial(tex, { sharpness });
             setMaterial(upscalingMat);
           } else {
-            // Use basic material
+            // Use basic material with proper transparency settings
             const basicMat = new THREE.MeshBasicMaterial({
               map: tex,
               transparent: true,
               side: THREE.BackSide,
               toneMapped: false,
+              depthWrite: false, // Prevent depth buffer writes for proper transparency
             });
             setMaterial(basicMat);
           }
@@ -179,7 +184,12 @@ export function RichLabel({
   ];
 
   return (
-    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} material={material}>
+    <mesh
+      scale={finalScale}
+      rotation={[Math.PI, 0, 0]}
+      material={material}
+      renderOrder={renderOrder}
+    >
       <planeGeometry args={[1, 1]} />
     </mesh>
   );
@@ -229,13 +239,14 @@ export function ComplexRichLabel({
   ];
 
   return (
-    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]}>
+    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} renderOrder={0}>
       <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={texture}
         transparent
         side={THREE.BackSide}
         toneMapped={false}
+        depthWrite={false}
       />
     </mesh>
   );

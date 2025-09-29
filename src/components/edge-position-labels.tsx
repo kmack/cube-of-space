@@ -75,6 +75,7 @@ export function EdgePositionLabels({
               scale={LABEL_SCALE * 2.5}
               background={{ color: 'transparent' }}
               uiFont="Inter, sans-serif"
+              renderOrder={1}
             />
           </Billboard>
         );

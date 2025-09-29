@@ -107,6 +107,7 @@ export class UpscalingMaterial extends THREE.ShaderMaterial {
       transparent: true,
       side: THREE.BackSide, // Match existing RichLabel behavior
       toneMapped: false,
+      depthWrite: false, // Prevent depth buffer writes for proper transparency
     });
 
     // Update texture size when texture changes
@@ -157,6 +158,7 @@ export function createUpscalingMaterial(
       transparent: true,
       side: THREE.BackSide,
       toneMapped: false,
+      depthWrite: false,
     });
   }
 
@@ -172,6 +174,7 @@ export function createUpscalingMaterial(
       transparent: true,
       side: THREE.BackSide,
       toneMapped: false,
+      depthWrite: false,
     });
   }
 }

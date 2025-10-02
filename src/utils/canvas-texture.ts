@@ -393,7 +393,7 @@ export function createStructuredHebrewLabel(
     // Below card layout: |Hebrew| LetterName    |Glyph| AssocName
     const belowCardY = cardY + cardHeight + 45;
     const hebrewSize = 48;
-    const spacing = 12; // consistent spacing between glyph and name
+    const nameOffset = 40; // spacing between glyph and name
 
     // Hebrew letter |ה|
     texts.push({
@@ -413,7 +413,7 @@ export function createStructuredHebrewLabel(
     // Letter name: "Heh"
     texts.push({
       content: letterName,
-      x: width / 2 - 180 + 40,
+      x: width / 2 - 180 + nameOffset,
       y: belowCardY,
       style: {
         fontSize: 24,
@@ -443,7 +443,7 @@ export function createStructuredHebrewLabel(
     // Association name: "Aries"
     texts.push({
       content: assocName,
-      x: width / 2 + 60 + 40,
+      x: width / 2 + 60 + nameOffset,
       y: belowCardY,
       style: {
         fontSize: 24,

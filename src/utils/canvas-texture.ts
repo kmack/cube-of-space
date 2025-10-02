@@ -70,9 +70,11 @@ export function createCanvasTexture(
     const renderHeight = config.targetResolution?.height || config.height;
 
     // Determine if this is a B&W image based on content
-    const isBlackAndWhite = config.useOptimizedFormat ||
-      (config.images?.some(img => img.src.includes('major-arcana')) &&
-       (!config.background?.color || config.background.color === 'transparent'));
+    const isBlackAndWhite =
+      config.useOptimizedFormat ||
+      (config.images?.some((img) => img.src.includes('major-arcana')) &&
+        (!config.background?.color ||
+          config.background.color === 'transparent'));
 
     const { canvas, ctx, getOptimizedImageData } = createOptimizedCanvas(
       renderWidth,
@@ -143,7 +145,7 @@ export function createCanvasTexture(
         config.texts?.forEach((textConfig) => {
           const scaledStyle = {
             ...textConfig.style,
-            fontSize: textConfig.style.fontSize * Math.min(scaleX, scaleY)
+            fontSize: textConfig.style.fontSize * Math.min(scaleX, scaleY),
           };
           drawText(
             ctx,
@@ -166,7 +168,10 @@ export function createCanvasTexture(
             resolve(texture);
           } catch (error) {
             // Fallback to regular canvas texture if optimization fails
-            console.warn('Failed to create optimized texture, falling back to canvas texture:', error);
+            console.warn(
+              'Failed to create optimized texture, falling back to canvas texture:',
+              error
+            );
             const texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
             texture.flipY = false;
@@ -175,8 +180,9 @@ export function createCanvasTexture(
             texture.magFilter = THREE.LinearFilter;
 
             // Check if texture dimensions are power of two for mipmap support
-            const isPowerOfTwo = (canvas.width & (canvas.width - 1)) === 0 &&
-                                (canvas.height & (canvas.height - 1)) === 0;
+            const isPowerOfTwo =
+              (canvas.width & (canvas.width - 1)) === 0 &&
+              (canvas.height & (canvas.height - 1)) === 0;
 
             if (isPowerOfTwo) {
               texture.minFilter = THREE.LinearMipmapLinearFilter;
@@ -198,8 +204,9 @@ export function createCanvasTexture(
           texture.magFilter = THREE.LinearFilter;
 
           // Check if texture dimensions are power of two for mipmap support
-          const isPowerOfTwo = (canvas.width & (canvas.width - 1)) === 0 &&
-                              (canvas.height & (canvas.height - 1)) === 0;
+          const isPowerOfTwo =
+            (canvas.width & (canvas.width - 1)) === 0 &&
+            (canvas.height & (canvas.height - 1)) === 0;
 
           if (isPowerOfTwo) {
             texture.minFilter = THREE.LinearMipmapLinearFilter;
@@ -343,7 +350,8 @@ export function createHebrewLabelTexture(
 
   // Determine if this is a B&W image for LUMINANCE_ALPHA optimization
   const hasBlackWhiteImage = !!options.imagePath?.includes('major-arcana');
-  const hasTransparentBackground = !options.background?.color || options.background.color === 'transparent';
+  const hasTransparentBackground =
+    !options.background?.color || options.background.color === 'transparent';
 
   if (options.imagePath) {
     // Source image crop area (x96-x416 = 320px wide, y0-y512 = 512px tall)
@@ -482,7 +490,10 @@ export function createHebrewLabelTexture(
     texts,
     images,
     // Memory optimization settings
-    useOptimizedFormat: useOptimization && hasBlackWhiteImage && hasTransparentBackground,
-    targetResolution: useOptimization ? { width: targetWidth, height: targetHeight } : undefined,
+    useOptimizedFormat:
+      useOptimization && hasBlackWhiteImage && hasTransparentBackground,
+    targetResolution: useOptimization
+      ? { width: targetWidth, height: targetHeight }
+      : undefined,
   });
 }

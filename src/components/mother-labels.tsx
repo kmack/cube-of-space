@@ -9,7 +9,6 @@ import { MOTHER_OFFSET, UP, LABEL_OFFSET } from '../data/constants';
 import { MOTHER_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
 
-
 interface MotherLabelsProps {
   useMemoryOptimization?: boolean;
 }

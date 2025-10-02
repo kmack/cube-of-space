@@ -149,7 +149,11 @@ export function RichLabel({
   ];
 
   return (
-    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} renderOrder={renderOrder}>
+    <mesh
+      scale={finalScale}
+      rotation={[Math.PI, 0, 0]}
+      renderOrder={renderOrder}
+    >
       <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={texture}
@@ -212,7 +216,11 @@ export function ComplexRichLabel({
   ];
 
   return (
-    <mesh scale={finalScale} rotation={[Math.PI, 0, 0]} renderOrder={renderOrder}>
+    <mesh
+      scale={finalScale}
+      rotation={[Math.PI, 0, 0]}
+      renderOrder={renderOrder}
+    >
       <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={texture}

@@ -27,7 +27,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     energyOpacity,
     energyParticles,
     showEdgePositions,
-    useMemoryOptimization
+    useMemoryOptimization,
   } = useControls({
     showGrid: {
       value: false,

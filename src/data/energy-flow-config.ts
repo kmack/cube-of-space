@@ -6,18 +6,36 @@ export type FlowDirection = 'positive' | 'negative';
 // Hebrew letters that appear on cube edges (not faces or axes)
 export type EdgeHebrewLetter = Extract<
   HebrewLetter,
-  | 'Heh' | 'Vav' | 'Lamed' | 'Nun'        // Corner verticals
-  | 'Zain' | 'Cheth' | 'Teth' | 'Yod'      // Face edges (East/North)
-  | 'Samekh' | 'Ayin' | 'Tzaddi' | 'Qoph'  // Face edges (West/South)
+  | 'Heh'
+  | 'Vav'
+  | 'Lamed'
+  | 'Nun' // Corner verticals
+  | 'Zain'
+  | 'Cheth'
+  | 'Teth'
+  | 'Yod' // Face edges (East/North)
+  | 'Samekh'
+  | 'Ayin'
+  | 'Tzaddi'
+  | 'Qoph' // Face edges (West/South)
 >;
 
 /**
  * Cube position descriptions for better debugging.
  */
 export type EdgePosition =
-  | 'Northeastern Edge' | 'Southeastern Edge' | 'Northwestern Edge' | 'Southwestern Edge'
-  | 'East Above Edge' | 'East Below Edge' | 'North Above Edge' | 'North Below Edge'
-  | 'West Above Edge' | 'West Below Edge' | 'South Above Edge' | 'South Below Edge';
+  | 'Northeastern Edge'
+  | 'Southeastern Edge'
+  | 'Northwestern Edge'
+  | 'Southwestern Edge'
+  | 'East Above Edge'
+  | 'East Below Edge'
+  | 'North Above Edge'
+  | 'North Below Edge'
+  | 'West Above Edge'
+  | 'West Below Edge'
+  | 'South Above Edge'
+  | 'South Below Edge';
 
 /**
  * Energy flow configuration with enhanced metadata.

@@ -316,6 +316,270 @@ async function loadImages(
 }
 
 /**
+ * Helper function to create a structured Hebrew label texture with separate components
+ */
+export function createStructuredHebrewLabel(
+  hebrewLetter: string,
+  letterName: string,
+  assocGlyph: string,
+  assocName: string,
+  title: string,
+  options: {
+    width?: number;
+    height?: number;
+    hebrewFont?: string;
+    uiFont?: string;
+    symbolFont?: string;
+    color?: string;
+    background?: BackgroundStyle;
+    imagePath?: string;
+    useMemoryOptimization?: boolean;
+  } = {}
+): Promise<THREE.CanvasTexture | THREE.DataTexture> {
+  const useOptimization = options.useMemoryOptimization !== false;
+  const width = options.width || (options.imagePath ? 900 : 512);
+  const height = options.height || (options.imagePath ? 800 : 320);
+  const targetWidth = useOptimization ? Math.min(width, 600) : width;
+  const targetHeight = useOptimization ? Math.min(height, 480) : height;
+  const color = options.color || 'white';
+  const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
+  const uiFont = options.uiFont || 'Inter, sans-serif';
+  const symbolFont = options.symbolFont || '"Symbola", "Noto Sans Symbols 2"';
+
+  const texts: CanvasLabelConfig['texts'] = [];
+  const images: ImageConfig[] = [];
+
+  const hasBlackWhiteImage = !!options.imagePath?.includes('major-arcana');
+  const hasTransparentBackground =
+    !options.background?.color || options.background.color === 'transparent';
+
+  if (options.imagePath) {
+    // Tarot card layout
+    const sourceWidth = 416 - 96;
+    const sourceHeight = 512 - 0;
+    const aspectRatio = sourceWidth / sourceHeight;
+    const cardHeight = height - 160;
+    const cardWidth = Math.floor(cardHeight * aspectRatio);
+    const cardX = (width - cardWidth) / 2;
+    const cardY = 80;
+
+    images.push({
+      src: options.imagePath,
+      x: cardX,
+      y: cardY,
+      width: cardWidth,
+      height: cardHeight,
+      sourceX: 96,
+      sourceY: 0,
+      sourceWidth: sourceWidth,
+      sourceHeight: sourceHeight,
+    });
+
+    // Title above the card
+    texts.push({
+      content: title,
+      x: width / 2,
+      y: 40,
+      style: {
+        fontSize: 32,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+        fontWeight: '600',
+      },
+    });
+
+    // Below card layout: |Hebrew| LetterName    |Glyph| AssocName
+    const belowCardY = cardY + cardHeight + 45;
+    const hebrewSize = 48;
+    const nameOffset = 40; // spacing between glyph and name
+
+    // Hebrew letter |ה|
+    texts.push({
+      content: hebrewLetter,
+      x: width / 2 - 180,
+      y: belowCardY,
+      style: {
+        fontSize: hebrewSize,
+        fontFamily: hebrewFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+        opacity: 0.95,
+      },
+    });
+
+    // Letter name: "Heh"
+    texts.push({
+      content: letterName,
+      x: width / 2 - 180 + nameOffset,
+      y: belowCardY,
+      style: {
+        fontSize: 24,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'left',
+        textBaseline: 'middle',
+        opacity: 0.9,
+      },
+    });
+
+    // Association glyph: ♈
+    texts.push({
+      content: assocGlyph,
+      x: width / 2 + 60,
+      y: belowCardY,
+      style: {
+        fontSize: hebrewSize,
+        fontFamily: `${symbolFont}, ${hebrewFont}`,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+        opacity: 0.95,
+      },
+    });
+
+    // Association name: "Aries"
+    texts.push({
+      content: assocName,
+      x: width / 2 + 60 + nameOffset,
+      y: belowCardY,
+      style: {
+        fontSize: 24,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'left',
+        textBaseline: 'middle',
+        opacity: 0.9,
+      },
+    });
+  } else {
+    // Centered layout without image
+    let currentY = 70;
+
+    // Hebrew letter (larger)
+    texts.push({
+      content: hebrewLetter,
+      x: width / 2,
+      y: currentY,
+      style: {
+        fontSize: 64,
+        fontFamily: hebrewFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+      },
+    });
+
+    currentY += 85;
+
+    // Title
+    texts.push({
+      content: title,
+      x: width / 2,
+      y: currentY,
+      style: {
+        fontSize: 28,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+        fontWeight: '500',
+      },
+    });
+
+    currentY += 50;
+
+    // Subtitle line: |ה| Heh — ♈ Aries
+    const hebrewSize = 32;
+    const spacing = 8;
+
+    // Calculate total width for centering
+    const letterNameWidth = letterName.length * 14; // approximate
+    const assocNameWidth = assocName.length * 14;
+    const totalWidth = hebrewSize + spacing + letterNameWidth + 30 + hebrewSize + spacing + assocNameWidth;
+    const startX = (width - totalWidth) / 2;
+
+    let xPos = startX;
+
+    // Hebrew letter
+    texts.push({
+      content: hebrewLetter,
+      x: xPos + hebrewSize / 2,
+      y: currentY,
+      style: {
+        fontSize: hebrewSize,
+        fontFamily: hebrewFont,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+      },
+    });
+    xPos += hebrewSize + spacing;
+
+    // Letter name
+    texts.push({
+      content: letterName,
+      x: xPos,
+      y: currentY,
+      style: {
+        fontSize: 22,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'left',
+        textBaseline: 'middle',
+        opacity: 0.9,
+      },
+    });
+    xPos += letterNameWidth + 30;
+
+    // Association glyph
+    texts.push({
+      content: assocGlyph,
+      x: xPos + hebrewSize / 2,
+      y: currentY,
+      style: {
+        fontSize: hebrewSize,
+        fontFamily: `${symbolFont}, ${hebrewFont}`,
+        color,
+        textAlign: 'center',
+        textBaseline: 'middle',
+      },
+    });
+    xPos += hebrewSize + spacing;
+
+    // Association name
+    texts.push({
+      content: assocName,
+      x: xPos,
+      y: currentY,
+      style: {
+        fontSize: 22,
+        fontFamily: uiFont,
+        color,
+        textAlign: 'left',
+        textBaseline: 'middle',
+        opacity: 0.9,
+      },
+    });
+  }
+
+  return createCanvasTexture({
+    width,
+    height,
+    background: options.background,
+    texts,
+    images,
+    useOptimizedFormat:
+      useOptimization && hasBlackWhiteImage && hasTransparentBackground,
+    targetResolution: useOptimization
+      ? { width: targetWidth, height: targetHeight }
+      : undefined,
+  });
+}
+
+/**
  * Helper function to create a standard Hebrew label texture matching your current format
  */
 export function createHebrewLabelTexture(
@@ -420,7 +684,7 @@ export function createHebrewLabelTexture(
         y: belowCardY,
         style: {
           fontSize: 22,
-          fontFamily: uiFont,
+          fontFamily: `${uiFont}, "Symbola", "Noto Sans Symbols 2", sans-serif`,
           color,
           textAlign: 'center',
           textBaseline: 'middle',
@@ -473,7 +737,7 @@ export function createHebrewLabelTexture(
         y: currentY,
         style: {
           fontSize: 20,
-          fontFamily: uiFont,
+          fontFamily: `${uiFont}, "Symbola", "Noto Sans Symbols 2", sans-serif`,
           color,
           textAlign: 'center',
           textBaseline: 'middle',

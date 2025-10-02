@@ -34,6 +34,9 @@ export function EdgeLabels({
               title={labelData.title}
               subtitle={labelData.subtitle}
               hebrewLetter={labelData.glyph}
+              letterName={labelData.letterName}
+              assocGlyph={labelData.assocGlyph}
+              assocName={labelData.assocName}
               imagePath={labelData.imagePath}
               scale={LABEL_SCALE}
               background={EDGE_LABEL_BACKGROUND}

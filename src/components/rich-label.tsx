@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
 import {
   createHebrewLabelTexture,
+  createStructuredHebrewLabel,
   createCanvasTexture,
 } from '../utils/canvas-texture';
 import type {
@@ -24,6 +25,11 @@ export type RichLabelProps = {
     x: number;
     y: number;
   }>;
+
+  // New structured label data
+  letterName?: string;
+  assocGlyph?: string;
+  assocName?: string;
 
   // Styling
   color?: string;
@@ -54,6 +60,9 @@ export function RichLabel({
   hebrewLetter,
   imagePath,
   images: _images, // Prefixed with _ to indicate intentionally unused for now
+  letterName,
+  assocGlyph,
+  assocName,
   color = 'white',
   background,
   width = 900,
@@ -83,16 +92,34 @@ export function RichLabel({
               }
             : undefined,
         })
-      : createHebrewLabelTexture(hebrewLetter || '', title, subtitle, {
-          width,
-          height,
-          color,
-          background,
-          hebrewFont,
-          uiFont,
-          imagePath,
-          useMemoryOptimization,
-        });
+      : letterName && assocGlyph && assocName
+        ? createStructuredHebrewLabel(
+            hebrewLetter || '',
+            letterName,
+            assocGlyph,
+            assocName,
+            title,
+            {
+              width,
+              height,
+              color,
+              background,
+              hebrewFont,
+              uiFont,
+              imagePath,
+              useMemoryOptimization,
+            }
+          )
+        : createHebrewLabelTexture(hebrewLetter || '', title, subtitle, {
+            width,
+            height,
+            color,
+            background,
+            hebrewFont,
+            uiFont,
+            imagePath,
+            useMemoryOptimization,
+          });
 
     texturePromise
       .then((tex) => {
@@ -114,6 +141,9 @@ export function RichLabel({
     title,
     subtitle,
     hebrewLetter,
+    letterName,
+    assocGlyph,
+    assocName,
     imagePath,
     color,
     width,

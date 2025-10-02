@@ -36,6 +36,9 @@ export function FaceLabels({
               title={labelData.title}
               subtitle={labelData.subtitle}
               hebrewLetter={labelData.glyph}
+              letterName={labelData.letterName}
+              assocGlyph={labelData.assocGlyph}
+              assocName={labelData.assocName}
               imagePath={labelData.imagePath}
               scale={LABEL_SCALE}
               background={FACE_LABEL_BACKGROUND}
@@ -59,6 +62,9 @@ export function FaceLabels({
           title={centerLabelData.title}
           subtitle={centerLabelData.subtitle}
           hebrewLetter={centerLabelData.glyph}
+          letterName={centerLabelData.letterName}
+          assocGlyph={centerLabelData.assocGlyph}
+          assocName={centerLabelData.assocName}
           imagePath={centerLabelData.imagePath}
           scale={LABEL_SCALE}
           background={FACE_LABEL_BACKGROUND}

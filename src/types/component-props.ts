@@ -77,4 +77,8 @@ export interface LabelData {
   glyph: string;
   subtitle: string;
   imagePath: string;
+  // New fields for improved layout
+  letterName: string; // e.g., "Aleph"
+  assocGlyph: string; // e.g., "♈" or "🜁"
+  assocName: string; // e.g., "Aries" or "Air"
 }

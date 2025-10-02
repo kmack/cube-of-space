@@ -14,10 +14,14 @@ import type { LabelData } from '../types/component-props';
 export function createLabelData(letter: HebrewLetter): LabelData {
   const spec = getSpec(letter);
   const assocGlyph = associationToGlyph(spec.association);
+  const assocName = spec.association.value;
   return {
     title: `Key ${spec.keyNumber} – ${spec.keyName}`,
     glyph: spec.letterChar,
-    subtitle: `${spec.letterName} — ${spec.association.value} ${assocGlyph}`,
+    subtitle: `${spec.letterName} — ${assocName} ${assocGlyph}`,
     imagePath: getTarotImagePath(spec.keyNumber),
+    letterName: spec.letterName,
+    assocGlyph,
+    assocName,
   };
 }

@@ -291,7 +291,7 @@ export function getLabelPieces(letter: HebrewLetter): {
 
   return {
     title: `Key ${d.keyNumber} – ${d.keyName}`,
-    subtitleText: `${d.letterName} |${d.letterChar}| – ${assocName}`,
+    subtitleText: `${d.letterName} |${d.letterChar}| – ${assocName} ${assocGlyph}`,
     hebrewChar: d.letterChar,
     assocGlyph,
   };

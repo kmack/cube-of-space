@@ -420,7 +420,7 @@ export function createHebrewLabelTexture(
         y: belowCardY,
         style: {
           fontSize: 22,
-          fontFamily: uiFont,
+          fontFamily: `${uiFont}, "Symbola", "Noto Sans Symbols 2", sans-serif`,
           color,
           textAlign: 'center',
           textBaseline: 'middle',
@@ -473,7 +473,7 @@ export function createHebrewLabelTexture(
         y: currentY,
         style: {
           fontSize: 20,
-          fontFamily: uiFont,
+          fontFamily: `${uiFont}, "Symbola", "Noto Sans Symbols 2", sans-serif`,
           color,
           textAlign: 'center',
           textBaseline: 'middle',

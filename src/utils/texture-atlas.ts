@@ -48,7 +48,8 @@ export function createTextureAtlas(
   atlasCtx.clearRect(0, 0, atlasWidth, atlasHeight);
 
   const regions: Record<string, AtlasRegion> = {};
-  const packedRects: { x: number; y: number; width: number; height: number }[] = [];
+  const packedRects: { x: number; y: number; width: number; height: number }[] =
+    [];
 
   // Simple bin packing - sort by height descending for better packing
   const entries = Object.entries(canvases).sort(
@@ -133,11 +134,12 @@ function findAtlasPosition(
       const candidate = { x, y, width, height };
 
       // Check if this position overlaps with any existing rect
-      const overlaps = packedRects.some(rect =>
-        candidate.x < rect.x + rect.width &&
-        candidate.x + candidate.width > rect.x &&
-        candidate.y < rect.y + rect.height &&
-        candidate.y + candidate.height > rect.y
+      const overlaps = packedRects.some(
+        (rect) =>
+          candidate.x < rect.x + rect.width &&
+          candidate.x + candidate.width > rect.x &&
+          candidate.y < rect.y + rect.height &&
+          candidate.y + candidate.height > rect.y
       );
 
       if (!overlaps) {
@@ -170,7 +172,10 @@ export function createMultipleAtlases(
 
     // If no textures were packed in this iteration, break to avoid infinite loop
     if (Object.keys(atlas.regions).length === 0) {
-      console.warn('Could not pack remaining textures:', Object.keys(remaining));
+      console.warn(
+        'Could not pack remaining textures:',
+        Object.keys(remaining)
+      );
       break;
     }
   }
@@ -279,7 +284,7 @@ export function createAlphaMaskTexture(
   } else {
     // Use LuminanceAlpha format for WebGL1 compatibility (preserves both channels, 2 bytes/pixel)
     // Note: LuminanceAlphaFormat was removed from Three.js, using raw WebGL constant
-    format = 0x190A as THREE.PixelFormat; // WebGL LUMINANCE_ALPHA constant
+    format = 0x190a as THREE.PixelFormat; // WebGL LUMINANCE_ALPHA constant
   }
 
   const texture = new THREE.DataTexture(
@@ -295,7 +300,8 @@ export function createAlphaMaskTexture(
   texture.magFilter = THREE.LinearFilter;
 
   // Check if texture dimensions are power of two
-  const isPowerOfTwo = (width & (width - 1)) === 0 && (height & (height - 1)) === 0;
+  const isPowerOfTwo =
+    (width & (width - 1)) === 0 && (height & (height - 1)) === 0;
 
   if (isPowerOfTwo) {
     texture.minFilter = THREE.LinearMipmapLinearFilter;

@@ -9,9 +9,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.app.json && vite build",
-    "lint": "eslint . --no-cache",
     "preview": "vite preview",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "lint": "eslint . --no-cache",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --build --dry"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.4",

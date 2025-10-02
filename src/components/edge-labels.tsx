@@ -7,7 +7,6 @@ import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { LABEL_OFFSET } from '../data/constants';
 import { createLabelData } from '../utils/label-factory';
 
-
 interface EdgeLabelsProps {
   useMemoryOptimization?: boolean;
 }
@@ -22,9 +21,12 @@ export function EdgeLabels({
         const labelData = createLabelData(e.letter);
         // Calculate offset position - push label outward from center along edge normal
         const offsetPos: [number, number, number] = [
-          e.pos[0] + (e.pos[0] > 0 ? LABEL_OFFSET : e.pos[0] < 0 ? -LABEL_OFFSET : 0),
-          e.pos[1] + (e.pos[1] > 0 ? LABEL_OFFSET : e.pos[1] < 0 ? -LABEL_OFFSET : 0),
-          e.pos[2] + (e.pos[2] > 0 ? LABEL_OFFSET : e.pos[2] < 0 ? -LABEL_OFFSET : 0),
+          e.pos[0] +
+            (e.pos[0] > 0 ? LABEL_OFFSET : e.pos[0] < 0 ? -LABEL_OFFSET : 0),
+          e.pos[1] +
+            (e.pos[1] > 0 ? LABEL_OFFSET : e.pos[1] < 0 ? -LABEL_OFFSET : 0),
+          e.pos[2] +
+            (e.pos[2] > 0 ? LABEL_OFFSET : e.pos[2] < 0 ? -LABEL_OFFSET : 0),
         ];
         return (
           <group key={i} position={offsetPos} rotation={rot}>

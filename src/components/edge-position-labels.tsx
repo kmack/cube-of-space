@@ -55,9 +55,25 @@ export function EdgePositionLabels({
         const positionOffset = LABEL_OFFSET * 10; // Larger offset to avoid overlap with edge labels
         const originY = -0.5; // Lower origin point for positioning
         const offsetPos: [number, number, number] = [
-          edge.pos[0] + (edge.pos[0] > 0 ? positionOffset : edge.pos[0] < 0 ? -positionOffset : 0),
-          originY + edge.pos[1] + (edge.pos[1] > 0 ? positionOffset : edge.pos[1] < 0 ? -positionOffset : 0),
-          edge.pos[2] + (edge.pos[2] > 0 ? positionOffset : edge.pos[2] < 0 ? -positionOffset : 0),
+          edge.pos[0] +
+            (edge.pos[0] > 0
+              ? positionOffset
+              : edge.pos[0] < 0
+                ? -positionOffset
+                : 0),
+          originY +
+            edge.pos[1] +
+            (edge.pos[1] > 0
+              ? positionOffset
+              : edge.pos[1] < 0
+                ? -positionOffset
+                : 0),
+          edge.pos[2] +
+            (edge.pos[2] > 0
+              ? positionOffset
+              : edge.pos[2] < 0
+                ? -positionOffset
+                : 0),
         ];
 
         return (

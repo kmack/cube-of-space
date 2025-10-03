@@ -11,6 +11,7 @@ export function FacePlanes({
   opacity?: number;
 }): React.JSX.Element {
   const planeSize = SIZE - 0.01;
+  const isOpaque = opacity >= 1.0;
   return (
     <>
       {faces.map((f, i) => {
@@ -22,9 +23,9 @@ export function FacePlanes({
               <planeGeometry args={[planeSize, planeSize]} />
               <meshStandardMaterial
                 color={faceColor}
-                transparent
+                transparent={!isOpaque}
                 opacity={opacity}
-                depthWrite={false}
+                depthWrite={isOpaque}
                 polygonOffset
                 polygonOffsetFactor={1}
                 polygonOffsetUnits={1}

@@ -11,6 +11,10 @@ import type {
   CanvasLabelConfig,
   BackgroundStyle,
 } from '../utils/canvas-texture';
+import {
+  LABEL_WIDTH_WITH_IMAGE,
+  LABEL_HEIGHT_WITH_IMAGE,
+} from '../data/constants';
 
 export type RichLabelProps = {
   // Content
@@ -65,8 +69,8 @@ export function RichLabel({
   assocName,
   color = 'white',
   background,
-  width = 900,
-  height = 800,
+  width = LABEL_WIDTH_WITH_IMAGE,
+  height = LABEL_HEIGHT_WITH_IMAGE,
   scale = 1,
   hebrewFont,
   uiFont,

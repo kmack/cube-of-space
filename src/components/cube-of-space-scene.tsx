@@ -50,7 +50,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Show Diagonal Lines',
     },
     showDiagonalLabels: {
-      value: false,
+      value: true,
       label: 'Show Diagonal Labels',
     },
     showEnergyFlow: {

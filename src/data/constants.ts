@@ -24,3 +24,9 @@ export const FACE_COLOR_BY_KEY: Record<string, string> = {
 // Line colors
 export const AXIS_LINE_COLOR = '#88ccff';
 export const DIAGONAL_LINE_COLOR = '#4d4d4d';
+
+// Label canvas dimensions
+export const LABEL_WIDTH_WITH_IMAGE = 900;
+export const LABEL_HEIGHT_WITH_IMAGE = 800;
+export const LABEL_WIDTH_NO_IMAGE = 512;
+export const LABEL_HEIGHT_NO_IMAGE = 320;

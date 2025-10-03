@@ -1,6 +1,12 @@
 // src/utils/canvas-texture.ts
 import * as THREE from 'three';
 import { createOptimizedCanvas, createAlphaMaskTexture } from './texture-atlas';
+import {
+  LABEL_WIDTH_WITH_IMAGE,
+  LABEL_HEIGHT_WITH_IMAGE,
+  LABEL_WIDTH_NO_IMAGE,
+  LABEL_HEIGHT_NO_IMAGE,
+} from '../data/constants';
 
 /**
  * Module-level image cache to avoid repeated loading and decoding
@@ -339,8 +345,8 @@ export function createStructuredHebrewLabel(
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
-  const width = options.width || (options.imagePath ? 900 : 512);
-  const height = options.height || (options.imagePath ? 800 : 320);
+  const width = options.width || (options.imagePath ? LABEL_WIDTH_WITH_IMAGE : LABEL_WIDTH_NO_IMAGE);
+  const height = options.height || (options.imagePath ? LABEL_HEIGHT_WITH_IMAGE : LABEL_HEIGHT_NO_IMAGE);
   const targetWidth = useOptimization ? Math.min(width, 600) : width;
   const targetHeight = useOptimization ? Math.min(height, 480) : height;
   const color = options.color || 'white';

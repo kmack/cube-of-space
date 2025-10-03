@@ -30,7 +30,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     energyOpacity,
     energyParticles,
     showEdgePositions,
-    opaqueFaces,
     useMemoryOptimization,
   } = useControls({
     showGrid: {
@@ -78,10 +77,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       value: true,
       label: 'Show Edge Positions',
     },
-    opaqueFaces: {
-      value: false,
-      label: 'Opaque Faces',
-    },
     // Memory optimization controls
     useMemoryOptimization: {
       value: true,
@@ -89,13 +84,22 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     },
   });
 
+  // Faces controls
+  const { showFaces, opaqueFaces } = useControls('Faces', {
+    showFaces: {
+      value: true,
+      label: 'Show Faces',
+    },
+    opaqueFaces: {
+      value: false,
+      label: 'Opaque Faces',
+    },
+  });
+
   // Element visibility controls
-  const { showFaces, showEdges, showMotherLetters, showDiagonals } =
-    useControls('Element Visibility', {
-      showFaces: {
-        value: true,
-        label: 'Faces',
-      },
+  const { showEdges, showMotherLetters, showDiagonals } = useControls(
+    'Element Visibility',
+    {
       showEdges: {
         value: true,
         label: 'Edges',
@@ -108,7 +112,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         value: true,
         label: 'Diagonals',
       },
-    });
+    }
+  );
 
   return (
     <Canvas

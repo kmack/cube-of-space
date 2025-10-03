@@ -20,15 +20,22 @@ export function DiagonalLabels({
         const rot = eulerFromNormalAndTangent(d.normal, d.tangent);
         const labelData = createLabelData(d.letter);
 
-        // Create a compact single-line canvas config
+        // Create a compact single-line canvas config with aggressive memory optimization
         const canvasConfig: CanvasLabelConfig = {
-          width: 250,
-          height: 50,
+          width: 200,
+          height: 40,
+          // Force very small texture size for iOS memory constraints
+          targetResolution: {
+            width: 160,
+            height: 32,
+          },
+          useOptimizedFormat: false, // Keep as RGBA for colored backgrounds
+          devicePixelRatio: 1, // Force 1x to prevent memory explosion on iOS
           background: {
             color: 'rgba(96, 96, 96, 0.4)',
             opacity: 0.45,
-            borderRadius: 4,
-            padding: 4,
+            borderRadius: 3,
+            padding: 3,
             border: {
               width: 1,
               color: 'rgba(255, 255, 255, 0.8)',
@@ -37,10 +44,10 @@ export function DiagonalLabels({
           texts: [
             {
               content: labelData.glyph,
-              x: 30,
-              y: 25,
+              x: 20,
+              y: 20,
               style: {
-                fontSize: 28,
+                fontSize: 22,
                 fontFamily: 'FrankRuhlLibre, serif',
                 color: 'white',
                 textAlign: 'center',
@@ -49,10 +56,10 @@ export function DiagonalLabels({
             },
             {
               content: labelData.letterName,
-              x: 65,
-              y: 25,
+              x: 50,
+              y: 20,
               style: {
-                fontSize: 16,
+                fontSize: 14,
                 fontFamily: 'Inter, sans-serif',
                 color: 'white',
                 textAlign: 'left',
@@ -67,9 +74,9 @@ export function DiagonalLabels({
             <RichLabel
               title=""
               canvasConfig={canvasConfig}
-              width={250}
-              height={50}
-              scale={LABEL_SCALE * 0.4}
+              width={200}
+              height={40}
+              scale={LABEL_SCALE * 0.15}
               useMemoryOptimization={useMemoryOptimization}
             />
           </group>

@@ -153,31 +153,31 @@ export const diagonals: Diagonal[] = [
     from: [eastX, botY, northZ], // NE bottom
     to: [westX, topY, southZ], // SW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: normalize([-1, 0, 1]), // horizontal component along diagonal
-    normal: [0, 1, 0], // up
+    tangent: normalize([2, -2, -2]), // try reverse direction
+    normal: normalize([1, 0, -1]), //
   },
   {
     letter: 'Nun-final',
     from: [westX, botY, southZ], // SW bottom
     to: [eastX, topY, northZ], // NE top
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: normalize([1, 0, -1]), // horizontal component along diagonal
-    normal: [0, 1, 0], // up
+    tangent: normalize([2, 2, -2]), // full 3D direction along diagonal
+    normal: normalize([1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
   },
   {
     letter: 'Peh-final',
     from: [eastX, botY, southZ], // SE bottom
     to: [westX, topY, northZ], // NW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: normalize([-1, 0, -1]), // horizontal component along diagonal
-    normal: [0, 1, 0], // up
+    tangent: normalize([2, -2, 2]), // try reverse direction
+    normal: normalize([1, 0, 1]), //
   },
   {
     letter: 'Tzaddi-final',
     from: [westX, botY, northZ], // NW bottom
     to: [eastX, topY, southZ], // SE top
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: normalize([1, 0, 1]), // horizontal component along diagonal
-    normal: [0, 1, 0], // up
+    tangent: normalize([2, 2, 2]), // full 3D direction along diagonal
+    normal: normalize([-1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
   },
 ];

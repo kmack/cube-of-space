@@ -25,7 +25,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showAxesHelper,
     showAxisLines,
     showDiagonalLines,
-    showDiagonalLabels,
     showEnergyFlow,
     energySpeed,
     energyOpacity,
@@ -49,10 +48,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showDiagonalLines: {
       value: true,
       label: 'Show Diagonal Lines',
-    },
-    showDiagonalLabels: {
-      value: true,
-      label: 'Show Diagonal Labels',
     },
     showEnergyFlow: {
       value: true,
@@ -94,6 +89,27 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     },
   });
 
+  // Element visibility controls
+  const { showFaces, showEdges, showMotherLetters, showDiagonals } =
+    useControls('Element Visibility', {
+      showFaces: {
+        value: true,
+        label: 'Faces',
+      },
+      showEdges: {
+        value: true,
+        label: 'Edges',
+      },
+      showMotherLetters: {
+        value: true,
+        label: 'Mother Letters',
+      },
+      showDiagonals: {
+        value: true,
+        label: 'Diagonals',
+      },
+    });
+
   return (
     <Canvas
       style={{ background: 'transparent' }}
@@ -126,17 +142,25 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {showAxesHelper && <axesHelper args={[5]} />}
 
       {/* Geometry */}
-      <FacePlanes
-        key={opaqueFaces ? 'opaque' : 'transparent'}
-        opacity={opaqueFaces ? 1.0 : 0.8}
-      />
+      {showFaces && (
+        <FacePlanes
+          key={opaqueFaces ? 'opaque' : 'transparent'}
+          opacity={opaqueFaces ? 1.0 : 0.8}
+        />
+      )}
       <WireCube />
       {showAxisLines && <AxisLines opacity={0.7} />}
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}
-      <FaceLabels useMemoryOptimization={useMemoryOptimization} />
-      <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
-      <MotherLabels useMemoryOptimization={useMemoryOptimization} />
-      {showDiagonalLabels && (
+      {showFaces && (
+        <FaceLabels useMemoryOptimization={useMemoryOptimization} />
+      )}
+      {showEdges && (
+        <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
+      )}
+      {showMotherLetters && (
+        <MotherLabels useMemoryOptimization={useMemoryOptimization} />
+      )}
+      {showDiagonals && (
         <DiagonalLabels useMemoryOptimization={useMemoryOptimization} />
       )}
 

@@ -150,6 +150,14 @@ const normalize = (v: [number, number, number]): [number, number, number] => {
 export const diagonals: Diagonal[] = [
   {
     letter: 'Kaph-final',
+    from: [eastX, botY, southZ], // SE bottom
+    to: [westX, topY, northZ], // NW top
+    pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
+    tangent: normalize([-2, 2, -2]), // direction: from SE bottom to NW top
+    normal: normalize([1, 0, -1]), // match Nun pattern but flip Z sign
+  },
+  {
+    letter: 'Nun-final',
     from: [eastX, botY, northZ], // NE bottom
     to: [westX, topY, southZ], // SW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
@@ -157,20 +165,12 @@ export const diagonals: Diagonal[] = [
     normal: normalize([-1, 0, -1]), // try negative X and Z
   },
   {
-    letter: 'Nun-final',
+    letter: 'Peh-final',
     from: [westX, botY, southZ], // SW bottom
     to: [eastX, topY, northZ], // NE top
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
     tangent: normalize([2, 2, -2]), // full 3D direction along diagonal
     normal: normalize([1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
-  },
-  {
-    letter: 'Peh-final',
-    from: [eastX, botY, southZ], // SE bottom
-    to: [westX, topY, northZ], // NW top
-    pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: normalize([-2, 2, -2]), // direction: from SE bottom to NW top
-    normal: normalize([1, 0, -1]), // match Nun pattern but flip Z sign
   },
   {
     letter: 'Tzaddi-final',

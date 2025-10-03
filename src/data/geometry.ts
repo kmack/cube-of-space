@@ -153,8 +153,8 @@ export const diagonals: Diagonal[] = [
     from: [eastX, botY, northZ], // NE bottom
     to: [westX, topY, southZ], // SW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: normalize([2, -2, -2]), // try reverse direction
-    normal: normalize([1, 0, -1]), //
+    tangent: normalize([-2, 2, 2]), // direction: from NE bottom to SW top
+    normal: normalize([-1, 0, -1]), // try negative X and Z
   },
   {
     letter: 'Nun-final',
@@ -169,8 +169,8 @@ export const diagonals: Diagonal[] = [
     from: [eastX, botY, southZ], // SE bottom
     to: [westX, topY, northZ], // NW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: normalize([2, -2, 2]), // try reverse direction
-    normal: normalize([1, 0, 1]), //
+    tangent: normalize([-2, 2, -2]), // direction: from SE bottom to NW top
+    normal: normalize([1, 0, -1]), // match Nun pattern but flip Z sign
   },
   {
     letter: 'Tzaddi-final',

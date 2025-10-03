@@ -25,10 +25,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showAxesHelper,
     showAxisLines,
     showDiagonalLines,
-    showEnergyFlow,
-    energySpeed,
-    energyOpacity,
-    energyParticles,
     showEdgePositions,
     useMemoryOptimization,
   } = useControls({
@@ -48,31 +44,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       value: true,
       label: 'Show Diagonal Lines',
     },
-    showEnergyFlow: {
-      value: true,
-      label: 'Show Energy Flow',
-    },
-    energySpeed: {
-      value: 1.0,
-      min: 0.1,
-      max: 3.0,
-      step: 0.1,
-      label: 'Energy Speed',
-    },
-    energyOpacity: {
-      value: 0.6,
-      min: 0.1,
-      max: 1.0,
-      step: 0.1,
-      label: 'Energy Opacity',
-    },
-    energyParticles: {
-      value: 8,
-      min: 4,
-      max: 16,
-      step: 2,
-      label: 'Energy Particles',
-    },
     showEdgePositions: {
       value: true,
       label: 'Show Edge Positions',
@@ -83,6 +54,36 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Memory Optimization',
     },
   });
+
+  // Energy Flow controls
+  const { showEnergyFlow, energySpeed, energyOpacity, energyParticles } =
+    useControls('Energy Flow', {
+      showEnergyFlow: {
+        value: true,
+        label: 'Show Energy Flow',
+      },
+      energySpeed: {
+        value: 1.0,
+        min: 0.1,
+        max: 3.0,
+        step: 0.1,
+        label: 'Speed',
+      },
+      energyOpacity: {
+        value: 0.6,
+        min: 0.1,
+        max: 1.0,
+        step: 0.1,
+        label: 'Opacity',
+      },
+      energyParticles: {
+        value: 8,
+        min: 4,
+        max: 16,
+        step: 2,
+        label: 'Particles',
+      },
+    });
 
   // Faces controls
   const { showFaces, opaqueFaces } = useControls('Faces', {

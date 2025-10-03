@@ -120,20 +120,29 @@ export function DiagonalLabels({
 
           // Cleanup textures on unmount to prevent memory leaks on iOS
           React.useEffect(() => {
-            const group = ref.current;
+            // Capture ref at mount time for cleanup
+            const groupElement = ref.current;
+
             return () => {
-              if (group) {
-                group.traverse((child) => {
+              if (groupElement) {
+                groupElement.traverse((child) => {
                   if (child instanceof THREE.Mesh) {
                     const material = child.material;
                     if (material instanceof THREE.Material) {
+                      // Dispose texture if it exists
                       const meshMaterial = material as THREE.MeshBasicMaterial;
-                      if (meshMaterial.map) {
+                      if (
+                        meshMaterial.map &&
+                        meshMaterial.map instanceof THREE.Texture
+                      ) {
                         meshMaterial.map.dispose();
                       }
                       material.dispose();
                     }
-                    if (child.geometry) {
+                    if (
+                      child.geometry &&
+                      child.geometry instanceof THREE.BufferGeometry
+                    ) {
                       child.geometry.dispose();
                     }
                   }

@@ -126,7 +126,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {showAxesHelper && <axesHelper args={[5]} />}
 
       {/* Geometry */}
-      <FacePlanes opacity={opaqueFaces ? 1.0 : 0.8} />
+      <FacePlanes
+        key={opaqueFaces ? 'opaque' : 'transparent'}
+        opacity={opaqueFaces ? 1.0 : 0.8}
+      />
       <WireCube />
       {showAxisLines && <AxisLines opacity={0.7} />}
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}

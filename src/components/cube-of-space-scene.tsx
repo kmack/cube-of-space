@@ -25,6 +25,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showAxesHelper,
     showAxisLines,
     showDiagonalLines,
+    showDiagonalLabels,
     showEnergyFlow,
     energySpeed,
     energyOpacity,
@@ -47,6 +48,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showDiagonalLines: {
       value: true,
       label: 'Show Diagonal Lines',
+    },
+    showDiagonalLabels: {
+      value: false,
+      label: 'Show Diagonal Labels',
     },
     showEnergyFlow: {
       value: true,
@@ -123,7 +128,9 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <FaceLabels useMemoryOptimization={useMemoryOptimization} />
       <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
       <MotherLabels useMemoryOptimization={useMemoryOptimization} />
-      <DiagonalLabels useMemoryOptimization={useMemoryOptimization} />
+      {showDiagonalLabels && (
+        <DiagonalLabels useMemoryOptimization={useMemoryOptimization} />
+      )}
 
       {/* Energy Flow */}
       <EdgeEnergyFlows

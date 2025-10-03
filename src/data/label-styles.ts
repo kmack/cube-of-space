@@ -32,5 +32,17 @@ export const MOTHER_LABEL_BACKGROUND: BackgroundStyle = {
   opacity: 0.475, // Slightly higher opacity for mother labels
 };
 
+// Diagonal labels styling - compact single-line layout
+export const DIAGONAL_LABEL_BACKGROUND: BackgroundStyle = {
+  color: 'rgba(96, 96, 96, 0.4)',
+  opacity: 0.45,
+  borderRadius: 4,
+  padding: 4,
+  border: {
+    width: 1,
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+};
+
 // Shared scale for all labels - increased for larger card display
 export const LABEL_SCALE = 0.6;

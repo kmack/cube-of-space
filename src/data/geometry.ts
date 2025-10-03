@@ -1,5 +1,5 @@
 // src/data/geometry.ts
-import type { Face, Edge, Axis } from '../utils/types';
+import type { Face, Edge, Axis, Diagonal } from '../utils/types';
 import { HALF, MOTHER_OFFSET } from './constants';
 
 export const faces: Face[] = [
@@ -134,5 +134,50 @@ export const axes: Axis[] = [
     pos: [0, 0, MOTHER_OFFSET],
     tangent: [0, 0, 1],
     normal: [0, 1, 0],
+  },
+];
+
+// Diagonals - Final Letters connecting opposite corners through center
+// Label positioned at offset from center along the diagonal
+const DIAGONAL_OFFSET = 0.6;
+
+// Helper to normalize a vector
+const normalize = (v: [number, number, number]): [number, number, number] => {
+  const len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  return [v[0] / len, v[1] / len, v[2] / len];
+};
+
+export const diagonals: Diagonal[] = [
+  {
+    letter: 'Kaph-final',
+    from: [eastX, botY, southZ], // SE bottom
+    to: [westX, topY, northZ], // NW top
+    pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
+    tangent: normalize([-2, 2, -2]), // direction: from SE bottom to NW top
+    normal: normalize([1, 0, -1]), // match Nun pattern but flip Z sign
+  },
+  {
+    letter: 'Nun-final',
+    from: [eastX, botY, northZ], // NE bottom
+    to: [westX, topY, southZ], // SW top
+    pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
+    tangent: normalize([-2, 2, 2]), // direction: from NE bottom to SW top
+    normal: normalize([-1, 0, -1]), // try negative X and Z
+  },
+  {
+    letter: 'Peh-final',
+    from: [westX, botY, southZ], // SW bottom
+    to: [eastX, topY, northZ], // NE top
+    pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
+    tangent: normalize([2, 2, -2]), // full 3D direction along diagonal
+    normal: normalize([1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
+  },
+  {
+    letter: 'Tzaddi-final',
+    from: [westX, botY, northZ], // NW bottom
+    to: [eastX, topY, southZ], // SE top
+    pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
+    tangent: normalize([2, 2, 2]), // full 3D direction along diagonal
+    normal: normalize([-1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
   },
 ];

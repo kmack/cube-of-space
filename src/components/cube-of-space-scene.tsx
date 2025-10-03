@@ -8,9 +8,11 @@ import { useControls } from 'leva';
 import { FacePlanes } from './face-planes';
 import { WireCube } from './wire-cube';
 import { AxisLines } from './axis-lines';
+import { DiagonalLines } from './diagonal-lines';
 import { FaceLabels } from './face-labels';
 import { EdgeLabels } from './edge-labels';
 import { MotherLabels } from './mother-labels';
+import { DiagonalLabels } from './diagonal-labels';
 import { EdgeEnergyFlows } from './edge-energy-flows';
 import { EdgePositionLabels } from './edge-position-labels';
 
@@ -22,6 +24,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showGrid,
     showAxesHelper,
     showAxisLines,
+    showDiagonalLines,
+    showDiagonalLabels,
     showEnergyFlow,
     energySpeed,
     energyOpacity,
@@ -40,6 +44,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showAxisLines: {
       value: true,
       label: 'Show Axis Lines',
+    },
+    showDiagonalLines: {
+      value: true,
+      label: 'Show Diagonal Lines',
+    },
+    showDiagonalLabels: {
+      value: true,
+      label: 'Show Diagonal Labels',
     },
     showEnergyFlow: {
       value: true,
@@ -111,10 +123,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {/* Geometry */}
       <FacePlanes opacity={0.8} />
       <WireCube />
-      {showAxisLines && <AxisLines opacity={0.7} color="#88ccff" />}
+      {showAxisLines && <AxisLines opacity={0.7} />}
+      {showDiagonalLines && <DiagonalLines opacity={0.7} />}
       <FaceLabels useMemoryOptimization={useMemoryOptimization} />
       <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
       <MotherLabels useMemoryOptimization={useMemoryOptimization} />
+      {showDiagonalLabels && (
+        <DiagonalLabels useMemoryOptimization={useMemoryOptimization} />
+      )}
 
       {/* Energy Flow */}
       <EdgeEnergyFlows

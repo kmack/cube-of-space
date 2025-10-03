@@ -84,13 +84,16 @@ export function RichLabel({
     const texturePromise = canvasConfig
       ? createCanvasTexture({
           ...canvasConfig,
-          useOptimizedFormat: useMemoryOptimization,
-          targetResolution: useMemoryOptimization
-            ? {
-                width: Math.min(canvasConfig.width, 600),
-                height: Math.min(canvasConfig.height, 480),
-              }
-            : undefined,
+          useOptimizedFormat:
+            canvasConfig.useOptimizedFormat ?? useMemoryOptimization,
+          targetResolution:
+            canvasConfig.targetResolution ??
+            (useMemoryOptimization
+              ? {
+                  width: Math.min(canvasConfig.width, 600),
+                  height: Math.min(canvasConfig.height, 480),
+                }
+              : undefined),
         })
       : letterName && assocGlyph && assocName
         ? createStructuredHebrewLabel(

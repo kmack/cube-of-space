@@ -231,7 +231,9 @@ function drawBackground(
 ): void {
   if (bg.color) {
     ctx.save();
-    ctx.globalAlpha = bg.opacity ?? 1;
+    if (bg.opacity !== undefined) {
+      ctx.globalAlpha = bg.opacity;
+    }
 
     if (bg.borderRadius) {
       // Draw rounded rectangle

@@ -1,6 +1,5 @@
 import { type FC } from 'react';
-import * as THREE from 'three';
-import { HALF } from '../data/constants';
+import { HALF, AXIS_LINE_COLOR } from '../data/constants';
 
 interface AxisLinesProps {
   opacity?: number;
@@ -10,7 +9,7 @@ interface AxisLinesProps {
 
 export const AxisLines: FC<AxisLinesProps> = ({
   opacity = 0.6,
-  color = '#ffffff',
+  color = AXIS_LINE_COLOR,
 }) => {
   // Define the three major axes connecting opposite face centers
   const axes = [
@@ -37,27 +36,18 @@ export const AxisLines: FC<AxisLinesProps> = ({
   return (
     <group>
       {axes.map((axis, index) => {
-        // Create geometry for the line
-        const points = [
-          new THREE.Vector3(...axis.start),
-          new THREE.Vector3(...axis.end),
-        ];
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const points = new Float32Array([...axis.start, ...axis.end]);
 
         return (
-          <primitive
-            key={`axis-${axis.name}-${index}`}
-            object={
-              new THREE.Line(
-                geometry,
-                new THREE.LineBasicMaterial({
-                  color: color,
-                  transparent: true,
-                  opacity: opacity,
-                })
-              )
-            }
-          />
+          <line key={`axis-${axis.name}-${index}`}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                args={[points, 3]}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color={color} transparent opacity={opacity} />
+          </line>
         );
       })}
     </group>

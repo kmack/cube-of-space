@@ -21,7 +21,12 @@ export type HebrewLetter =
   | 'Qoph'
   | 'Resh'
   | 'Shin'
-  | 'Tav';
+  | 'Tav'
+  | 'Kaph-final'
+  | 'Mem-final'
+  | 'Nun-final'
+  | 'Peh-final'
+  | 'Tzaddi-final';
 
 type Assoc =
   | { kind: 'element'; value: 'Air' | 'Water' | 'Fire' }
@@ -55,7 +60,7 @@ type Assoc =
 
 export type LetterSpec = {
   letterChar: string; // Hebrew glyph as a single char (or image elsewhere)
-  letterName: HebrewLetter; // English name
+  letterName: string; // English name (display string)
   keyNumber: number; // Tarot Major Arcana number (0..21 in B.O.T.A. scheme)
   keyName: string; // Tarot Key title
   association: Assoc; // Element / planet / zodiac
@@ -276,6 +281,43 @@ const S: Record<HebrewLetter, LetterSpec> = {
     keyNumber: 18,
     keyName: 'The Moon',
     association: { kind: 'zodiac', value: 'Pisces' },
+  },
+
+  // Final Letters (diagonal lines through center)
+  'Kaph-final': {
+    letterChar: 'ך',
+    letterName: 'Final Kaph',
+    keyNumber: 10,
+    keyName: 'Wheel of Fortune',
+    association: { kind: 'planet', value: 'Jupiter' },
+  },
+  'Nun-final': {
+    letterChar: 'ן',
+    letterName: 'Final Nun',
+    keyNumber: 13,
+    keyName: 'Death',
+    association: { kind: 'zodiac', value: 'Scorpio' },
+  },
+  'Peh-final': {
+    letterChar: 'ף',
+    letterName: 'Final Peh',
+    keyNumber: 16,
+    keyName: 'The Tower',
+    association: { kind: 'planet', value: 'Mars' },
+  },
+  'Tzaddi-final': {
+    letterChar: 'ץ',
+    letterName: 'Final Tzaddi',
+    keyNumber: 17,
+    keyName: 'The Star',
+    association: { kind: 'zodiac', value: 'Aquarius' },
+  },
+  'Mem-final': {
+    letterChar: 'ם',
+    letterName: 'Final Mem',
+    keyNumber: 12,
+    keyName: 'The Hanged Man',
+    association: { kind: 'element', value: 'Water' },
   },
 };
 

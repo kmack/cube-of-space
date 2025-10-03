@@ -20,3 +20,7 @@ export const FACE_COLOR_BY_KEY: Record<string, string> = {
   '16': '#ff4d4f', // North  (Peh, Key 16)    Red
   '19': '#ff9a1f', // South  (Resh, Key 19)   Orange
 };
+
+// Line colors
+export const AXIS_LINE_COLOR = '#88ccff';
+export const DIAGONAL_LINE_COLOR = '#4d4d4d';

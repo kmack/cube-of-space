@@ -1,7 +1,8 @@
 // src/components/diagonal-labels.tsx
 import * as React from 'react';
+import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
 import { diagonals } from '../data/geometry';
-import { eulerFromNormalAndTangent } from '../utils/orientation';
 import { RichLabel } from './rich-label';
 import { LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
@@ -17,7 +18,6 @@ export function DiagonalLabels({
   return (
     <>
       {diagonals.map((d, i) => {
-        const rot = eulerFromNormalAndTangent(d.normal, d.tangent);
         const labelData = createLabelData(d.letter);
 
         // Create a compact single-line canvas config with aggressive memory optimization
@@ -68,18 +68,62 @@ export function DiagonalLabels({
           ],
         };
 
-        return (
-          <group key={i} position={d.pos} rotation={rot}>
-            <RichLabel
-              title=""
-              canvasConfig={canvasConfig}
-              width={200}
-              height={40}
-              scale={LABEL_SCALE * 0.15}
-              useMemoryOptimization={useMemoryOptimization}
-            />
-          </group>
-        );
+        const DiagonalLabel = (): React.JSX.Element => {
+          const ref = React.useRef<THREE.Group>(null!);
+
+          // Simple billboard behavior for diagonal labels
+          useFrame(({ camera }) => {
+            if (!ref.current) return;
+
+            const worldPos = new THREE.Vector3();
+            ref.current.getWorldPosition(worldPos);
+
+            // Get direction from label to camera
+            const toCamera = new THREE.Vector3()
+              .copy(camera.position)
+              .sub(worldPos)
+              .normalize();
+
+            // Diagonal tangent direction
+            const tangent = new THREE.Vector3(...d.tangent).normalize();
+
+            // Project camera direction onto plane perpendicular to diagonal
+            const normal = new THREE.Vector3()
+              .copy(toCamera)
+              .addScaledVector(tangent, -toCamera.dot(tangent))
+              .normalize();
+
+            // Binormal (up direction for the label)
+            const binormal = new THREE.Vector3()
+              .crossVectors(normal, tangent)
+              .normalize();
+
+            // Ensure binormal points generally upward
+            if (binormal.y < 0) {
+              binormal.multiplyScalar(-1);
+              tangent.multiplyScalar(-1);
+            }
+
+            // Build rotation matrix and apply
+            const matrix = new THREE.Matrix4().makeBasis(tangent, binormal, normal);
+            ref.current.quaternion.setFromRotationMatrix(matrix);
+          });
+
+          return (
+            <group ref={ref} position={d.pos}>
+              <RichLabel
+                title=""
+                canvasConfig={canvasConfig}
+                width={200}
+                height={40}
+                scale={LABEL_SCALE * 0.15}
+                useMemoryOptimization={useMemoryOptimization}
+              />
+            </group>
+          );
+        };
+
+        return <DiagonalLabel key={i} />;
       })}
     </>
   );

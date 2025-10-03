@@ -141,37 +141,43 @@ export const axes: Axis[] = [
 // Label positioned at offset from center along the diagonal
 const DIAGONAL_OFFSET = 0.6;
 
+// Helper to normalize a vector
+const normalize = (v: [number, number, number]): [number, number, number] => {
+  const len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  return [v[0] / len, v[1] / len, v[2] / len];
+};
+
 export const diagonals: Diagonal[] = [
   {
     letter: 'Kaph-final',
     from: [eastX, botY, northZ], // NE bottom
     to: [westX, topY, southZ], // SW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: [-1, 1, 1], // direction along diagonal
-    normal: [1, 1, -1], // perpendicular to diagonal
+    tangent: normalize([-1, 0, 1]), // horizontal component along diagonal
+    normal: [0, 1, 0], // up
   },
   {
     letter: 'Nun-final',
     from: [westX, botY, southZ], // SW bottom
     to: [eastX, topY, northZ], // NE top
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: [1, 1, -1], // direction along diagonal
-    normal: [1, 1, 1], // perpendicular to diagonal
+    tangent: normalize([1, 0, -1]), // horizontal component along diagonal
+    normal: [0, 1, 0], // up
   },
   {
     letter: 'Peh-final',
     from: [eastX, botY, southZ], // SE bottom
     to: [westX, topY, northZ], // NW top
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: [-1, 1, -1], // direction along diagonal
-    normal: [-1, 1, 1], // perpendicular to diagonal
+    tangent: normalize([-1, 0, -1]), // horizontal component along diagonal
+    normal: [0, 1, 0], // up
   },
   {
     letter: 'Tzaddi-final',
     from: [westX, botY, northZ], // NW bottom
     to: [eastX, topY, southZ], // SE top
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: [1, 1, 1], // direction along diagonal
-    normal: [-1, 1, -1], // perpendicular to diagonal
+    tangent: normalize([1, 0, 1]), // horizontal component along diagonal
+    normal: [0, 1, 0], // up
   },
 ];

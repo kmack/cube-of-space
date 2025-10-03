@@ -71,46 +71,51 @@ export function DiagonalLabels({
         const DiagonalLabel = (): React.JSX.Element => {
           const ref = React.useRef<THREE.Group>(null!);
 
+          // Reusable objects to prevent memory allocation every frame
+          const tempObjects = React.useRef({
+            worldPos: new THREE.Vector3(),
+            toCamera: new THREE.Vector3(),
+            tangent: new THREE.Vector3(...d.tangent).normalize(),
+            normal: new THREE.Vector3(),
+            binormal: new THREE.Vector3(),
+            matrix: new THREE.Matrix4(),
+          });
+
           // Simple billboard behavior for diagonal labels
           useFrame(({ camera }) => {
             if (!ref.current) return;
 
-            const worldPos = new THREE.Vector3();
-            ref.current.getWorldPosition(worldPos);
+            const tmp = tempObjects.current;
+
+            ref.current.getWorldPosition(tmp.worldPos);
 
             // Get direction from label to camera
-            const toCamera = new THREE.Vector3()
-              .copy(camera.position)
-              .sub(worldPos)
-              .normalize();
-
-            // Diagonal tangent direction
-            const tangent = new THREE.Vector3(...d.tangent).normalize();
+            tmp.toCamera.copy(camera.position).sub(tmp.worldPos).normalize();
 
             // Project camera direction onto plane perpendicular to diagonal
-            const normal = new THREE.Vector3()
-              .copy(toCamera)
-              .addScaledVector(tangent, -toCamera.dot(tangent))
+            const dot = tmp.toCamera.dot(tmp.tangent);
+            tmp.normal
+              .copy(tmp.toCamera)
+              .addScaledVector(tmp.tangent, -dot)
               .normalize();
 
             // Binormal (up direction for the label)
-            const binormal = new THREE.Vector3()
-              .crossVectors(normal, tangent)
-              .normalize();
+            tmp.binormal.crossVectors(tmp.normal, tmp.tangent).normalize();
 
             // Ensure binormal points generally upward
-            if (binormal.y < 0) {
-              binormal.multiplyScalar(-1);
-              tangent.multiplyScalar(-1);
+            if (tmp.binormal.y < 0) {
+              tmp.binormal.multiplyScalar(-1);
+              tmp.tangent.multiplyScalar(-1);
             }
 
             // Build rotation matrix and apply
-            const matrix = new THREE.Matrix4().makeBasis(
-              tangent,
-              binormal,
-              normal
-            );
-            ref.current.quaternion.setFromRotationMatrix(matrix);
+            tmp.matrix.makeBasis(tmp.tangent, tmp.binormal, tmp.normal);
+            ref.current.quaternion.setFromRotationMatrix(tmp.matrix);
+
+            // Reset tangent for next frame (in case it was flipped)
+            tmp.tangent
+              .set(d.tangent[0], d.tangent[1], d.tangent[2])
+              .normalize();
           });
 
           // Cleanup textures on unmount to prevent memory leaks on iOS

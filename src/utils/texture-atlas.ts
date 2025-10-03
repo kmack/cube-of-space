@@ -38,7 +38,7 @@ export function createTextureAtlas(
   const atlasCanvas = document.createElement('canvas');
   atlasCanvas.width = atlasWidth;
   atlasCanvas.height = atlasHeight;
-  const atlasCtx = atlasCanvas.getContext('2d');
+  const atlasCtx = atlasCanvas.getContext('2d', { alpha: true });
 
   if (!atlasCtx) {
     throw new Error('Could not get atlas canvas context');
@@ -200,7 +200,7 @@ export function createOptimizedCanvas(
   canvas.width = width;
   canvas.height = height;
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: true });
   if (!ctx) {
     throw new Error('Could not get canvas context');
   }

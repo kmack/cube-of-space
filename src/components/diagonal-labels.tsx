@@ -33,7 +33,6 @@ export function DiagonalLabels({
           devicePixelRatio: 1, // Force 1x to prevent memory explosion on iOS
           background: {
             color: 'rgba(96, 96, 96, 0.4)',
-            opacity: 0.45,
             borderRadius: 3,
             padding: 3,
             border: {

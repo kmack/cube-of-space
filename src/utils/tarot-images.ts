@@ -34,7 +34,7 @@ export function getTarotImagePath(keyNumber: number): string {
   if (!filename) {
     throw new Error(`No Tarot image found for key number: ${keyNumber}`);
   }
-  return `/images/major-arcana/${filename}`;
+  return `/images/major-arcana-color/${filename}`;
 }
 
 /**

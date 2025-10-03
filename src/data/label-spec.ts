@@ -21,7 +21,12 @@ export type HebrewLetter =
   | 'Qoph'
   | 'Resh'
   | 'Shin'
-  | 'Tav';
+  | 'Tav'
+  | 'Kaph-final'
+  | 'Mem-final'
+  | 'Nun-final'
+  | 'Peh-final'
+  | 'Tzaddi-final';
 
 type Assoc =
   | { kind: 'element'; value: 'Air' | 'Water' | 'Fire' }
@@ -276,6 +281,43 @@ const S: Record<HebrewLetter, LetterSpec> = {
     keyNumber: 18,
     keyName: 'The Moon',
     association: { kind: 'zodiac', value: 'Pisces' },
+  },
+
+  // Final Letters (diagonal lines through center)
+  'Kaph-final': {
+    letterChar: 'ך',
+    letterName: 'Kaph-final',
+    keyNumber: 10,
+    keyName: 'Wheel of Fortune',
+    association: { kind: 'planet', value: 'Jupiter' },
+  },
+  'Nun-final': {
+    letterChar: 'ן',
+    letterName: 'Nun-final',
+    keyNumber: 13,
+    keyName: 'Death',
+    association: { kind: 'zodiac', value: 'Scorpio' },
+  },
+  'Peh-final': {
+    letterChar: 'ף',
+    letterName: 'Peh-final',
+    keyNumber: 16,
+    keyName: 'The Tower',
+    association: { kind: 'planet', value: 'Mars' },
+  },
+  'Tzaddi-final': {
+    letterChar: 'ץ',
+    letterName: 'Tzaddi-final',
+    keyNumber: 17,
+    keyName: 'The Star',
+    association: { kind: 'zodiac', value: 'Aquarius' },
+  },
+  'Mem-final': {
+    letterChar: 'ם',
+    letterName: 'Mem-final',
+    keyNumber: 12,
+    keyName: 'The Hanged Man',
+    association: { kind: 'element', value: 'Water' },
   },
 };
 

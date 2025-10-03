@@ -1,5 +1,5 @@
 // src/data/geometry.ts
-import type { Face, Edge, Axis } from '../utils/types';
+import type { Face, Edge, Axis, Diagonal } from '../utils/types';
 import { HALF, MOTHER_OFFSET } from './constants';
 
 export const faces: Face[] = [
@@ -134,5 +134,44 @@ export const axes: Axis[] = [
     pos: [0, 0, MOTHER_OFFSET],
     tangent: [0, 0, 1],
     normal: [0, 1, 0],
+  },
+];
+
+// Diagonals - Final Letters connecting opposite corners through center
+// Label positioned at offset from center along the diagonal
+const DIAGONAL_OFFSET = 0.6;
+
+export const diagonals: Diagonal[] = [
+  {
+    letter: 'Kaph-final',
+    from: [eastX, botY, northZ], // NE bottom
+    to: [westX, topY, southZ], // SW top
+    pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
+    tangent: [-1, 1, 1], // direction along diagonal
+    normal: [1, 1, -1], // perpendicular to diagonal
+  },
+  {
+    letter: 'Nun-final',
+    from: [westX, botY, southZ], // SW bottom
+    to: [eastX, topY, northZ], // NE top
+    pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
+    tangent: [1, 1, -1], // direction along diagonal
+    normal: [1, 1, 1], // perpendicular to diagonal
+  },
+  {
+    letter: 'Peh-final',
+    from: [eastX, botY, southZ], // SE bottom
+    to: [westX, topY, northZ], // NW top
+    pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
+    tangent: [-1, 1, -1], // direction along diagonal
+    normal: [-1, 1, 1], // perpendicular to diagonal
+  },
+  {
+    letter: 'Tzaddi-final',
+    from: [westX, botY, northZ], // NW bottom
+    to: [eastX, topY, southZ], // SE top
+    pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
+    tangent: [1, 1, 1], // direction along diagonal
+    normal: [-1, 1, -1], // perpendicular to diagonal
   },
 ];

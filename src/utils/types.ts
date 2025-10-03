@@ -24,3 +24,12 @@ export type Axis = {
   normal: Vec3; // preferred out direction
   tangent: Vec3; // along-axis direction
 };
+
+export type Diagonal = {
+  letter: HebrewLetter;
+  from: Vec3;
+  to: Vec3;
+  pos: Vec3; // label position
+  normal: Vec3; // preferred out direction
+  tangent: Vec3; // along-diagonal direction
+};

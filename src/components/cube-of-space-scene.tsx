@@ -118,8 +118,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {/* Geometry */}
       <FacePlanes opacity={0.8} />
       <WireCube />
-      {showAxisLines && <AxisLines opacity={0.7} color="#88ccff" />}
-      {showDiagonalLines && <DiagonalLines opacity={0.7} color="#ff88cc" />}
+      {showAxisLines && <AxisLines opacity={0.7} />}
+      {showDiagonalLines && <DiagonalLines opacity={0.7} />}
       <FaceLabels useMemoryOptimization={useMemoryOptimization} />
       <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
       <MotherLabels useMemoryOptimization={useMemoryOptimization} />

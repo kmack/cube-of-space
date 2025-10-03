@@ -20,21 +20,21 @@ export function DiagonalLabels({
       {diagonals.map((d, i) => {
         const labelData = createLabelData(d.letter);
 
-        // Create a compact single-line canvas config with aggressive memory optimization
+        // Balanced memory optimization for iOS Safari - crisp rendering at small size
         const canvasConfig: CanvasLabelConfig = {
-          width: 200,
-          height: 40,
-          // Force very small texture size for iOS memory constraints
+          width: 128,
+          height: 32,
+          // Higher resolution texture for crisp rendering, but still small
           targetResolution: {
-            width: 160,
+            width: 128,
             height: 32,
           },
-          useOptimizedFormat: false, // Keep as RGBA for colored backgrounds
+          useOptimizedFormat: false, // Must use RGBA for proper transparency
           devicePixelRatio: 1, // Force 1x to prevent memory explosion on iOS
           background: {
             color: 'rgba(96, 96, 96, 0.4)',
-            borderRadius: 3,
-            padding: 3,
+            borderRadius: 2,
+            padding: 2,
             border: {
               width: 1,
               color: 'rgba(255, 255, 255, 0.8)',
@@ -43,10 +43,10 @@ export function DiagonalLabels({
           texts: [
             {
               content: labelData.glyph,
-              x: 20,
-              y: 20,
+              x: 16,
+              y: 16,
               style: {
-                fontSize: 22,
+                fontSize: 18,
                 fontFamily: 'FrankRuhlLibre, serif',
                 color: 'white',
                 textAlign: 'center',
@@ -55,10 +55,10 @@ export function DiagonalLabels({
             },
             {
               content: labelData.letterName,
-              x: 50,
-              y: 20,
+              x: 40,
+              y: 16,
               style: {
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: 'Inter, sans-serif',
                 color: 'white',
                 textAlign: 'left',
@@ -105,18 +105,46 @@ export function DiagonalLabels({
             }
 
             // Build rotation matrix and apply
-            const matrix = new THREE.Matrix4().makeBasis(tangent, binormal, normal);
+            const matrix = new THREE.Matrix4().makeBasis(
+              tangent,
+              binormal,
+              normal
+            );
             ref.current.quaternion.setFromRotationMatrix(matrix);
           });
+
+          // Cleanup textures on unmount to prevent memory leaks on iOS
+          React.useEffect(() => {
+            const group = ref.current;
+            return () => {
+              if (group) {
+                group.traverse((child) => {
+                  if (child instanceof THREE.Mesh) {
+                    const material = child.material;
+                    if (material instanceof THREE.Material) {
+                      const meshMaterial = material as THREE.MeshBasicMaterial;
+                      if (meshMaterial.map) {
+                        meshMaterial.map.dispose();
+                      }
+                      material.dispose();
+                    }
+                    if (child.geometry) {
+                      child.geometry.dispose();
+                    }
+                  }
+                });
+              }
+            };
+          }, []);
 
           return (
             <group ref={ref} position={d.pos}>
               <RichLabel
                 title=""
                 canvasConfig={canvasConfig}
-                width={200}
-                height={40}
-                scale={LABEL_SCALE * 0.15}
+                width={128}
+                height={32}
+                scale={LABEL_SCALE * 0.075}
                 useMemoryOptimization={useMemoryOptimization}
               />
             </group>

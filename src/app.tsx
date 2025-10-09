@@ -7,7 +7,15 @@ import { AnimatedGradientBackground } from './components/animated-gradient-backg
 export function App(): React.JSX.Element {
   return (
     <>
-      <Leva collapsed />
+      <Leva
+        collapsed
+        theme={{
+          sizes: {
+            rootWidth: '320px',
+            controlWidth: '130px',
+          },
+        }}
+      />
       <AnimatedGradientBackground />
       <CubeOfSpaceScene />
     </>

@@ -36,6 +36,23 @@ export function EnergyFlow({
     return end.sub(start);
   }, [startPosition, endPosition]);
 
+  // Memoize geometry to avoid recreation
+  const sphereGeometry = React.useMemo(
+    () => new THREE.SphereGeometry(1, 8, 6),
+    []
+  );
+
+  // Memoize material to avoid recreation when props change
+  const particleMaterial = React.useMemo(() => {
+    const material = new THREE.MeshBasicMaterial({
+      color,
+      transparent: true,
+      toneMapped: false,
+    });
+    material.opacity = opacity;
+    return material;
+  }, [color, opacity]);
+
   useFrame((_, delta) => {
     if (!meshRef.current) return;
 
@@ -81,14 +98,9 @@ export function EnergyFlow({
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, particleCount]}>
-      <sphereGeometry args={[1, 8, 6]} />
-      <meshBasicMaterial
-        color={color}
-        transparent
-        opacity={opacity}
-        toneMapped={false}
-      />
-    </instancedMesh>
+    <instancedMesh
+      ref={meshRef}
+      args={[sphereGeometry, particleMaterial, particleCount]}
+    />
   );
 }

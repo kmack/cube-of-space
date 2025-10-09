@@ -11,33 +11,40 @@ interface EdgeLabelsProps {
   useMemoryOptimization?: boolean;
 }
 
-export function EdgeLabels({
+function EdgeLabelsComponent({
   useMemoryOptimization = true,
 }: EdgeLabelsProps): React.JSX.Element {
+  // Memoize edge label data and positions to avoid recalculation
+  const edgeLabelInfo = React.useMemo(() => {
+    return edges.map((e) => {
+      const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
+      const labelData = createLabelData(e.letter);
+      // Calculate offset position - push label outward from center along edge normal
+      const offsetPos: [number, number, number] = [
+        e.pos[0] +
+          (e.pos[0] > 0 ? LABEL_OFFSET : e.pos[0] < 0 ? -LABEL_OFFSET : 0),
+        e.pos[1] +
+          (e.pos[1] > 0 ? LABEL_OFFSET : e.pos[1] < 0 ? -LABEL_OFFSET : 0),
+        e.pos[2] +
+          (e.pos[2] > 0 ? LABEL_OFFSET : e.pos[2] < 0 ? -LABEL_OFFSET : 0),
+      ];
+      return { labelData, offsetPos, rotation: rot };
+    });
+  }, []);
+
   return (
     <>
-      {edges.map((e, i) => {
-        const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
-        const labelData = createLabelData(e.letter);
-        // Calculate offset position - push label outward from center along edge normal
-        const offsetPos: [number, number, number] = [
-          e.pos[0] +
-            (e.pos[0] > 0 ? LABEL_OFFSET : e.pos[0] < 0 ? -LABEL_OFFSET : 0),
-          e.pos[1] +
-            (e.pos[1] > 0 ? LABEL_OFFSET : e.pos[1] < 0 ? -LABEL_OFFSET : 0),
-          e.pos[2] +
-            (e.pos[2] > 0 ? LABEL_OFFSET : e.pos[2] < 0 ? -LABEL_OFFSET : 0),
-        ];
+      {edgeLabelInfo.map((info, i) => {
         return (
-          <group key={i} position={offsetPos} rotation={rot}>
+          <group key={i} position={info.offsetPos} rotation={info.rotation}>
             <RichLabel
-              title={labelData.title}
-              subtitle={labelData.subtitle}
-              hebrewLetter={labelData.glyph}
-              letterName={labelData.letterName}
-              assocGlyph={labelData.assocGlyph}
-              assocName={labelData.assocName}
-              imagePath={labelData.imagePath}
+              title={info.labelData.title}
+              subtitle={info.labelData.subtitle}
+              hebrewLetter={info.labelData.glyph}
+              letterName={info.labelData.letterName}
+              assocGlyph={info.labelData.assocGlyph}
+              assocName={info.labelData.assocName}
+              imagePath={info.labelData.imagePath}
               scale={LABEL_SCALE}
               background={EDGE_LABEL_BACKGROUND}
               hebrewFont="FrankRuhlLibre, serif"
@@ -50,3 +57,6 @@ export function EdgeLabels({
     </>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const EdgeLabels = React.memo(EdgeLabelsComponent);

@@ -13,7 +13,7 @@ export type Label3DProps = {
   color?: string;
 };
 
-export function Label3D({
+function Label3DComponent({
   title,
   subtitle,
   hebrewLetter: hebrewLetter,
@@ -99,3 +99,6 @@ export function Label3D({
     </group>
   );
 }
+
+// Memoize to prevent unnecessary re-renders when props haven't changed
+export const Label3D = React.memo(Label3DComponent);

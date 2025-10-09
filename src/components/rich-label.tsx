@@ -172,6 +172,9 @@ export function RichLabel({
     };
   }, [texture]);
 
+  // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
+  const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+
   if (!texture) {
     return <group />; // Return empty group while loading
   }
@@ -190,8 +193,8 @@ export function RichLabel({
       scale={finalScale}
       rotation={[Math.PI, 0, 0]}
       renderOrder={renderOrder}
+      geometry={planeGeometry}
     >
-      <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={texture}
         transparent
@@ -240,6 +243,9 @@ export function ComplexRichLabel({
     };
   }, [canvasConfig, texture, gl]);
 
+  // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
+  const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+
   if (!texture) {
     return <group />;
   }
@@ -257,8 +263,8 @@ export function ComplexRichLabel({
       scale={finalScale}
       rotation={[Math.PI, 0, 0]}
       renderOrder={renderOrder}
+      geometry={planeGeometry}
     >
-      <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={texture}
         transparent

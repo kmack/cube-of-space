@@ -19,15 +19,8 @@ import { EdgePositionLabels } from './edge-position-labels';
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
-  // UI Controls
-  const {
-    showGrid,
-    showAxesHelper,
-    showAxisLines,
-    showDiagonalLines,
-    showEdgePositions,
-    useMemoryOptimization,
-  } = useControls({
+  // Debug controls
+  const { showGrid, showAxesHelper, useMemoryOptimization } = useControls('Debug', {
     showGrid: {
       value: false,
       label: 'Show Ground Grid',
@@ -36,22 +29,41 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       value: false,
       label: 'Show Axes Helper',
     },
-    showAxisLines: {
+    useMemoryOptimization: {
       value: true,
-      label: 'Show Axis Lines',
+      label: 'Memory Optimization',
     },
-    showDiagonalLines: {
-      value: true,
-      label: 'Show Diagonal Lines',
-    },
+  });
+
+  // UI Controls
+  const { showEdgePositions } = useControls({
     showEdgePositions: {
       value: true,
       label: 'Show Edge Positions',
     },
-    // Memory optimization controls
-    useMemoryOptimization: {
+  });
+
+  // Mother Letters controls
+  const { showAxisLines, showMotherLetters } = useControls('Mother Letters', {
+    showAxisLines: {
       value: true,
-      label: 'Memory Optimization',
+      label: 'Show Axis Lines',
+    },
+    showMotherLetters: {
+      value: true,
+      label: 'Mother Letters',
+    },
+  });
+
+  // Final Letters controls
+  const { showDiagonalLines, showDiagonals } = useControls('Final Letters', {
+    showDiagonalLines: {
+      value: true,
+      label: 'Show Diagonal Lines',
+    },
+    showDiagonals: {
+      value: true,
+      label: 'Diagonals',
     },
   });
 
@@ -98,23 +110,12 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   });
 
   // Element visibility controls
-  const { showEdges, showMotherLetters, showDiagonals } = useControls(
-    'Element Visibility',
-    {
-      showEdges: {
-        value: true,
-        label: 'Edges',
-      },
-      showMotherLetters: {
-        value: true,
-        label: 'Mother Letters',
-      },
-      showDiagonals: {
-        value: true,
-        label: 'Diagonals',
-      },
-    }
-  );
+  const { showEdges } = useControls('Element Visibility', {
+    showEdges: {
+      value: true,
+      label: 'Edges',
+    },
+  });
 
   return (
     <Canvas

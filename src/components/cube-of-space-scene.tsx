@@ -19,21 +19,38 @@ import { EdgePositionLabels } from './edge-position-labels';
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
-  // Debug controls
-  const { showGrid, showAxesHelper, useMemoryOptimization } = useControls(
-    'Debug',
-    {
-      showGrid: {
-        value: false,
-        label: 'Show Ground Grid',
-      },
-      showAxesHelper: {
-        value: false,
-        label: 'Show Axes Helper',
-      },
-      useMemoryOptimization: {
+  // Letters controls
+  const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
+    useControls('Letters', {
+      showEdges: {
         value: true,
-        label: 'Memory Optimization',
+        label: 'Single Letters',
+      },
+      showDoubleLetters: {
+        value: true,
+        label: 'Double Letters',
+      },
+      showMotherLetters: {
+        value: true,
+        label: 'Mother Letters',
+      },
+      showDiagonals: {
+        value: true,
+        label: 'Final Letters',
+      },
+    });
+
+  // Faces controls
+  const { showFaces, opaqueFaces } = useControls(
+    'Faces',
+    {
+      showFaces: {
+        value: true,
+        label: 'Show Faces',
+      },
+      opaqueFaces: {
+        value: false,
+        label: 'Opaque Faces',
       },
     },
     { collapsed: true }
@@ -93,42 +110,25 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       { collapsed: true }
     );
 
-  // Faces controls
-  const { showFaces, opaqueFaces } = useControls(
-    'Faces',
+  // Debug controls
+  const { showGrid, showAxesHelper, useMemoryOptimization } = useControls(
+    'Debug',
     {
-      showFaces: {
-        value: true,
-        label: 'Show Faces',
-      },
-      opaqueFaces: {
+      showGrid: {
         value: false,
-        label: 'Opaque Faces',
+        label: 'Show Ground Grid',
+      },
+      showAxesHelper: {
+        value: false,
+        label: 'Show Axes Helper',
+      },
+      useMemoryOptimization: {
+        value: true,
+        label: 'Memory Optimization',
       },
     },
     { collapsed: true }
   );
-
-  // Letters controls
-  const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
-    useControls('Letters', {
-      showEdges: {
-        value: true,
-        label: 'Single Letters',
-      },
-      showDoubleLetters: {
-        value: true,
-        label: 'Double Letters',
-      },
-      showMotherLetters: {
-        value: true,
-        label: 'Mother Letters',
-      },
-      showDiagonals: {
-        value: true,
-        label: 'Final Letters',
-      },
-    });
 
   return (
     <Canvas

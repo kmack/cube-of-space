@@ -83,6 +83,7 @@ export function RichLabel({
 
   React.useEffect(() => {
     let mounted = true;
+    let currentTexture: THREE.Texture | null = null;
 
     // Use custom canvas config if provided, otherwise use Hebrew label helper
     const texturePromise = canvasConfig
@@ -134,7 +135,11 @@ export function RichLabel({
           // Enable anisotropic filtering for better quality on scaled textures
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy); // Use up to 4x anisotropic filtering
+          currentTexture = tex;
           setTexture(tex);
+        } else {
+          // Dispose texture if component unmounted before promise resolved
+          tex.dispose();
         }
       })
       .catch((error) => {
@@ -143,6 +148,11 @@ export function RichLabel({
 
     return () => {
       mounted = false;
+      // Dispose the current texture when component unmounts or dependencies change
+      if (currentTexture) {
+        currentTexture.dispose();
+        currentTexture = null;
+      }
     };
   }, [
     title,
@@ -162,15 +172,6 @@ export function RichLabel({
     useMemoryOptimization,
     gl,
   ]);
-
-  // Separate cleanup effect for proper disposal
-  React.useEffect(() => {
-    return () => {
-      if (texture) {
-        texture.dispose();
-      }
-    };
-  }, [texture]);
 
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
@@ -221,6 +222,7 @@ export function ComplexRichLabel({
 
   React.useEffect(() => {
     let mounted = true;
+    let currentTexture: THREE.Texture | null = null;
 
     createCanvasTexture(canvasConfig)
       .then((tex) => {
@@ -228,7 +230,11 @@ export function ComplexRichLabel({
           // Enable anisotropic filtering for better quality
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy);
+          currentTexture = tex;
           setTexture(tex);
+        } else {
+          // Dispose texture if component unmounted before promise resolved
+          tex.dispose();
         }
       })
       .catch((error) => {
@@ -237,11 +243,13 @@ export function ComplexRichLabel({
 
     return () => {
       mounted = false;
-      if (texture) {
-        texture.dispose();
+      // Dispose the current texture when component unmounts or dependencies change
+      if (currentTexture) {
+        currentTexture.dispose();
+        currentTexture = null;
       }
     };
-  }, [canvasConfig, texture, gl]);
+  }, [canvasConfig, gl]);
 
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);

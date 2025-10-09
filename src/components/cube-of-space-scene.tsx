@@ -20,102 +20,115 @@ import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
   // Debug controls
-  const { showGrid, showAxesHelper, useMemoryOptimization } = useControls('Debug', {
-    showGrid: {
-      value: false,
-      label: 'Show Ground Grid',
+  const { showGrid, showAxesHelper, useMemoryOptimization } = useControls(
+    'Debug',
+    {
+      showGrid: {
+        value: false,
+        label: 'Show Ground Grid',
+      },
+      showAxesHelper: {
+        value: false,
+        label: 'Show Axes Helper',
+      },
+      useMemoryOptimization: {
+        value: true,
+        label: 'Memory Optimization',
+      },
     },
-    showAxesHelper: {
-      value: false,
-      label: 'Show Axes Helper',
-    },
-    useMemoryOptimization: {
-      value: true,
-      label: 'Memory Optimization',
-    },
-  });
+    { collapsed: true }
+  );
 
-  // UI Controls
-  const { showEdgePositions } = useControls({
-    showEdgePositions: {
-      value: true,
-      label: 'Show Edge Positions',
+  // Axes controls
+  const { showAxisLines, showDiagonalLines, showEdgePositions } = useControls(
+    'Axes',
+    {
+      showAxisLines: {
+        value: true,
+        label: 'Show Axis Lines',
+      },
+      showDiagonalLines: {
+        value: true,
+        label: 'Show Diagonal Lines',
+      },
+      showEdgePositions: {
+        value: true,
+        label: 'Show Edge Positions',
+      },
     },
-  });
-
-  // Mother Letters controls
-  const { showAxisLines, showMotherLetters } = useControls('Mother Letters', {
-    showAxisLines: {
-      value: true,
-      label: 'Show Axis Lines',
-    },
-    showMotherLetters: {
-      value: true,
-      label: 'Mother Letters',
-    },
-  });
-
-  // Final Letters controls
-  const { showDiagonalLines, showDiagonals } = useControls('Final Letters', {
-    showDiagonalLines: {
-      value: true,
-      label: 'Show Diagonal Lines',
-    },
-    showDiagonals: {
-      value: true,
-      label: 'Diagonals',
-    },
-  });
+    { collapsed: true }
+  );
 
   // Energy Flow controls
   const { showEnergyFlow, energySpeed, energyOpacity, energyParticles } =
-    useControls('Energy Flow', {
-      showEnergyFlow: {
-        value: true,
-        label: 'Show Energy Flow',
+    useControls(
+      'Energy Flow',
+      {
+        showEnergyFlow: {
+          value: true,
+          label: 'Show Energy Flow',
+        },
+        energySpeed: {
+          value: 1.0,
+          min: 0.1,
+          max: 3.0,
+          step: 0.1,
+          label: 'Speed',
+        },
+        energyOpacity: {
+          value: 0.6,
+          min: 0.1,
+          max: 1.0,
+          step: 0.1,
+          label: 'Opacity',
+        },
+        energyParticles: {
+          value: 8,
+          min: 4,
+          max: 16,
+          step: 2,
+          label: 'Particles',
+        },
       },
-      energySpeed: {
-        value: 1.0,
-        min: 0.1,
-        max: 3.0,
-        step: 0.1,
-        label: 'Speed',
-      },
-      energyOpacity: {
-        value: 0.6,
-        min: 0.1,
-        max: 1.0,
-        step: 0.1,
-        label: 'Opacity',
-      },
-      energyParticles: {
-        value: 8,
-        min: 4,
-        max: 16,
-        step: 2,
-        label: 'Particles',
-      },
-    });
+      { collapsed: true }
+    );
 
   // Faces controls
-  const { showFaces, opaqueFaces } = useControls('Faces', {
-    showFaces: {
-      value: true,
-      label: 'Show Faces',
+  const { showFaces, opaqueFaces } = useControls(
+    'Faces',
+    {
+      showFaces: {
+        value: true,
+        label: 'Show Faces',
+      },
+      opaqueFaces: {
+        value: false,
+        label: 'Opaque Faces',
+      },
     },
-    opaqueFaces: {
-      value: false,
-      label: 'Opaque Faces',
-    },
-  });
+    { collapsed: true }
+  );
 
-  // Element visibility controls
-  const { showEdges } = useControls('Element Visibility', {
-    showEdges: {
-      value: true,
-      label: 'Edges',
-    },
-  });
+  // Letters controls
+  const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
+    useControls('Letters', {
+      showEdges: {
+        value: true,
+        label: 'Single Letters',
+      },
+      showDoubleLetters: {
+        value: true,
+        label: 'Double Letters',
+      },
+      showMotherLetters: {
+        value: true,
+        label: 'Mother Letters',
+      },
+      showDiagonals: {
+        value: true,
+        label: 'Final Letters',
+      },
+    });
 
   return (
     <Canvas
@@ -158,7 +171,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <WireCube />
       {showAxisLines && <AxisLines opacity={0.7} />}
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}
-      {showFaces && (
+      {showFaces && showDoubleLetters && (
         <FaceLabels useMemoryOptimization={useMemoryOptimization} />
       )}
       {showEdges && (

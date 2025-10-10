@@ -166,6 +166,7 @@ export function RichLabel({
         currentTexture = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- useMemoryOptimization intentionally excluded to prevent unnecessary texture recreation
   }, [
     title,
     subtitle,
@@ -181,7 +182,6 @@ export function RichLabel({
     hebrewFont,
     uiFont,
     canvasConfig,
-    // REMOVED: useMemoryOptimization - causes unnecessary texture recreation on parent re-renders
     gl,
   ]);
 

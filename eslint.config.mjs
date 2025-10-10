@@ -100,6 +100,7 @@ export default [
             'transparent',
             'opacity',
             'depthWrite',
+            'depthTest',
             'polygonOffset',
             'polygonOffsetFactor',
             'polygonOffsetUnits',

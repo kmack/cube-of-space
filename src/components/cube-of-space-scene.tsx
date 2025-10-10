@@ -167,10 +167,20 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <WireCube />
       {showAxisLines && <AxisLines opacity={0.7} />}
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}
-      {showFaces && showDoubleLetters && <FaceLabels />}
-      {showEdges && <EdgeLabels />}
-      {showMotherLetters && <MotherLabels />}
-      {showDiagonals && <DiagonalLabels />}
+
+      {/* Keep label components mounted, toggle visibility to prevent texture churn */}
+      <group visible={showFaces && showDoubleLetters}>
+        <FaceLabels />
+      </group>
+      <group visible={showEdges}>
+        <EdgeLabels />
+      </group>
+      <group visible={showMotherLetters}>
+        <MotherLabels />
+      </group>
+      <group visible={showDiagonals}>
+        <DiagonalLabels />
+      </group>
 
       {/* Energy Flow */}
       <EdgeEnergyFlows

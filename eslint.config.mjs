@@ -106,6 +106,7 @@ export default [
             'side',
             'toneMapped',
             'map',
+            'visible',
           ],
         },
       ],

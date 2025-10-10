@@ -176,6 +176,13 @@ export function RichLabel({
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
 
+  // Dispose geometry on unmount to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      planeGeometry.dispose();
+    };
+  }, [planeGeometry]);
+
   if (!texture) {
     return <group />; // Return empty group while loading
   }
@@ -253,6 +260,13 @@ export function ComplexRichLabel({
 
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+
+  // Dispose geometry on unmount to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      planeGeometry.dispose();
+    };
+  }, [planeGeometry]);
 
   if (!texture) {
     return <group />;

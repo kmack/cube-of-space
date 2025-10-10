@@ -53,9 +53,8 @@ export function EdgePositionLabels({
         const positionText = POSITION_LABELS[edge.letter];
         if (!positionText) return null;
 
-        // Calculate position from a lower origin to move labels down
+        // Calculate position with offset to avoid overlap with edge labels
         const positionOffset = LABEL_OFFSET * 10; // Larger offset to avoid overlap with edge labels
-        const originY = -0.5; // Lower origin point for positioning
         const offsetPos: [number, number, number] = [
           edge.pos[0] +
             (edge.pos[0] > 0
@@ -63,8 +62,7 @@ export function EdgePositionLabels({
               : edge.pos[0] < 0
                 ? -positionOffset
                 : 0),
-          originY +
-            edge.pos[1] +
+          edge.pos[1] +
             (edge.pos[1] > 0
               ? positionOffset
               : edge.pos[1] < 0
@@ -97,7 +95,7 @@ export function EdgePositionLabels({
               renderOrder={1}
               materialSide={THREE.DoubleSide}
               depthTest={false}
-              flipY={false}
+              flipY={true}
               canvasConfig={{
                 width: 256,
                 height: 64,

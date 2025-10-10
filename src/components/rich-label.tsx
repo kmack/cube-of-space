@@ -59,6 +59,12 @@ export type RichLabelProps = {
 
   // Material side for billboard compatibility
   materialSide?: THREE.Side;
+
+  // Depth testing for overlay labels (false = always on top)
+  depthTest?: boolean;
+
+  // Skip 180° flip for billboarded labels
+  flipY?: boolean;
 };
 
 export function RichLabel({
@@ -81,6 +87,8 @@ export function RichLabel({
   useMemoryOptimization = true, // Enable by default for iOS compatibility
   renderOrder = 0,
   materialSide = THREE.BackSide, // BackSide for normal use, DoubleSide for billboards
+  depthTest = true, // true for normal labels, false for overlay UI labels
+  flipY = true, // true for normal labels, false for billboards
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
@@ -203,7 +211,7 @@ export function RichLabel({
   return (
     <mesh
       scale={finalScale}
-      rotation={[Math.PI, 0, 0]}
+      rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
       renderOrder={renderOrder}
       geometry={planeGeometry}
     >
@@ -213,6 +221,7 @@ export function RichLabel({
         side={materialSide}
         toneMapped={false}
         depthWrite={false}
+        depthTest={depthTest}
       />
     </mesh>
   );

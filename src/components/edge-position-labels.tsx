@@ -34,9 +34,6 @@ const POSITION_LABELS: Record<string, string> = {
   Qoph: 'South Below',
 };
 
-// Stable background object to prevent texture recreation on every render
-const TRANSPARENT_BACKGROUND = { color: 'transparent' };
-
 interface EdgePositionLabelsProps extends PositionedComponentProps {
   // All props inherited from PositionedComponentProps
 }
@@ -94,12 +91,13 @@ export function EdgePositionLabels({
               title={positionText}
               color={color}
               scale={LABEL_SCALE * 0.5}
-              background={TRANSPARENT_BACKGROUND}
               width={256}
               height={64}
               uiFont="Inter, sans-serif"
               renderOrder={1}
               materialSide={THREE.DoubleSide}
+              depthTest={false}
+              flipY={false}
               canvasConfig={{
                 width: 256,
                 height: 64,

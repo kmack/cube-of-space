@@ -1,11 +1,13 @@
 // src/components/edge-position-labels.tsx
 import * as React from 'react';
+import * as THREE from 'three';
 import { Billboard } from '@react-three/drei';
 import { edges } from '../data/geometry';
 import type { PositionedComponentProps } from '../types/component-props';
 import { RichLabel } from './rich-label';
 import { LABEL_SCALE } from '../data/label-styles';
 import { LABEL_OFFSET } from '../data/constants';
+import type { CanvasLabelConfig } from '../utils/canvas-texture';
 
 // Map Hebrew letters to their geometric position descriptions
 const POSITION_LABELS: Record<string, string> = {
@@ -51,9 +53,8 @@ export function EdgePositionLabels({
         const positionText = POSITION_LABELS[edge.letter];
         if (!positionText) return null;
 
-        // Calculate position from a lower origin to move labels down
+        // Calculate position with offset to avoid overlap with edge labels
         const positionOffset = LABEL_OFFSET * 10; // Larger offset to avoid overlap with edge labels
-        const originY = -0.5; // Lower origin point for positioning
         const offsetPos: [number, number, number] = [
           edge.pos[0] +
             (edge.pos[0] > 0
@@ -61,8 +62,7 @@ export function EdgePositionLabels({
               : edge.pos[0] < 0
                 ? -positionOffset
                 : 0),
-          originY +
-            edge.pos[1] +
+          edge.pos[1] +
             (edge.pos[1] > 0
               ? positionOffset
               : edge.pos[1] < 0
@@ -88,10 +88,35 @@ export function EdgePositionLabels({
             <RichLabel
               title={positionText}
               color={color}
-              scale={LABEL_SCALE * 2.5}
-              background={{ color: 'transparent' }}
+              scale={LABEL_SCALE * 0.5}
+              width={256}
+              height={64}
               uiFont="Inter, sans-serif"
               renderOrder={1}
+              materialSide={THREE.DoubleSide}
+              depthTest={false}
+              flipY={true}
+              canvasConfig={{
+                width: 256,
+                height: 64,
+                devicePixelRatio: 1,
+                useOptimizedFormat: false,
+                background: { color: 'transparent' },
+                texts: [
+                  {
+                    content: positionText,
+                    x: 128,
+                    y: 32,
+                    style: {
+                      fontSize: 22,
+                      fontFamily: 'Inter, sans-serif',
+                      color,
+                      textAlign: 'center',
+                      textBaseline: 'middle',
+                    },
+                  },
+                ],
+              } as CanvasLabelConfig}
             />
           </Billboard>
         );

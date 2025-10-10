@@ -111,7 +111,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     );
 
   // Debug controls
-  const { showGrid, showAxesHelper, useMemoryOptimization } = useControls(
+  const { showGrid, showAxesHelper } = useControls(
     'Debug',
     {
       showGrid: {
@@ -121,10 +121,6 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       showAxesHelper: {
         value: false,
         label: 'Show Axes Helper',
-      },
-      useMemoryOptimization: {
-        value: true,
-        label: 'Memory Optimization',
       },
     },
     { collapsed: true }
@@ -171,18 +167,20 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <WireCube />
       {showAxisLines && <AxisLines opacity={0.7} />}
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}
-      {showFaces && showDoubleLetters && (
-        <FaceLabels useMemoryOptimization={useMemoryOptimization} />
-      )}
-      {showEdges && (
-        <EdgeLabels useMemoryOptimization={useMemoryOptimization} />
-      )}
-      {showMotherLetters && (
-        <MotherLabels useMemoryOptimization={useMemoryOptimization} />
-      )}
-      {showDiagonals && (
-        <DiagonalLabels useMemoryOptimization={useMemoryOptimization} />
-      )}
+
+      {/* Keep label components mounted, toggle visibility to prevent texture churn */}
+      <group visible={showFaces && showDoubleLetters}>
+        <FaceLabels />
+      </group>
+      <group visible={showEdges}>
+        <EdgeLabels />
+      </group>
+      <group visible={showMotherLetters}>
+        <MotherLabels />
+      </group>
+      <group visible={showDiagonals}>
+        <DiagonalLabels />
+      </group>
 
       {/* Energy Flow */}
       <EdgeEnergyFlows

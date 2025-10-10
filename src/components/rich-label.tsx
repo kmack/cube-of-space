@@ -56,6 +56,15 @@ export type RichLabelProps = {
 
   // Render order for transparency sorting
   renderOrder?: number;
+
+  // Material side for billboard compatibility
+  materialSide?: THREE.Side;
+
+  // Depth testing for overlay labels (false = always on top)
+  depthTest?: boolean;
+
+  // Skip 180° flip for billboarded labels
+  flipY?: boolean;
 };
 
 export function RichLabel({
@@ -77,12 +86,16 @@ export function RichLabel({
   canvasConfig,
   useMemoryOptimization = true, // Enable by default for iOS compatibility
   renderOrder = 0,
+  materialSide = THREE.BackSide, // BackSide for normal use, DoubleSide for billboards
+  depthTest = true, // true for normal labels, false for overlay UI labels
+  flipY = true, // true for normal labels, false for billboards
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
     let mounted = true;
+    let currentTexture: THREE.Texture | null = null;
 
     // Use custom canvas config if provided, otherwise use Hebrew label helper
     const texturePromise = canvasConfig
@@ -134,7 +147,11 @@ export function RichLabel({
           // Enable anisotropic filtering for better quality on scaled textures
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy); // Use up to 4x anisotropic filtering
+          currentTexture = tex;
           setTexture(tex);
+        } else {
+          // Dispose texture if component unmounted before promise resolved
+          tex.dispose();
         }
       })
       .catch((error) => {
@@ -143,7 +160,13 @@ export function RichLabel({
 
     return () => {
       mounted = false;
+      // Dispose the current texture when component unmounts or dependencies change
+      if (currentTexture) {
+        currentTexture.dispose();
+        currentTexture = null;
+      }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- useMemoryOptimization intentionally excluded to prevent unnecessary texture recreation
   }, [
     title,
     subtitle,
@@ -159,21 +182,18 @@ export function RichLabel({
     hebrewFont,
     uiFont,
     canvasConfig,
-    useMemoryOptimization,
     gl,
   ]);
 
-  // Separate cleanup effect for proper disposal
-  React.useEffect(() => {
-    return () => {
-      if (texture) {
-        texture.dispose();
-      }
-    };
-  }, [texture]);
-
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+
+  // Dispose geometry on unmount to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      planeGeometry.dispose();
+    };
+  }, [planeGeometry]);
 
   if (!texture) {
     return <group />; // Return empty group while loading
@@ -191,16 +211,17 @@ export function RichLabel({
   return (
     <mesh
       scale={finalScale}
-      rotation={[Math.PI, 0, 0]}
+      rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
       renderOrder={renderOrder}
       geometry={planeGeometry}
     >
       <meshBasicMaterial
         map={texture}
         transparent
-        side={THREE.BackSide}
+        side={materialSide}
         toneMapped={false}
         depthWrite={false}
+        depthTest={depthTest}
       />
     </mesh>
   );
@@ -221,6 +242,7 @@ export function ComplexRichLabel({
 
   React.useEffect(() => {
     let mounted = true;
+    let currentTexture: THREE.Texture | null = null;
 
     createCanvasTexture(canvasConfig)
       .then((tex) => {
@@ -228,7 +250,11 @@ export function ComplexRichLabel({
           // Enable anisotropic filtering for better quality
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy);
+          currentTexture = tex;
           setTexture(tex);
+        } else {
+          // Dispose texture if component unmounted before promise resolved
+          tex.dispose();
         }
       })
       .catch((error) => {
@@ -237,14 +263,23 @@ export function ComplexRichLabel({
 
     return () => {
       mounted = false;
-      if (texture) {
-        texture.dispose();
+      // Dispose the current texture when component unmounts or dependencies change
+      if (currentTexture) {
+        currentTexture.dispose();
+        currentTexture = null;
       }
     };
-  }, [canvasConfig, texture, gl]);
+  }, [canvasConfig, gl]);
 
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+
+  // Dispose geometry on unmount to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      planeGeometry.dispose();
+    };
+  }, [planeGeometry]);
 
   if (!texture) {
     return <group />;

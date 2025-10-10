@@ -56,6 +56,9 @@ export type RichLabelProps = {
 
   // Render order for transparency sorting
   renderOrder?: number;
+
+  // Material side for billboard compatibility
+  materialSide?: THREE.Side;
 };
 
 export function RichLabel({
@@ -77,6 +80,7 @@ export function RichLabel({
   canvasConfig,
   useMemoryOptimization = true, // Enable by default for iOS compatibility
   renderOrder = 0,
+  materialSide = THREE.BackSide, // BackSide for normal use, DoubleSide for billboards
 }: RichLabelProps): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
@@ -169,7 +173,7 @@ export function RichLabel({
     hebrewFont,
     uiFont,
     canvasConfig,
-    useMemoryOptimization,
+    // REMOVED: useMemoryOptimization - causes unnecessary texture recreation on parent re-renders
     gl,
   ]);
 
@@ -206,7 +210,7 @@ export function RichLabel({
       <meshBasicMaterial
         map={texture}
         transparent
-        side={THREE.BackSide}
+        side={materialSide}
         toneMapped={false}
         depthWrite={false}
       />

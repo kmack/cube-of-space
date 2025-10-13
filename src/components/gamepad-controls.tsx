@@ -10,6 +10,8 @@ interface GamepadControlsProps {
   zoomSpeed?: number;
   panSpeed?: number;
   rotationCurve?: number; // Exponent for rotation curve (1.0 = linear, >1.0 = exponential)
+  defaultCameraPosition?: [number, number, number];
+  defaultTarget?: [number, number, number];
 }
 
 /**
@@ -28,12 +30,15 @@ export function GamepadControls({
   zoomSpeed = 3.0,
   panSpeed = 2.0,
   rotationCurve = 2.0,
+  defaultCameraPosition = [4, 3, 6],
+  defaultTarget = [0, 0, 0],
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
   const gamepadRef = useRef(gamepad);
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
+  const lastRightStickPressRef = useRef<boolean>(false);
 
   // Keep gamepad ref up to date
   useEffect(() => {
@@ -71,6 +76,16 @@ export function GamepadControls({
 
       const currentGamepad = gamepadRef.current;
       let hasGamepadInput = false;
+
+      // Right stick press: Reset view to defaults (with debouncing)
+      if (currentGamepad.buttons.rightStickPress && !lastRightStickPressRef.current) {
+        // Button just pressed (rising edge)
+        camera.position.set(...defaultCameraPosition);
+        orbitControls.target.set(...defaultTarget);
+        camera.updateMatrixWorld();
+        orbitControls.update();
+      }
+      lastRightStickPressRef.current = currentGamepad.buttons.rightStickPress;
 
       // Left stick X: Pan horizontally
       if (Math.abs(currentGamepad.leftStickX) > 0) {
@@ -148,6 +163,8 @@ export function GamepadControls({
     zoomSpeed,
     panSpeed,
     rotationCurve,
+    defaultCameraPosition,
+    defaultTarget,
   ]);
 
   return null;

@@ -11,6 +11,9 @@ export interface GamepadState {
     left: number;
     right: number;
   };
+  buttons: {
+    rightStickPress: boolean;
+  };
 }
 
 const DEADZONE = 0.15; // Ignore small stick movements
@@ -31,6 +34,7 @@ export function useGamepad(): GamepadState {
     rightStickX: 0,
     rightStickY: 0,
     triggers: { left: 0, right: 0 },
+    buttons: { rightStickPress: false },
   });
 
   const animationFrameRef = useRef<number | null>(null);
@@ -53,6 +57,7 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
+          buttons: { rightStickPress: false },
         });
       }
     };
@@ -65,7 +70,7 @@ export function useGamepad(): GamepadState {
       if (gamepad) {
         // Xbox controller mapping (standard layout):
         // Axes: 0=LeftX, 1=LeftY, 2=RightX, 3=RightY
-        // Buttons: 6=LT, 7=RT (as buttons), or axes 2,5 (as analog)
+        // Buttons: 6=LT, 7=RT (as buttons), 11=RightStickPress
 
         const leftStickX = applyDeadzone(gamepad.axes[0] || 0, DEADZONE);
         const leftStickY = applyDeadzone(gamepad.axes[1] || 0, DEADZONE);
@@ -78,6 +83,9 @@ export function useGamepad(): GamepadState {
         const rightTrigger =
           gamepad.buttons[7]?.value || (gamepad.axes[5] + 1) / 2 || 0;
 
+        // Right stick button (R3)
+        const rightStickPress = gamepad.buttons[11]?.pressed || false;
+
         setState({
           connected: true,
           leftStickX,
@@ -87,6 +95,9 @@ export function useGamepad(): GamepadState {
           triggers: {
             left: leftTrigger,
             right: rightTrigger,
+          },
+          buttons: {
+            rightStickPress,
           },
         });
       } else if (gamepadIndex !== null) {
@@ -98,6 +109,7 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
+          buttons: { rightStickPress: false },
         });
       }
 

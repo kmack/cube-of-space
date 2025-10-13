@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Grid, OrbitControls } from '@react-three/drei';
 import { useControls } from 'leva';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 import { FacePlanes } from './face-planes';
 import { WireCube } from './wire-cube';
@@ -20,7 +21,7 @@ import { GamepadControls } from './gamepad-controls';
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
-  const orbitControlsRef = React.useRef(null);
+  const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
   const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
@@ -149,8 +150,9 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       />
       <GamepadControls
         controlsRef={orbitControlsRef}
-        rotateSpeed={2.0}
+        rotateSpeed={4.5}
         zoomSpeed={3.0}
+        rotationCurve={2.5}
       />
 
       {/* Ground grid */}

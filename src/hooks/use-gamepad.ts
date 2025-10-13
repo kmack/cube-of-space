@@ -35,13 +35,11 @@ export function useGamepad(): GamepadState {
     let gamepadIndex: number | null = null;
 
     const handleGamepadConnected = (e: GamepadEvent): void => {
-      console.log('Gamepad connected:', e.gamepad.id);
       gamepadIndex = e.gamepad.index;
       setState((prev) => ({ ...prev, connected: true }));
     };
 
     const handleGamepadDisconnected = (e: GamepadEvent): void => {
-      console.log('Gamepad disconnected:', e.gamepad.id);
       if (e.gamepad.index === gamepadIndex) {
         gamepadIndex = null;
         setState({
@@ -71,21 +69,6 @@ export function useGamepad(): GamepadState {
           gamepad.buttons[6]?.value || (gamepad.axes[4] + 1) / 2 || 0;
         const rightTrigger =
           gamepad.buttons[7]?.value || (gamepad.axes[5] + 1) / 2 || 0;
-
-        // Debug logging for input
-        if (
-          Math.abs(rightStickX) > 0 ||
-          Math.abs(rightStickY) > 0 ||
-          leftTrigger > 0.1 ||
-          rightTrigger > 0.1
-        ) {
-          console.log('Gamepad input:', {
-            rightStickX,
-            rightStickY,
-            leftTrigger,
-            rightTrigger,
-          });
-        }
 
         setState({
           connected: true,

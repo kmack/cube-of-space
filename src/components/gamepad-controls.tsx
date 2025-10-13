@@ -5,15 +5,27 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { useGamepad } from '../hooks/use-gamepad';
 
 interface GamepadControlsProps {
-  controlsRef: React.RefObject<OrbitControlsImpl>;
+  controlsRef: React.RefObject<OrbitControlsImpl | null>;
   rotateSpeed?: number;
   zoomSpeed?: number;
+  rotationCurve?: number; // Exponent for rotation curve (1.0 = linear, >1.0 = exponential)
+}
+
+/**
+ * Apply a power curve to input for more responsive controls
+ * Small inputs remain small for precision, large inputs scale faster
+ */
+function applyCurve(value: number, exponent: number): number {
+  const sign = Math.sign(value);
+  const magnitude = Math.abs(value);
+  return sign * Math.pow(magnitude, exponent);
 }
 
 export function GamepadControls({
   controlsRef,
-  rotateSpeed = 2.0,
+  rotateSpeed = 4.0,
   zoomSpeed = 3.0,
+  rotationCurve = 2.0,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
@@ -29,18 +41,13 @@ export function GamepadControls({
   useEffect(() => {
     // Wait for both gamepad and controls to be ready
     if (!gamepad.connected) {
-      console.log('GamepadControls: Gamepad not connected');
       return;
     }
 
     if (!controlsRef.current) {
-      console.log(
-        'GamepadControls: OrbitControls ref not yet available, waiting...'
-      );
       return;
     }
 
-    console.log('GamepadControls: Starting update loop with controls');
     const orbitControls = controlsRef.current;
 
     // Verify controls has the required methods
@@ -64,20 +71,27 @@ export function GamepadControls({
 
       // Right stick X: Rotate horizontally (azimuth)
       if (Math.abs(currentGamepad.rightStickX) > 0) {
-        const azimuthDelta =
-          currentGamepad.rightStickX * rotateSpeed * deltaTime;
+        const curvedInput = applyCurve(
+          currentGamepad.rightStickX,
+          rotationCurve
+        );
+        const azimuthDelta = curvedInput * rotateSpeed * deltaTime;
         orbitControls.setAzimuthalAngle(
           orbitControls.getAzimuthalAngle() - azimuthDelta
         );
       }
 
-      // Right stick Y: Rotate vertically (polar)
+      // Right stick Y: Rotate vertically (polar) - inverted for natural camera movement
       if (Math.abs(currentGamepad.rightStickY) > 0) {
-        const polarDelta = currentGamepad.rightStickY * rotateSpeed * deltaTime;
+        const curvedInput = applyCurve(
+          currentGamepad.rightStickY,
+          rotationCurve
+        );
+        const polarDelta = curvedInput * rotateSpeed * deltaTime;
         orbitControls.setPolarAngle(
           Math.max(
             0.1,
-            Math.min(Math.PI - 0.1, orbitControls.getPolarAngle() + polarDelta)
+            Math.min(Math.PI - 0.1, orbitControls.getPolarAngle() - polarDelta)
           )
         );
       }
@@ -100,12 +114,19 @@ export function GamepadControls({
     animationFrameRef.current = requestAnimationFrame(updateControls);
 
     return () => {
-      console.log('GamepadControls: Stopping update loop');
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gamepad.connected, camera, controlsRef, controlsRef.current, rotateSpeed, zoomSpeed]);
+  }, [
+    gamepad.connected,
+    camera,
+    controlsRef,
+    controlsRef.current,
+    rotateSpeed,
+    zoomSpeed,
+    rotationCurve,
+  ]);
 
   return null;
 }

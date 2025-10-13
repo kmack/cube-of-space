@@ -114,6 +114,28 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       { collapsed: true }
     );
 
+  // Gamepad controls
+  const { gamepadRotateSpeed, gamepadRotationCurve } = useControls(
+    'Gamepad',
+    {
+      gamepadRotateSpeed: {
+        value: 10.0,
+        min: 1.0,
+        max: 20.0,
+        step: 0.5,
+        label: 'Rotation Speed',
+      },
+      gamepadRotationCurve: {
+        value: 2.5,
+        min: 1.0,
+        max: 4.0,
+        step: 0.1,
+        label: 'Rotation Curve',
+      },
+    },
+    { collapsed: true }
+  );
+
   // Debug controls
   const { showGrid, showAxesHelper } = useControls(
     'Debug',
@@ -150,9 +172,9 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       />
       <GamepadControls
         controlsRef={orbitControlsRef}
-        rotateSpeed={4.5}
+        rotateSpeed={gamepadRotateSpeed}
         zoomSpeed={3.0}
-        rotationCurve={2.5}
+        rotationCurve={gamepadRotationCurve}
       />
 
       {/* Ground grid */}

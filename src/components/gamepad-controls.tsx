@@ -70,23 +70,30 @@ export function GamepadControls({
       lastUpdateRef.current = timestamp;
 
       const currentGamepad = gamepadRef.current;
+      let hasGamepadInput = false;
 
       // Left stick X: Pan horizontally
       if (Math.abs(currentGamepad.leftStickX) > 0) {
+        hasGamepadInput = true;
         const panX = currentGamepad.leftStickX * panSpeed * deltaTime;
         orbitControls.target.x += panX;
       }
 
       // Left stick Y: Zoom in/out
       if (Math.abs(currentGamepad.leftStickY) > 0) {
+        hasGamepadInput = true;
         const zoomDelta = currentGamepad.leftStickY * zoomSpeed * deltaTime;
         const distance = camera.position.distanceTo(orbitControls.target);
         const newDistance = Math.max(1, Math.min(20, distance + zoomDelta));
-        camera.position.setLength(newDistance);
+
+        // Calculate direction from target to camera, then scale to new distance
+        const direction = camera.position.clone().sub(orbitControls.target).normalize();
+        camera.position.copy(orbitControls.target).add(direction.multiplyScalar(newDistance));
       }
 
       // Right stick X: Rotate horizontally (azimuth)
       if (Math.abs(currentGamepad.rightStickX) > 0) {
+        hasGamepadInput = true;
         const curvedInput = applyCurve(
           currentGamepad.rightStickX,
           rotationCurve
@@ -99,6 +106,7 @@ export function GamepadControls({
 
       // Right stick Y: Rotate vertically (polar) - inverted for natural camera movement
       if (Math.abs(currentGamepad.rightStickY) > 0) {
+        hasGamepadInput = true;
         const curvedInput = applyCurve(
           currentGamepad.rightStickY,
           rotationCurve
@@ -112,7 +120,16 @@ export function GamepadControls({
         );
       }
 
-      orbitControls.update();
+      // If we have gamepad input, temporarily disable damping to prevent momentum buildup
+      if (hasGamepadInput && orbitControls.enableDamping) {
+        const wasDampingEnabled = orbitControls.enableDamping;
+        orbitControls.enableDamping = false;
+        orbitControls.update();
+        orbitControls.enableDamping = wasDampingEnabled;
+      } else {
+        orbitControls.update();
+      }
+
       animationFrameRef.current = requestAnimationFrame(updateControls);
     };
 

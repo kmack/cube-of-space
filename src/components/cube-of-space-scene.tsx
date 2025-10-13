@@ -15,10 +15,13 @@ import { MotherLabels } from './mother-labels';
 import { DiagonalLabels } from './diagonal-labels';
 import { EdgeEnergyFlows } from './edge-energy-flows';
 import { EdgePositionLabels } from './edge-position-labels';
+import { GamepadControls } from './gamepad-controls';
 
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
+  const orbitControlsRef = React.useRef(null);
+
   // Letters controls
   const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
     useControls('Letters', {
@@ -138,7 +141,17 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 8, 5]} intensity={0.9} />
-      <OrbitControls enableDamping dampingFactor={0.15} rotateSpeed={0.9} />
+      <OrbitControls
+        ref={orbitControlsRef}
+        enableDamping
+        dampingFactor={0.15}
+        rotateSpeed={0.9}
+      />
+      <GamepadControls
+        controlsRef={orbitControlsRef}
+        rotateSpeed={2.0}
+        zoomSpeed={3.0}
+      />
 
       {/* Ground grid */}
       {showGrid && (

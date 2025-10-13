@@ -8,6 +8,7 @@ interface GamepadControlsProps {
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
   rotateSpeed?: number;
   zoomSpeed?: number;
+  panSpeed?: number;
   rotationCurve?: number; // Exponent for rotation curve (1.0 = linear, >1.0 = exponential)
 }
 
@@ -25,6 +26,7 @@ export function GamepadControls({
   controlsRef,
   rotateSpeed = 4.0,
   zoomSpeed = 3.0,
+  panSpeed = 2.0,
   rotationCurve = 2.0,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
@@ -69,6 +71,20 @@ export function GamepadControls({
 
       const currentGamepad = gamepadRef.current;
 
+      // Left stick X: Pan horizontally
+      if (Math.abs(currentGamepad.leftStickX) > 0) {
+        const panX = currentGamepad.leftStickX * panSpeed * deltaTime;
+        orbitControls.target.x += panX;
+      }
+
+      // Left stick Y: Zoom in/out
+      if (Math.abs(currentGamepad.leftStickY) > 0) {
+        const zoomDelta = currentGamepad.leftStickY * zoomSpeed * deltaTime;
+        const distance = camera.position.distanceTo(orbitControls.target);
+        const newDistance = Math.max(1, Math.min(20, distance + zoomDelta));
+        camera.position.setLength(newDistance);
+      }
+
       // Right stick X: Rotate horizontally (azimuth)
       if (Math.abs(currentGamepad.rightStickX) > 0) {
         const curvedInput = applyCurve(
@@ -96,17 +112,6 @@ export function GamepadControls({
         );
       }
 
-      // Triggers: Zoom in/out
-      const zoomDelta =
-        (currentGamepad.triggers.right - currentGamepad.triggers.left) *
-        zoomSpeed *
-        deltaTime;
-      if (Math.abs(zoomDelta) > 0) {
-        const distance = camera.position.distanceTo(orbitControls.target);
-        const newDistance = Math.max(1, Math.min(20, distance - zoomDelta));
-        camera.position.setLength(newDistance);
-      }
-
       orbitControls.update();
       animationFrameRef.current = requestAnimationFrame(updateControls);
     };
@@ -122,9 +127,9 @@ export function GamepadControls({
     gamepad.connected,
     camera,
     controlsRef,
-    controlsRef.current,
     rotateSpeed,
     zoomSpeed,
+    panSpeed,
     rotationCurve,
   ]);
 

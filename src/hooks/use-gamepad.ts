@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 
 export interface GamepadState {
   connected: boolean;
+  leftStickX: number;
+  leftStickY: number;
   rightStickX: number;
   rightStickY: number;
   triggers: {
@@ -24,6 +26,8 @@ function applyDeadzone(value: number, deadzone: number): number {
 export function useGamepad(): GamepadState {
   const [state, setState] = useState<GamepadState>({
     connected: false,
+    leftStickX: 0,
+    leftStickY: 0,
     rightStickX: 0,
     rightStickY: 0,
     triggers: { left: 0, right: 0 },
@@ -44,6 +48,8 @@ export function useGamepad(): GamepadState {
         gamepadIndex = null;
         setState({
           connected: false,
+          leftStickX: 0,
+          leftStickY: 0,
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
@@ -61,6 +67,8 @@ export function useGamepad(): GamepadState {
         // Axes: 0=LeftX, 1=LeftY, 2=RightX, 3=RightY
         // Buttons: 6=LT, 7=RT (as buttons), or axes 2,5 (as analog)
 
+        const leftStickX = applyDeadzone(gamepad.axes[0] || 0, DEADZONE);
+        const leftStickY = applyDeadzone(gamepad.axes[1] || 0, DEADZONE);
         const rightStickX = applyDeadzone(gamepad.axes[2] || 0, DEADZONE);
         const rightStickY = applyDeadzone(gamepad.axes[3] || 0, DEADZONE);
 
@@ -72,6 +80,8 @@ export function useGamepad(): GamepadState {
 
         setState({
           connected: true,
+          leftStickX,
+          leftStickY,
           rightStickX,
           rightStickY,
           triggers: {
@@ -83,6 +93,8 @@ export function useGamepad(): GamepadState {
         // Gamepad was connected but now missing
         setState({
           connected: false,
+          leftStickX: 0,
+          leftStickY: 0,
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },

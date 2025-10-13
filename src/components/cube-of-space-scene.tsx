@@ -115,7 +115,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     );
 
   // Gamepad controls
-  const { gamepadRotateSpeed, gamepadRotationCurve } = useControls(
+  const { gamepadRotateSpeed, gamepadZoomSpeed, gamepadPanSpeed, gamepadRotationCurve } = useControls(
     'Gamepad',
     {
       gamepadRotateSpeed: {
@@ -124,6 +124,20 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         max: 20.0,
         step: 0.5,
         label: 'Rotation Speed',
+      },
+      gamepadZoomSpeed: {
+        value: 3.0,
+        min: 0.5,
+        max: 10.0,
+        step: 0.5,
+        label: 'Zoom Speed',
+      },
+      gamepadPanSpeed: {
+        value: 2.0,
+        min: 0.5,
+        max: 8.0,
+        step: 0.5,
+        label: 'Pan Speed',
       },
       gamepadRotationCurve: {
         value: 2.5,
@@ -173,7 +187,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <GamepadControls
         controlsRef={orbitControlsRef}
         rotateSpeed={gamepadRotateSpeed}
-        zoomSpeed={3.0}
+        zoomSpeed={gamepadZoomSpeed}
+        panSpeed={gamepadPanSpeed}
         rotationCurve={gamepadRotationCurve}
       />
 

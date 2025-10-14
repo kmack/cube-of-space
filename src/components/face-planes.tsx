@@ -24,6 +24,7 @@ function FacePlanesComponent({
   const faceMaterials = React.useMemo(() => {
     return faces.map((f) => {
       const keyNum = String(getSpec(f.letter).keyNumber);
+      // eslint-disable-next-line security/detect-object-injection -- keyNum is TypeScript-typed, safe indexed access
       const faceColor = FACE_COLOR_BY_KEY[keyNum] ?? '#ffffff';
       const material = new THREE.MeshStandardMaterial({
         color: faceColor,
@@ -48,7 +49,10 @@ function FacePlanesComponent({
             <mesh
               renderOrder={-1}
               geometry={planeGeometry}
-              material={faceMaterials[i]}
+              material={
+                // eslint-disable-next-line security/detect-object-injection -- i is loop index, safe array access
+                faceMaterials[i]
+              }
             />
           </group>
         );

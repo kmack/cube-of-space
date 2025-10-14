@@ -73,12 +73,12 @@ export function createCanvasTexture(
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   return new Promise((resolve, reject) => {
     // Use target resolution for memory optimization if specified
-    const renderWidth = config.targetResolution?.width || config.width;
-    const renderHeight = config.targetResolution?.height || config.height;
+    const renderWidth = config.targetResolution?.width ?? config.width;
+    const renderHeight = config.targetResolution?.height ?? config.height;
 
     // Determine if this is a B&W image based on content
     const isBlackAndWhite =
-      config.useOptimizedFormat ||
+      config.useOptimizedFormat ??
       (config.images?.some((img) => img.src.includes('major-arcana')) &&
         (!config.background?.color ||
           config.background.color === 'transparent'));
@@ -89,7 +89,7 @@ export function createCanvasTexture(
       isBlackAndWhite
     );
 
-    const dpr = config.devicePixelRatio || window.devicePixelRatio || 1;
+    const dpr = config.devicePixelRatio ?? window.devicePixelRatio ?? 1;
 
     // Set canvas dimensions with device pixel ratio for crisp rendering
     canvas.width = renderWidth * dpr;
@@ -112,10 +112,11 @@ export function createCanvasTexture(
     }
 
     // Load and draw images, then draw text
-    loadImages(config.images || [])
+    loadImages(config.images ?? [])
       .then((loadedImages) => {
         // Draw images with scaling
         loadedImages.forEach((img, index) => {
+          // eslint-disable-next-line security/detect-object-injection -- index is loop counter, safe array access
           const imgConfig = config.images![index];
 
           if (
@@ -244,7 +245,7 @@ function drawBackground(
 
     if (bg.borderRadius) {
       // Draw rounded rectangle
-      const padding = bg.padding || 0;
+      const padding = bg.padding ?? 0;
       const radius = bg.borderRadius;
 
       ctx.beginPath();
@@ -284,10 +285,10 @@ function drawText(
   ctx.save();
 
   // Apply text styles
-  ctx.font = `${style.fontWeight || 'normal'} ${style.fontSize}px ${style.fontFamily}`;
+  ctx.font = `${style.fontWeight ?? 'normal'} ${style.fontSize}px ${style.fontFamily}`;
   ctx.fillStyle = style.color;
-  ctx.textAlign = style.textAlign || 'center';
-  ctx.textBaseline = style.textBaseline || 'middle';
+  ctx.textAlign = style.textAlign ?? 'center';
+  ctx.textBaseline = style.textBaseline ?? 'middle';
   ctx.globalAlpha = style.opacity ?? 1;
 
   // Draw text
@@ -347,17 +348,17 @@ export function createStructuredHebrewLabel(
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
   const width =
-    options.width ||
+    options.width ??
     (options.imagePath ? LABEL_WIDTH_WITH_IMAGE : LABEL_WIDTH_NO_IMAGE);
   const height =
-    options.height ||
+    options.height ??
     (options.imagePath ? LABEL_HEIGHT_WITH_IMAGE : LABEL_HEIGHT_NO_IMAGE);
   const targetWidth = useOptimization ? Math.min(width, 600) : width;
   const targetHeight = useOptimization ? Math.min(height, 480) : height;
-  const color = options.color || 'white';
-  const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
-  const uiFont = options.uiFont || 'Inter, sans-serif';
-  const symbolFont = options.symbolFont || '"Symbola", "Noto Sans Symbols 2"';
+  const color = options.color ?? 'white';
+  const hebrewFont = options.hebrewFont ?? 'FrankRuhlLibre, serif';
+  const uiFont = options.uiFont ?? 'Inter, sans-serif';
+  const symbolFont = options.symbolFont ?? '"Symbola", "Noto Sans Symbols 2"';
 
   const texts: CanvasLabelConfig['texts'] = [];
   const images: ImageConfig[] = [];
@@ -619,15 +620,15 @@ export function createHebrewLabelTexture(
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   // Apply memory optimization defaults
   const useOptimization = options.useMemoryOptimization !== false; // Default to true
-  const width = options.width || (options.imagePath ? 900 : 512); // Target display size
-  const height = options.height || (options.imagePath ? 800 : 320); // Target display size
+  const width = options.width ?? (options.imagePath ? 900 : 512); // Target display size
+  const height = options.height ?? (options.imagePath ? 800 : 320); // Target display size
 
   // Reduce render resolution for memory optimization while maintaining aspect ratio
   const targetWidth = useOptimization ? Math.min(width, 600) : width;
   const targetHeight = useOptimization ? Math.min(height, 480) : height;
-  const color = options.color || 'white';
-  const hebrewFont = options.hebrewFont || 'FrankRuhlLibre, serif';
-  const uiFont = options.uiFont || 'Inter, sans-serif';
+  const color = options.color ?? 'white';
+  const hebrewFont = options.hebrewFont ?? 'FrankRuhlLibre, serif';
+  const uiFont = options.uiFont ?? 'Inter, sans-serif';
 
   const texts: CanvasLabelConfig['texts'] = [];
   const images: ImageConfig[] = [];

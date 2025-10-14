@@ -108,10 +108,12 @@ function DiagonalLabelInner({
       if (groupElement) {
         groupElement.traverse((child) => {
           if (child instanceof THREE.Mesh) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- child.material can be Material | Material[], type assertion is safe here
             const material = child.material;
             if (material instanceof THREE.Material) {
               // Dispose texture if it exists
-              const meshMaterial = material as THREE.MeshBasicMaterial;
+              const meshMaterial =
+                material as unknown as THREE.MeshBasicMaterial;
               if (
                 meshMaterial.map &&
                 meshMaterial.map instanceof THREE.Texture

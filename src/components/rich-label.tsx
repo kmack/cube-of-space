@@ -115,7 +115,7 @@ export function RichLabel({
         })
       : letterName && assocGlyph && assocName
         ? createStructuredHebrewLabel(
-            hebrewLetter || '',
+            hebrewLetter ?? '',
             letterName,
             assocGlyph,
             assocName,
@@ -131,7 +131,7 @@ export function RichLabel({
               useMemoryOptimization,
             }
           )
-        : createHebrewLabelTexture(hebrewLetter || '', title, subtitle, {
+        : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
             width,
             height,
             color,

@@ -30,6 +30,7 @@ const TAROT_IMAGE_MAP: Record<number, string> = {
  * Get the image path for a Tarot key number
  */
 export function getTarotImagePath(keyNumber: number): string {
+  // eslint-disable-next-line security/detect-object-injection -- keyNumber is controlled number (0-21), safe indexed access
   const filename = TAROT_IMAGE_MAP[keyNumber];
   if (!filename) {
     throw new Error(`No Tarot image found for key number: ${keyNumber}`);

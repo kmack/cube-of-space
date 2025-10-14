@@ -141,17 +141,22 @@ export const ENERGY_FLOW_CONFIG = {
    * Get the flow direction for a given Hebrew letter edge.
    */
   getDirection: (letter: EdgeHebrewLetter): FlowDirection =>
+    // eslint-disable-next-line security/detect-object-injection -- letter is TypeScript-typed EdgeHebrewLetter, safe indexed access
     FLOW_DIRECTIONS[letter],
 
   /**
    * Get the energy color for a given Hebrew letter edge.
    */
-  getColor: (letter: EdgeHebrewLetter): string => FLOW_COLORS[letter],
+  getColor: (letter: EdgeHebrewLetter): string =>
+    // eslint-disable-next-line security/detect-object-injection -- letter is TypeScript-typed EdgeHebrewLetter, safe indexed access
+    FLOW_COLORS[letter],
 
   /**
    * Get the mystical/geometric reasoning for a given Hebrew letter's flow direction.
    */
-  getReason: (letter: EdgeHebrewLetter): string => FLOW_REASONING[letter],
+  getReason: (letter: EdgeHebrewLetter): string =>
+    // eslint-disable-next-line security/detect-object-injection -- letter is TypeScript-typed EdgeHebrewLetter, safe indexed access
+    FLOW_REASONING[letter],
 
   /**
    * Get all edge letters that have energy flows.

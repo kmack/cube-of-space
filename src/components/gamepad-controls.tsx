@@ -113,7 +113,7 @@ export function GamepadControls({
 
         // Apply pan movement
         const panX = currentGamepad.leftStickX * panSpeed * deltaTime;
-        const panY = -currentGamepad.leftStickY * panSpeed * deltaTime; // Inverted for natural feel
+        const panY = currentGamepad.leftStickY * panSpeed * deltaTime;
 
         orbitControls.target.addScaledVector(cameraRight, panX);
         orbitControls.target.addScaledVector(cameraUp, panY);

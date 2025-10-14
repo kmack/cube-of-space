@@ -15,6 +15,7 @@ import { EdgeLabels } from './edge-labels';
 import { MotherLabels } from './mother-labels';
 import { DiagonalLabels } from './diagonal-labels';
 import { EdgeEnergyFlows } from './edge-energy-flows';
+import { AxisEnergyFlows } from './axis-energy-flows';
 import { EdgePositionLabels } from './edge-position-labels';
 import { GamepadControls } from './gamepad-controls';
 
@@ -280,6 +281,12 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
       {/* Energy Flow */}
       <EdgeEnergyFlows
+        visible={showEnergyFlow}
+        speed={energySpeed}
+        particleCount={energyParticles}
+        opacity={energyOpacity}
+      />
+      <AxisEnergyFlows
         visible={showEnergyFlow}
         speed={energySpeed}
         particleCount={energyParticles}

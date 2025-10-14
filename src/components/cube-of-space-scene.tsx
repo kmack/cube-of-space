@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Grid, OrbitControls } from '@react-three/drei';
 import { useControls } from 'leva';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 import { FacePlanes } from './face-planes';
 import { WireCube } from './wire-cube';
@@ -15,13 +16,16 @@ import { MotherLabels } from './mother-labels';
 import { DiagonalLabels } from './diagonal-labels';
 import { EdgeEnergyFlows } from './edge-energy-flows';
 import { EdgePositionLabels } from './edge-position-labels';
+import { GamepadControls } from './gamepad-controls';
 
 import { HALF } from '../data/constants';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
+  const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
+
   // Letters controls
-  const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
-    useControls('Letters', {
+  const [{ showEdges, showDoubleLetters, showMotherLetters, showDiagonals }, setLetters] =
+    useControls('Letters', () => ({
       showEdges: {
         value: true,
         label: 'Single Letters',
@@ -38,12 +42,29 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         value: true,
         label: 'Final Letters',
       },
-    });
+    }));
+
+  // Gamepad letter toggle callbacks
+  const handleToggleMotherLetters = React.useCallback(() => {
+    setLetters({ showMotherLetters: !showMotherLetters });
+  }, [showMotherLetters, setLetters]);
+
+  const handleToggleDoubleLetters = React.useCallback(() => {
+    setLetters({ showDoubleLetters: !showDoubleLetters });
+  }, [showDoubleLetters, setLetters]);
+
+  const handleToggleSingleLetters = React.useCallback(() => {
+    setLetters({ showEdges: !showEdges });
+  }, [showEdges, setLetters]);
+
+  const handleToggleFinalLetters = React.useCallback(() => {
+    setLetters({ showDiagonals: !showDiagonals });
+  }, [showDiagonals, setLetters]);
 
   // Faces controls
-  const { showFaces, opaqueFaces } = useControls(
+  const [{ showFaces, opaqueFaces }, setFaces] = useControls(
     'Faces',
-    {
+    () => ({
       showFaces: {
         value: true,
         label: 'Show Faces',
@@ -52,9 +73,18 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         value: false,
         label: 'Opaque Faces',
       },
-    },
+    }),
     { collapsed: true }
   );
+
+  // Gamepad toggle callbacks
+  const handleToggleFaceVisibility = React.useCallback(() => {
+    setFaces({ showFaces: !showFaces });
+  }, [showFaces, setFaces]);
+
+  const handleToggleFaceOpacity = React.useCallback(() => {
+    setFaces({ opaqueFaces: !opaqueFaces });
+  }, [opaqueFaces, setFaces]);
 
   // Axes controls
   const { showAxisLines, showDiagonalLines, showEdgePositions } = useControls(
@@ -77,38 +107,85 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   );
 
   // Energy Flow controls
-  const { showEnergyFlow, energySpeed, energyOpacity, energyParticles } =
-    useControls(
-      'Energy Flow',
-      {
-        showEnergyFlow: {
-          value: true,
-          label: 'Show Energy Flow',
-        },
-        energySpeed: {
-          value: 1.0,
-          min: 0.1,
-          max: 3.0,
-          step: 0.1,
-          label: 'Speed',
-        },
-        energyOpacity: {
-          value: 0.6,
-          min: 0.1,
-          max: 1.0,
-          step: 0.1,
-          label: 'Opacity',
-        },
-        energyParticles: {
-          value: 8,
-          min: 4,
-          max: 16,
-          step: 2,
-          label: 'Particles',
-        },
+  const [
+    { showEnergyFlow, energySpeed, energyOpacity, energyParticles },
+    setEnergyFlow,
+  ] = useControls(
+    'Energy Flow',
+    () => ({
+      showEnergyFlow: {
+        value: true,
+        label: 'Show Energy Flow',
       },
-      { collapsed: true }
-    );
+      energySpeed: {
+        value: 1.0,
+        min: 0.1,
+        max: 3.0,
+        step: 0.1,
+        label: 'Speed',
+      },
+      energyOpacity: {
+        value: 0.6,
+        min: 0.1,
+        max: 1.0,
+        step: 0.1,
+        label: 'Opacity',
+      },
+      energyParticles: {
+        value: 8,
+        min: 4,
+        max: 16,
+        step: 2,
+        label: 'Particles',
+      },
+    }),
+    { collapsed: true }
+  );
+
+  const handleToggleEnergyFlow = React.useCallback(() => {
+    setEnergyFlow({ showEnergyFlow: !showEnergyFlow });
+  }, [showEnergyFlow, setEnergyFlow]);
+
+  // Gamepad controls
+  const {
+    gamepadRotateSpeed,
+    gamepadZoomSpeed,
+    gamepadPanSpeed,
+    gamepadRotationCurve,
+  } = useControls(
+    'Gamepad',
+    {
+      gamepadRotateSpeed: {
+        value: 10.0,
+        min: 1.0,
+        max: 20.0,
+        step: 0.5,
+        label: 'Rotation Speed',
+      },
+      gamepadZoomSpeed: {
+        value: 3.0,
+        min: 0.5,
+        max: 10.0,
+        step: 0.5,
+        label: 'Zoom Speed',
+      },
+      gamepadPanSpeed: {
+        value: 2.0,
+        min: 0.5,
+        max: 8.0,
+        step: 0.5,
+        label: 'Pan Speed',
+      },
+      gamepadRotationCurve: {
+        value: 2.5,
+        min: 1.0,
+        max: 4.0,
+        step: 0.1,
+        label: 'Rotation Curve',
+      },
+    },
+    { collapsed: true }
+  );
 
   // Debug controls
   const { showGrid, showAxesHelper } = useControls(
@@ -138,7 +215,26 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 8, 5]} intensity={0.9} />
-      <OrbitControls enableDamping dampingFactor={0.15} rotateSpeed={0.9} />
+      <OrbitControls
+        ref={orbitControlsRef}
+        enableDamping
+        dampingFactor={0.15}
+        rotateSpeed={0.9}
+      />
+      <GamepadControls
+        controlsRef={orbitControlsRef}
+        rotateSpeed={gamepadRotateSpeed}
+        zoomSpeed={gamepadZoomSpeed}
+        panSpeed={gamepadPanSpeed}
+        rotationCurve={gamepadRotationCurve}
+        onToggleFaceVisibility={handleToggleFaceVisibility}
+        onToggleFaceOpacity={handleToggleFaceOpacity}
+        onToggleEnergyFlow={handleToggleEnergyFlow}
+        onToggleMotherLetters={handleToggleMotherLetters}
+        onToggleDoubleLetters={handleToggleDoubleLetters}
+        onToggleSingleLetters={handleToggleSingleLetters}
+        onToggleFinalLetters={handleToggleFinalLetters}
+      />
 
       {/* Ground grid */}
       {showGrid && (
@@ -169,7 +265,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}
 
       {/* Keep label components mounted, toggle visibility to prevent texture churn */}
-      <group visible={showFaces && showDoubleLetters}>
+      <group visible={showDoubleLetters}>
         <FaceLabels />
       </group>
       <group visible={showEdges}>

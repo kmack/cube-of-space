@@ -1,6 +1,30 @@
-# React + TypeScript + Vite
+# Cube of Space
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive 3D visualization of the Qabalistic "Cube of Space" - a geometric model mapping Hebrew letters, Tarot keys, and astrological correspondences onto a three-dimensional cube structure.
+
+## Features
+
+- Interactive 3D cube visualization with React Three Fiber
+- Hebrew letter associations with Tarot and astrological symbols
+- Customizable visibility controls for different letter types
+- Animated energy flow along cube edges
+- **Xbox Controller Support** - Navigate the scene using a Microsoft Xbox controller
+
+## Xbox Controller Controls
+
+Connect an Xbox controller to your computer to navigate the 3D scene:
+
+- **Right Stick**: Rotate the camera around the cube (orbit controls)
+  - Move left/right to rotate horizontally
+  - Move up/down to rotate vertically
+- **Right Trigger (RT)**: Zoom in towards the cube
+- **Left Trigger (LT)**: Zoom out away from the cube
+
+The controller will be automatically detected when connected. Check your browser console for connection status messages.
+
+## Development
+
+This project uses React + TypeScript + Vite.
 
 Currently, two official plugins are available:
 

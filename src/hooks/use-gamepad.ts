@@ -12,6 +12,7 @@ export interface GamepadState {
     right: number;
   };
   buttons: {
+    a: boolean;
     leftBumper: boolean;
     rightBumper: boolean;
     leftStickPress: boolean;
@@ -37,7 +38,13 @@ export function useGamepad(): GamepadState {
     rightStickX: 0,
     rightStickY: 0,
     triggers: { left: 0, right: 0 },
-    buttons: { leftBumper: false, rightBumper: false, leftStickPress: false, rightStickPress: false },
+    buttons: {
+      a: false,
+      leftBumper: false,
+      rightBumper: false,
+      leftStickPress: false,
+      rightStickPress: false,
+    },
   });
 
   const animationFrameRef = useRef<number | null>(null);
@@ -60,7 +67,13 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
-          buttons: { leftBumper: false, rightBumper: false, leftStickPress: false, rightStickPress: false },
+          buttons: {
+            a: false,
+            leftBumper: false,
+            rightBumper: false,
+            leftStickPress: false,
+            rightStickPress: false,
+          },
         });
       }
     };
@@ -86,6 +99,9 @@ export function useGamepad(): GamepadState {
         const rightTrigger =
           gamepad.buttons[7]?.value || (gamepad.axes[5] + 1) / 2 || 0;
 
+        // Face buttons (A = button 0)
+        const aButton = gamepad.buttons[0]?.pressed || false;
+
         // Shoulder buttons (LB = button 4, RB = button 5)
         const leftBumper = gamepad.buttons[4]?.pressed || false;
         const rightBumper = gamepad.buttons[5]?.pressed || false;
@@ -105,6 +121,7 @@ export function useGamepad(): GamepadState {
             right: rightTrigger,
           },
           buttons: {
+            a: aButton,
             leftBumper,
             rightBumper,
             leftStickPress,
@@ -120,7 +137,13 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
-          buttons: { leftBumper: false, rightBumper: false, leftStickPress: false, rightStickPress: false },
+          buttons: {
+            a: false,
+            leftBumper: false,
+            rightBumper: false,
+            leftStickPress: false,
+            rightStickPress: false,
+          },
         });
       }
 

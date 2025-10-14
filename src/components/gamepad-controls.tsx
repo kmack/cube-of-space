@@ -15,6 +15,7 @@ interface GamepadControlsProps {
   defaultTarget?: [number, number, number];
   onToggleFaceVisibility?: () => void;
   onToggleFaceOpacity?: () => void;
+  onToggleEnergyFlow?: () => void;
 }
 
 /**
@@ -37,12 +38,14 @@ export function GamepadControls({
   defaultTarget = [0, 0, 0],
   onToggleFaceVisibility,
   onToggleFaceOpacity,
+  onToggleEnergyFlow,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
   const gamepadRef = useRef(gamepad);
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
+  const lastAButtonRef = useRef<boolean>(false);
   const lastLeftBumperRef = useRef<boolean>(false);
   const lastRightBumperRef = useRef<boolean>(false);
   const lastLeftStickPressRef = useRef<boolean>(false);
@@ -85,6 +88,12 @@ export function GamepadControls({
       const currentGamepad = gamepadRef.current;
       let hasGamepadInput = false;
 
+      // A button: Toggle energy flow visibility (with debouncing)
+      if (currentGamepad.buttons.a && !lastAButtonRef.current) {
+        onToggleEnergyFlow?.();
+      }
+      lastAButtonRef.current = currentGamepad.buttons.a;
+
       // Left bumper (LB): Toggle face visibility (with debouncing)
       if (currentGamepad.buttons.leftBumper && !lastLeftBumperRef.current) {
         onToggleFaceVisibility?.();
@@ -98,7 +107,10 @@ export function GamepadControls({
       lastRightBumperRef.current = currentGamepad.buttons.rightBumper;
 
       // Left stick press: Reset pan (target position) to origin (with debouncing)
-      if (currentGamepad.buttons.leftStickPress && !lastLeftStickPressRef.current) {
+      if (
+        currentGamepad.buttons.leftStickPress &&
+        !lastLeftStickPressRef.current
+      ) {
         // Button just pressed (rising edge)
         orbitControls.target.set(...defaultTarget);
         orbitControls.update();
@@ -106,7 +118,10 @@ export function GamepadControls({
       lastLeftStickPressRef.current = currentGamepad.buttons.leftStickPress;
 
       // Right stick press: Reset view to defaults (with debouncing)
-      if (currentGamepad.buttons.rightStickPress && !lastRightStickPressRef.current) {
+      if (
+        currentGamepad.buttons.rightStickPress &&
+        !lastRightStickPressRef.current
+      ) {
         // Button just pressed (rising edge)
         camera.position.set(...defaultCameraPosition);
         orbitControls.target.set(...defaultTarget);
@@ -116,7 +131,10 @@ export function GamepadControls({
       lastRightStickPressRef.current = currentGamepad.buttons.rightStickPress;
 
       // Left stick: Pan in screen space (like right-mouse-button drag)
-      if (Math.abs(currentGamepad.leftStickX) > 0 || Math.abs(currentGamepad.leftStickY) > 0) {
+      if (
+        Math.abs(currentGamepad.leftStickX) > 0 ||
+        Math.abs(currentGamepad.leftStickY) > 0
+      ) {
         hasGamepadInput = true;
 
         // Get camera's right vector (for horizontal panning)
@@ -142,7 +160,8 @@ export function GamepadControls({
       }
 
       // Triggers: Zoom in/out
-      const triggerDelta = currentGamepad.triggers.right - currentGamepad.triggers.left;
+      const triggerDelta =
+        currentGamepad.triggers.right - currentGamepad.triggers.left;
       if (Math.abs(triggerDelta) > 0.01) {
         hasGamepadInput = true;
         const zoomDelta = triggerDelta * zoomSpeed * deltaTime;
@@ -150,8 +169,13 @@ export function GamepadControls({
         const newDistance = Math.max(1, Math.min(20, distance - zoomDelta));
 
         // Calculate direction from target to camera, then scale to new distance
-        const direction = camera.position.clone().sub(orbitControls.target).normalize();
-        camera.position.copy(orbitControls.target).add(direction.multiplyScalar(newDistance));
+        const direction = camera.position
+          .clone()
+          .sub(orbitControls.target)
+          .normalize();
+        camera.position
+          .copy(orbitControls.target)
+          .add(direction.multiplyScalar(newDistance));
       }
 
       // Right stick X: Rotate horizontally (azimuth)
@@ -215,6 +239,7 @@ export function GamepadControls({
     defaultTarget,
     onToggleFaceVisibility,
     onToggleFaceOpacity,
+    onToggleEnergyFlow,
   ]);
 
   return null;

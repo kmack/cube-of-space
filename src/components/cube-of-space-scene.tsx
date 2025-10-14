@@ -90,41 +90,52 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   );
 
   // Energy Flow controls
-  const { showEnergyFlow, energySpeed, energyOpacity, energyParticles } =
-    useControls(
-      'Energy Flow',
-      {
-        showEnergyFlow: {
-          value: true,
-          label: 'Show Energy Flow',
-        },
-        energySpeed: {
-          value: 1.0,
-          min: 0.1,
-          max: 3.0,
-          step: 0.1,
-          label: 'Speed',
-        },
-        energyOpacity: {
-          value: 0.6,
-          min: 0.1,
-          max: 1.0,
-          step: 0.1,
-          label: 'Opacity',
-        },
-        energyParticles: {
-          value: 8,
-          min: 4,
-          max: 16,
-          step: 2,
-          label: 'Particles',
-        },
+  const [
+    { showEnergyFlow, energySpeed, energyOpacity, energyParticles },
+    setEnergyFlow,
+  ] = useControls(
+    'Energy Flow',
+    () => ({
+      showEnergyFlow: {
+        value: true,
+        label: 'Show Energy Flow',
       },
-      { collapsed: true }
-    );
+      energySpeed: {
+        value: 1.0,
+        min: 0.1,
+        max: 3.0,
+        step: 0.1,
+        label: 'Speed',
+      },
+      energyOpacity: {
+        value: 0.6,
+        min: 0.1,
+        max: 1.0,
+        step: 0.1,
+        label: 'Opacity',
+      },
+      energyParticles: {
+        value: 8,
+        min: 4,
+        max: 16,
+        step: 2,
+        label: 'Particles',
+      },
+    }),
+    { collapsed: true }
+  );
+
+  const handleToggleEnergyFlow = React.useCallback(() => {
+    setEnergyFlow({ showEnergyFlow: !showEnergyFlow });
+  }, [showEnergyFlow, setEnergyFlow]);
 
   // Gamepad controls
-  const { gamepadRotateSpeed, gamepadZoomSpeed, gamepadPanSpeed, gamepadRotationCurve } = useControls(
+  const {
+    gamepadRotateSpeed,
+    gamepadZoomSpeed,
+    gamepadPanSpeed,
+    gamepadRotationCurve,
+  } = useControls(
     'Gamepad',
     {
       gamepadRotateSpeed: {
@@ -201,6 +212,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         rotationCurve={gamepadRotationCurve}
         onToggleFaceVisibility={handleToggleFaceVisibility}
         onToggleFaceOpacity={handleToggleFaceOpacity}
+        onToggleEnergyFlow={handleToggleEnergyFlow}
       />
 
       {/* Ground grid */}

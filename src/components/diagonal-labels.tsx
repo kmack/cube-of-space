@@ -1,12 +1,13 @@
 // src/components/diagonal-labels.tsx
+import { useFrame } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+
 import { diagonals } from '../data/geometry';
-import { RichLabel } from './rich-label';
 import { LABEL_SCALE } from '../data/label-styles';
-import { createLabelData } from '../utils/label-factory';
 import type { CanvasLabelConfig } from '../utils/canvas-texture';
+import { createLabelData } from '../utils/label-factory';
+import { RichLabel } from './rich-label';
 
 interface DiagonalLabelsProps {
   useMemoryOptimization?: boolean;
@@ -95,9 +96,7 @@ function DiagonalLabelInner({
     ref.current.quaternion.setFromRotationMatrix(tmp.matrix);
 
     // Reset tangent for next frame (in case it was flipped)
-    tmp.tangent
-      .set(d.tangent[0], d.tangent[1], d.tangent[2])
-      .normalize();
+    tmp.tangent.set(d.tangent[0], d.tangent[1], d.tangent[2]).normalize();
   });
 
   // Cleanup textures on unmount to prevent memory leaks on iOS

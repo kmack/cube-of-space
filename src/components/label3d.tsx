@@ -1,6 +1,7 @@
 // src/components/label3d.tsx
 import { Text } from '@react-three/drei';
 import * as React from 'react';
+
 import { HEBREW_FONT, UI_FONT } from '../data/constants';
 
 export type Label3DProps = {

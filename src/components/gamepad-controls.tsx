@@ -1,8 +1,9 @@
 // src/components/gamepad-controls.tsx
-import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
-import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import { useEffect, useRef } from 'react';
 import { Vector3 } from 'three';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+
 import { useGamepad } from '../hooks/use-gamepad';
 
 interface GamepadControlsProps {

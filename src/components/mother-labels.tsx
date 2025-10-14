@@ -1,13 +1,14 @@
 // src/components/mother-labels.tsx
+import { useFrame } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+
+import { LABEL_OFFSET, MOTHER_OFFSET, UP } from '../data/constants';
 import { axes } from '../data/geometry';
-import { RichLabel } from './rich-label';
-import { useAxisFacingQuaternion } from '../utils/orientation';
-import { MOTHER_OFFSET, UP, LABEL_OFFSET } from '../data/constants';
-import { MOTHER_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
+import { LABEL_SCALE, MOTHER_LABEL_BACKGROUND } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
+import { useAxisFacingQuaternion } from '../utils/orientation';
+import { RichLabel } from './rich-label';
 
 interface MotherLabelsProps {
   useMemoryOptimization?: boolean;

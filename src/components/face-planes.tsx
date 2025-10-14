@@ -1,8 +1,9 @@
 // src/components/face-planes.tsx
-import * as THREE from 'three';
 import * as React from 'react';
-import { faces } from '../data/geometry';
+import * as THREE from 'three';
+
 import { FACE_COLOR_BY_KEY, SIZE } from '../data/constants';
+import { faces } from '../data/geometry';
 import { getSpec } from '../data/label-spec';
 
 function FacePlanesComponent({
@@ -44,7 +45,11 @@ function FacePlanesComponent({
       {faces.map((f, i) => {
         return (
           <group key={`plane-${i}`} position={f.pos} rotation={f.rotation}>
-            <mesh renderOrder={-1} geometry={planeGeometry} material={faceMaterials[i]} />
+            <mesh
+              renderOrder={-1}
+              geometry={planeGeometry}
+              material={faceMaterials[i]}
+            />
           </group>
         );
       })}

@@ -1,5 +1,6 @@
 import { type FC } from 'react';
-import { HALF, AXIS_LINE_COLOR } from '../data/constants';
+
+import { AXIS_LINE_COLOR, HALF } from '../data/constants';
 
 interface AxisLinesProps {
   opacity?: number;

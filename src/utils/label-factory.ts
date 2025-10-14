@@ -1,8 +1,8 @@
 // src/utils/label-factory.ts
-import { getSpec, associationToGlyph } from '../data/label-spec';
-import { getTarotImagePath } from './tarot-images';
 import type { HebrewLetter } from '../data/label-spec';
+import { associationToGlyph, getSpec } from '../data/label-spec';
 import type { LabelData } from '../types/component-props';
+import { getTarotImagePath } from './tarot-images';
 
 /**
  * Creates standardized label data for any Hebrew letter.

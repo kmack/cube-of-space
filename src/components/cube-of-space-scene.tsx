@@ -24,8 +24,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
-  const { showEdges, showDoubleLetters, showMotherLetters, showDiagonals } =
-    useControls('Letters', {
+  const [{ showEdges, showDoubleLetters, showMotherLetters, showDiagonals }, setLetters] =
+    useControls('Letters', () => ({
       showEdges: {
         value: true,
         label: 'Single Letters',
@@ -42,7 +42,24 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         value: true,
         label: 'Final Letters',
       },
-    });
+    }));
+
+  // Gamepad letter toggle callbacks
+  const handleToggleMotherLetters = React.useCallback(() => {
+    setLetters({ showMotherLetters: !showMotherLetters });
+  }, [showMotherLetters, setLetters]);
+
+  const handleToggleDoubleLetters = React.useCallback(() => {
+    setLetters({ showDoubleLetters: !showDoubleLetters });
+  }, [showDoubleLetters, setLetters]);
+
+  const handleToggleSingleLetters = React.useCallback(() => {
+    setLetters({ showEdges: !showEdges });
+  }, [showEdges, setLetters]);
+
+  const handleToggleFinalLetters = React.useCallback(() => {
+    setLetters({ showDiagonals: !showDiagonals });
+  }, [showDiagonals, setLetters]);
 
   // Faces controls
   const [{ showFaces, opaqueFaces }, setFaces] = useControls(
@@ -213,6 +230,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         onToggleFaceVisibility={handleToggleFaceVisibility}
         onToggleFaceOpacity={handleToggleFaceOpacity}
         onToggleEnergyFlow={handleToggleEnergyFlow}
+        onToggleMotherLetters={handleToggleMotherLetters}
+        onToggleDoubleLetters={handleToggleDoubleLetters}
+        onToggleSingleLetters={handleToggleSingleLetters}
+        onToggleFinalLetters={handleToggleFinalLetters}
       />
 
       {/* Ground grid */}

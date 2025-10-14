@@ -13,6 +13,10 @@ export interface GamepadState {
   };
   buttons: {
     a: boolean;
+    dpadUp: boolean;
+    dpadDown: boolean;
+    dpadLeft: boolean;
+    dpadRight: boolean;
     leftBumper: boolean;
     rightBumper: boolean;
     leftStickPress: boolean;
@@ -40,6 +44,10 @@ export function useGamepad(): GamepadState {
     triggers: { left: 0, right: 0 },
     buttons: {
       a: false,
+      dpadUp: false,
+      dpadDown: false,
+      dpadLeft: false,
+      dpadRight: false,
       leftBumper: false,
       rightBumper: false,
       leftStickPress: false,
@@ -69,6 +77,10 @@ export function useGamepad(): GamepadState {
           triggers: { left: 0, right: 0 },
           buttons: {
             a: false,
+            dpadUp: false,
+            dpadDown: false,
+            dpadLeft: false,
+            dpadRight: false,
             leftBumper: false,
             rightBumper: false,
             leftStickPress: false,
@@ -102,6 +114,12 @@ export function useGamepad(): GamepadState {
         // Face buttons (A = button 0)
         const aButton = gamepad.buttons[0]?.pressed || false;
 
+        // D-Pad buttons (Up = 12, Down = 13, Left = 14, Right = 15)
+        const dpadUp = gamepad.buttons[12]?.pressed || false;
+        const dpadDown = gamepad.buttons[13]?.pressed || false;
+        const dpadLeft = gamepad.buttons[14]?.pressed || false;
+        const dpadRight = gamepad.buttons[15]?.pressed || false;
+
         // Shoulder buttons (LB = button 4, RB = button 5)
         const leftBumper = gamepad.buttons[4]?.pressed || false;
         const rightBumper = gamepad.buttons[5]?.pressed || false;
@@ -122,6 +140,10 @@ export function useGamepad(): GamepadState {
           },
           buttons: {
             a: aButton,
+            dpadUp,
+            dpadDown,
+            dpadLeft,
+            dpadRight,
             leftBumper,
             rightBumper,
             leftStickPress,
@@ -139,6 +161,10 @@ export function useGamepad(): GamepadState {
           triggers: { left: 0, right: 0 },
           buttons: {
             a: false,
+            dpadUp: false,
+            dpadDown: false,
+            dpadLeft: false,
+            dpadRight: false,
             leftBumper: false,
             rightBumper: false,
             leftStickPress: false,

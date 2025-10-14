@@ -16,6 +16,10 @@ interface GamepadControlsProps {
   onToggleFaceVisibility?: () => void;
   onToggleFaceOpacity?: () => void;
   onToggleEnergyFlow?: () => void;
+  onToggleMotherLetters?: () => void;
+  onToggleDoubleLetters?: () => void;
+  onToggleSingleLetters?: () => void;
+  onToggleFinalLetters?: () => void;
 }
 
 /**
@@ -39,6 +43,10 @@ export function GamepadControls({
   onToggleFaceVisibility,
   onToggleFaceOpacity,
   onToggleEnergyFlow,
+  onToggleMotherLetters,
+  onToggleDoubleLetters,
+  onToggleSingleLetters,
+  onToggleFinalLetters,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
@@ -46,6 +54,10 @@ export function GamepadControls({
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
   const lastAButtonRef = useRef<boolean>(false);
+  const lastDpadUpRef = useRef<boolean>(false);
+  const lastDpadDownRef = useRef<boolean>(false);
+  const lastDpadLeftRef = useRef<boolean>(false);
+  const lastDpadRightRef = useRef<boolean>(false);
   const lastLeftBumperRef = useRef<boolean>(false);
   const lastRightBumperRef = useRef<boolean>(false);
   const lastLeftStickPressRef = useRef<boolean>(false);
@@ -93,6 +105,30 @@ export function GamepadControls({
         onToggleEnergyFlow?.();
       }
       lastAButtonRef.current = currentGamepad.buttons.a;
+
+      // D-Pad Up: Toggle Mother Letters (with debouncing)
+      if (currentGamepad.buttons.dpadUp && !lastDpadUpRef.current) {
+        onToggleMotherLetters?.();
+      }
+      lastDpadUpRef.current = currentGamepad.buttons.dpadUp;
+
+      // D-Pad Right: Toggle Double Letters (with debouncing)
+      if (currentGamepad.buttons.dpadRight && !lastDpadRightRef.current) {
+        onToggleDoubleLetters?.();
+      }
+      lastDpadRightRef.current = currentGamepad.buttons.dpadRight;
+
+      // D-Pad Down: Toggle Single Letters (with debouncing)
+      if (currentGamepad.buttons.dpadDown && !lastDpadDownRef.current) {
+        onToggleSingleLetters?.();
+      }
+      lastDpadDownRef.current = currentGamepad.buttons.dpadDown;
+
+      // D-Pad Left: Toggle Final Letters (with debouncing)
+      if (currentGamepad.buttons.dpadLeft && !lastDpadLeftRef.current) {
+        onToggleFinalLetters?.();
+      }
+      lastDpadLeftRef.current = currentGamepad.buttons.dpadLeft;
 
       // Left bumper (LB): Toggle face visibility (with debouncing)
       if (currentGamepad.buttons.leftBumper && !lastLeftBumperRef.current) {
@@ -240,6 +276,10 @@ export function GamepadControls({
     onToggleFaceVisibility,
     onToggleFaceOpacity,
     onToggleEnergyFlow,
+    onToggleMotherLetters,
+    onToggleDoubleLetters,
+    onToggleSingleLetters,
+    onToggleFinalLetters,
   ]);
 
   return null;

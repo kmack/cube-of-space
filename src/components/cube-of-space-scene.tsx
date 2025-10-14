@@ -232,7 +232,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       {showDiagonalLines && <DiagonalLines opacity={0.7} />}
 
       {/* Keep label components mounted, toggle visibility to prevent texture churn */}
-      <group visible={showFaces && showDoubleLetters}>
+      <group visible={showDoubleLetters}>
         <FaceLabels />
       </group>
       <group visible={showEdges}>

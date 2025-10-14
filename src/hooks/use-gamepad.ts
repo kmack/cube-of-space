@@ -12,6 +12,7 @@ export interface GamepadState {
     right: number;
   };
   buttons: {
+    leftStickPress: boolean;
     rightStickPress: boolean;
   };
 }
@@ -34,7 +35,7 @@ export function useGamepad(): GamepadState {
     rightStickX: 0,
     rightStickY: 0,
     triggers: { left: 0, right: 0 },
-    buttons: { rightStickPress: false },
+    buttons: { leftStickPress: false, rightStickPress: false },
   });
 
   const animationFrameRef = useRef<number | null>(null);
@@ -57,7 +58,7 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
-          buttons: { rightStickPress: false },
+          buttons: { leftStickPress: false, rightStickPress: false },
         });
       }
     };
@@ -83,7 +84,8 @@ export function useGamepad(): GamepadState {
         const rightTrigger =
           gamepad.buttons[7]?.value || (gamepad.axes[5] + 1) / 2 || 0;
 
-        // Right stick button (R3)
+        // Stick buttons (L3 = button 10, R3 = button 11)
+        const leftStickPress = gamepad.buttons[10]?.pressed || false;
         const rightStickPress = gamepad.buttons[11]?.pressed || false;
 
         setState({
@@ -97,6 +99,7 @@ export function useGamepad(): GamepadState {
             right: rightTrigger,
           },
           buttons: {
+            leftStickPress,
             rightStickPress,
           },
         });
@@ -109,7 +112,7 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
-          buttons: { rightStickPress: false },
+          buttons: { leftStickPress: false, rightStickPress: false },
         });
       }
 

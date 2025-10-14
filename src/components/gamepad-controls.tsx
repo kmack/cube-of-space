@@ -38,6 +38,7 @@ export function GamepadControls({
   const gamepadRef = useRef(gamepad);
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
+  const lastLeftStickPressRef = useRef<boolean>(false);
   const lastRightStickPressRef = useRef<boolean>(false);
 
   // Keep gamepad ref up to date
@@ -76,6 +77,14 @@ export function GamepadControls({
 
       const currentGamepad = gamepadRef.current;
       let hasGamepadInput = false;
+
+      // Left stick press: Reset pan (target position) to origin (with debouncing)
+      if (currentGamepad.buttons.leftStickPress && !lastLeftStickPressRef.current) {
+        // Button just pressed (rising edge)
+        orbitControls.target.set(...defaultTarget);
+        orbitControls.update();
+      }
+      lastLeftStickPressRef.current = currentGamepad.buttons.leftStickPress;
 
       // Right stick press: Reset view to defaults (with debouncing)
       if (currentGamepad.buttons.rightStickPress && !lastRightStickPressRef.current) {

@@ -12,6 +12,8 @@ export interface GamepadState {
     right: number;
   };
   buttons: {
+    leftBumper: boolean;
+    rightBumper: boolean;
     leftStickPress: boolean;
     rightStickPress: boolean;
   };
@@ -35,7 +37,7 @@ export function useGamepad(): GamepadState {
     rightStickX: 0,
     rightStickY: 0,
     triggers: { left: 0, right: 0 },
-    buttons: { leftStickPress: false, rightStickPress: false },
+    buttons: { leftBumper: false, rightBumper: false, leftStickPress: false, rightStickPress: false },
   });
 
   const animationFrameRef = useRef<number | null>(null);
@@ -58,7 +60,7 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
-          buttons: { leftStickPress: false, rightStickPress: false },
+          buttons: { leftBumper: false, rightBumper: false, leftStickPress: false, rightStickPress: false },
         });
       }
     };
@@ -84,6 +86,10 @@ export function useGamepad(): GamepadState {
         const rightTrigger =
           gamepad.buttons[7]?.value || (gamepad.axes[5] + 1) / 2 || 0;
 
+        // Shoulder buttons (LB = button 4, RB = button 5)
+        const leftBumper = gamepad.buttons[4]?.pressed || false;
+        const rightBumper = gamepad.buttons[5]?.pressed || false;
+
         // Stick buttons (L3 = button 10, R3 = button 11)
         const leftStickPress = gamepad.buttons[10]?.pressed || false;
         const rightStickPress = gamepad.buttons[11]?.pressed || false;
@@ -99,6 +105,8 @@ export function useGamepad(): GamepadState {
             right: rightTrigger,
           },
           buttons: {
+            leftBumper,
+            rightBumper,
             leftStickPress,
             rightStickPress,
           },
@@ -112,7 +120,7 @@ export function useGamepad(): GamepadState {
           rightStickX: 0,
           rightStickY: 0,
           triggers: { left: 0, right: 0 },
-          buttons: { leftStickPress: false, rightStickPress: false },
+          buttons: { leftBumper: false, rightBumper: false, leftStickPress: false, rightStickPress: false },
         });
       }
 

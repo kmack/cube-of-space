@@ -45,9 +45,9 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     });
 
   // Faces controls
-  const { showFaces, opaqueFaces } = useControls(
+  const [{ showFaces, opaqueFaces }, setFaces] = useControls(
     'Faces',
-    {
+    () => ({
       showFaces: {
         value: true,
         label: 'Show Faces',
@@ -56,9 +56,18 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         value: false,
         label: 'Opaque Faces',
       },
-    },
+    }),
     { collapsed: true }
   );
+
+  // Gamepad toggle callbacks
+  const handleToggleFaceVisibility = React.useCallback(() => {
+    setFaces({ showFaces: !showFaces });
+  }, [showFaces, setFaces]);
+
+  const handleToggleFaceOpacity = React.useCallback(() => {
+    setFaces({ opaqueFaces: !opaqueFaces });
+  }, [opaqueFaces, setFaces]);
 
   // Axes controls
   const { showAxisLines, showDiagonalLines, showEdgePositions } = useControls(
@@ -190,6 +199,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         zoomSpeed={gamepadZoomSpeed}
         panSpeed={gamepadPanSpeed}
         rotationCurve={gamepadRotationCurve}
+        onToggleFaceVisibility={handleToggleFaceVisibility}
+        onToggleFaceOpacity={handleToggleFaceOpacity}
       />
 
       {/* Ground grid */}

@@ -13,6 +13,8 @@ interface GamepadControlsProps {
   rotationCurve?: number; // Exponent for rotation curve (1.0 = linear, >1.0 = exponential)
   defaultCameraPosition?: [number, number, number];
   defaultTarget?: [number, number, number];
+  onToggleFaceVisibility?: () => void;
+  onToggleFaceOpacity?: () => void;
 }
 
 /**
@@ -33,12 +35,16 @@ export function GamepadControls({
   rotationCurve = 2.0,
   defaultCameraPosition = [4, 3, 6],
   defaultTarget = [0, 0, 0],
+  onToggleFaceVisibility,
+  onToggleFaceOpacity,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
   const gamepadRef = useRef(gamepad);
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
+  const lastLeftBumperRef = useRef<boolean>(false);
+  const lastRightBumperRef = useRef<boolean>(false);
   const lastLeftStickPressRef = useRef<boolean>(false);
   const lastRightStickPressRef = useRef<boolean>(false);
 
@@ -78,6 +84,18 @@ export function GamepadControls({
 
       const currentGamepad = gamepadRef.current;
       let hasGamepadInput = false;
+
+      // Left bumper (LB): Toggle face visibility (with debouncing)
+      if (currentGamepad.buttons.leftBumper && !lastLeftBumperRef.current) {
+        onToggleFaceVisibility?.();
+      }
+      lastLeftBumperRef.current = currentGamepad.buttons.leftBumper;
+
+      // Right bumper (RB): Toggle face opacity (with debouncing)
+      if (currentGamepad.buttons.rightBumper && !lastRightBumperRef.current) {
+        onToggleFaceOpacity?.();
+      }
+      lastRightBumperRef.current = currentGamepad.buttons.rightBumper;
 
       // Left stick press: Reset pan (target position) to origin (with debouncing)
       if (currentGamepad.buttons.leftStickPress && !lastLeftStickPressRef.current) {
@@ -195,6 +213,8 @@ export function GamepadControls({
     rotationCurve,
     defaultCameraPosition,
     defaultTarget,
+    onToggleFaceVisibility,
+    onToggleFaceOpacity,
   ]);
 
   return null;

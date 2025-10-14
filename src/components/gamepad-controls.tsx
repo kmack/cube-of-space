@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import { Vector3 } from 'three';
 import { useGamepad } from '../hooks/use-gamepad';
 
 interface GamepadControlsProps {
@@ -96,19 +97,39 @@ export function GamepadControls({
       }
       lastRightStickPressRef.current = currentGamepad.buttons.rightStickPress;
 
-      // Left stick X: Pan horizontally
-      if (Math.abs(currentGamepad.leftStickX) > 0) {
+      // Left stick: Pan in screen space (like right-mouse-button drag)
+      if (Math.abs(currentGamepad.leftStickX) > 0 || Math.abs(currentGamepad.leftStickY) > 0) {
         hasGamepadInput = true;
+
+        // Get camera's right vector (for horizontal panning)
+        const cameraRight = new Vector3();
+        camera.getWorldDirection(cameraRight);
+        cameraRight.cross(camera.up).normalize();
+
+        // Get camera's up vector (for vertical panning)
+        const cameraUp = new Vector3();
+        camera.getWorldDirection(cameraUp);
+        cameraUp.cross(cameraRight).normalize();
+
+        // Apply pan movement
         const panX = currentGamepad.leftStickX * panSpeed * deltaTime;
-        orbitControls.target.x += panX;
+        const panY = -currentGamepad.leftStickY * panSpeed * deltaTime; // Inverted for natural feel
+
+        orbitControls.target.addScaledVector(cameraRight, panX);
+        orbitControls.target.addScaledVector(cameraUp, panY);
+
+        // Move camera along with target to maintain relative position
+        camera.position.addScaledVector(cameraRight, panX);
+        camera.position.addScaledVector(cameraUp, panY);
       }
 
-      // Left stick Y: Zoom in/out
-      if (Math.abs(currentGamepad.leftStickY) > 0) {
+      // Triggers: Zoom in/out
+      const triggerDelta = currentGamepad.triggers.right - currentGamepad.triggers.left;
+      if (Math.abs(triggerDelta) > 0.01) {
         hasGamepadInput = true;
-        const zoomDelta = currentGamepad.leftStickY * zoomSpeed * deltaTime;
+        const zoomDelta = triggerDelta * zoomSpeed * deltaTime;
         const distance = camera.position.distanceTo(orbitControls.target);
-        const newDistance = Math.max(1, Math.min(20, distance + zoomDelta));
+        const newDistance = Math.max(1, Math.min(20, distance - zoomDelta));
 
         // Calculate direction from target to camera, then scale to new distance
         const direction = camera.position.clone().sub(orbitControls.target).normalize();

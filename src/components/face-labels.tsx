@@ -1,11 +1,12 @@
 // src/components/face-labels.tsx
-import * as React from 'react';
 import { Billboard } from '@react-three/drei';
-import { faces, center } from '../data/geometry';
-import { RichLabel } from './rich-label';
-import { FACE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
+import * as React from 'react';
+
 import { LABEL_OFFSET } from '../data/constants';
+import { center, faces } from '../data/geometry';
+import { FACE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
+import { RichLabel } from './rich-label';
 
 interface FaceLabelsProps {
   useMemoryOptimization?: boolean;

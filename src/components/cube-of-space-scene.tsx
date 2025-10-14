@@ -1,49 +1,49 @@
 // src/components/cube-of-space-scene.tsx
-import * as React from 'react';
-
-import { Canvas } from '@react-three/fiber';
 import { Grid, OrbitControls } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import { useControls } from 'leva';
+import * as React from 'react';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
-import { FacePlanes } from './face-planes';
-import { WireCube } from './wire-cube';
-import { AxisLines } from './axis-lines';
-import { DiagonalLines } from './diagonal-lines';
-import { FaceLabels } from './face-labels';
-import { EdgeLabels } from './edge-labels';
-import { MotherLabels } from './mother-labels';
-import { DiagonalLabels } from './diagonal-labels';
-import { EdgeEnergyFlows } from './edge-energy-flows';
-import { AxisEnergyFlows } from './axis-energy-flows';
-import { EdgePositionLabels } from './edge-position-labels';
-import { GamepadControls } from './gamepad-controls';
-
 import { HALF } from '../data/constants';
+import { AxisEnergyFlows } from './axis-energy-flows';
+import { AxisLines } from './axis-lines';
+import { DiagonalLabels } from './diagonal-labels';
+import { DiagonalLines } from './diagonal-lines';
+import { EdgeEnergyFlows } from './edge-energy-flows';
+import { EdgeLabels } from './edge-labels';
+import { EdgePositionLabels } from './edge-position-labels';
+import { FaceLabels } from './face-labels';
+import { FacePlanes } from './face-planes';
+import { GamepadControls } from './gamepad-controls';
+import { MotherLabels } from './mother-labels';
+import { WireCube } from './wire-cube';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
   const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
-  const [{ showEdges, showDoubleLetters, showMotherLetters, showDiagonals }, setLetters] =
-    useControls('Letters', () => ({
-      showEdges: {
-        value: true,
-        label: 'Single Letters',
-      },
-      showDoubleLetters: {
-        value: true,
-        label: 'Double Letters',
-      },
-      showMotherLetters: {
-        value: true,
-        label: 'Mother Letters',
-      },
-      showDiagonals: {
-        value: true,
-        label: 'Final Letters',
-      },
-    }));
+  const [
+    { showEdges, showDoubleLetters, showMotherLetters, showDiagonals },
+    setLetters,
+  ] = useControls('Letters', () => ({
+    showEdges: {
+      value: true,
+      label: 'Single Letters',
+    },
+    showDoubleLetters: {
+      value: true,
+      label: 'Double Letters',
+    },
+    showMotherLetters: {
+      value: true,
+      label: 'Mother Letters',
+    },
+    showDiagonals: {
+      value: true,
+      label: 'Final Letters',
+    },
+  }));
 
   // Gamepad letter toggle callbacks
   const handleToggleMotherLetters = React.useCallback(() => {

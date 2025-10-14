@@ -1,20 +1,21 @@
 // src/components/rich-label.tsx
+import { useThree } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+
 import {
+  LABEL_HEIGHT_WITH_IMAGE,
+  LABEL_WIDTH_WITH_IMAGE,
+} from '../data/constants';
+import type {
+  BackgroundStyle,
+  CanvasLabelConfig,
+} from '../utils/canvas-texture';
+import {
+  createCanvasTexture,
   createHebrewLabelTexture,
   createStructuredHebrewLabel,
-  createCanvasTexture,
 } from '../utils/canvas-texture';
-import type {
-  CanvasLabelConfig,
-  BackgroundStyle,
-} from '../utils/canvas-texture';
-import {
-  LABEL_WIDTH_WITH_IMAGE,
-  LABEL_HEIGHT_WITH_IMAGE,
-} from '../data/constants';
 
 export type RichLabelProps = {
   // Content
@@ -114,7 +115,7 @@ export function RichLabel({
         })
       : letterName && assocGlyph && assocName
         ? createStructuredHebrewLabel(
-            hebrewLetter || '',
+            hebrewLetter ?? '',
             letterName,
             assocGlyph,
             assocName,
@@ -130,7 +131,7 @@ export function RichLabel({
               useMemoryOptimization,
             }
           )
-        : createHebrewLabelTexture(hebrewLetter || '', title, subtitle, {
+        : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
             width,
             height,
             color,

@@ -1,8 +1,9 @@
 // src/components/wire-cube.tsx
-import * as React from 'react';
 import { Line } from '@react-three/drei';
-import type { Vec3 } from '../utils/types';
+import * as React from 'react';
+
 import { SIZE } from '../data/constants';
+import type { Vec3 } from '../utils/types';
 
 export function WireCube({
   size = SIZE,

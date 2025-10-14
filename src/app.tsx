@@ -1,8 +1,9 @@
 // src/app.tsx
-import * as React from 'react';
 import { Leva } from 'leva';
-import { CubeOfSpaceScene } from './components/cube-of-space-scene';
+import * as React from 'react';
+
 import { AnimatedGradientBackground } from './components/animated-gradient-background';
+import { CubeOfSpaceScene } from './components/cube-of-space-scene';
 
 export function App(): React.JSX.Element {
   return (

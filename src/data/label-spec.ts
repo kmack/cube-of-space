@@ -341,5 +341,6 @@ export function getLabelPieces(letter: HebrewLetter): {
 
 /** Direct access to specs if you need more than the string. */
 export function getSpec(letter: HebrewLetter): LetterSpec {
+  // eslint-disable-next-line security/detect-object-injection -- letter is TypeScript-typed HebrewLetter, safe indexed access
   return S[letter];
 }

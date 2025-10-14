@@ -93,6 +93,7 @@ export function useGamepad(): GamepadState {
     const pollGamepad = (): void => {
       const gamepads = navigator.getGamepads();
       const gamepad =
+        // eslint-disable-next-line security/detect-object-injection -- gamepadIndex is controlled number, safe array access
         gamepadIndex !== null ? gamepads[gamepadIndex] : gamepads[0];
 
       if (gamepad) {

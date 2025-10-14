@@ -1,7 +1,8 @@
 // src/components/energy-flow.tsx
+import { useFrame } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+
 import type { FlowDirection } from '../data/energy-flow-config';
 
 export type EnergyFlowProps = {

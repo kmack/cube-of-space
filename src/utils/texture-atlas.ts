@@ -87,6 +87,7 @@ export function createTextureAtlas(
     const u2 = (x + width) / atlasWidth;
     const v2 = 1 - y / atlasHeight; // Flip V coordinate
 
+    // eslint-disable-next-line security/detect-object-injection -- id is string key from trusted canvases Record, safe indexed access
     regions[id] = {
       x,
       y,
@@ -167,6 +168,7 @@ export function createMultipleAtlases(
 
     // Remove successfully packed textures
     for (const id of Object.keys(atlas.regions)) {
+      // eslint-disable-next-line security/detect-object-injection -- id is key from Object.keys, safe indexed access
       delete remaining[id];
     }
 
@@ -215,11 +217,15 @@ export function createOptimizedCanvas(
       const luminanceAlpha = new Uint8Array(width * height * 2);
 
       for (let i = 0; i < rgba.length; i += 4) {
+        // eslint-disable-next-line security/detect-object-injection -- i is loop counter for typed array, safe indexed access
         const luminance = rgba[i]; // R channel (since it's B&W, R=G=B)
+
         const alpha = rgba[i + 3]; // A channel
         const laIndex = (i / 4) * 2;
 
+        // eslint-disable-next-line security/detect-object-injection -- laIndex is computed index for typed array, safe indexed access
         luminanceAlpha[laIndex] = luminance;
+
         luminanceAlpha[laIndex + 1] = alpha;
       }
 
@@ -254,7 +260,7 @@ function supportsRGFormat(): boolean {
 
     const gl1 = canvas.getContext('webgl');
     if (gl1) {
-      const ext = gl1.getExtension('EXT_texture_rg');
+      const ext = gl1.getExtension('EXT_texture_rg') as unknown;
       rgFormatSupported = ext !== null;
       return rgFormatSupported;
     }

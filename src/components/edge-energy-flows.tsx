@@ -1,14 +1,15 @@
 // src/components/edge-energy-flows.tsx
 import * as React from 'react';
 import * as THREE from 'three';
-import { EnergyFlow } from './energy-flow';
-import { edges } from '../data/geometry';
+
 import { HALF } from '../data/constants';
 import {
-  ENERGY_FLOW_CONFIG,
   type EdgeHebrewLetter,
+  ENERGY_FLOW_CONFIG,
 } from '../data/energy-flow-config';
+import { edges } from '../data/geometry';
 import type { BaseVisualizationProps } from '../types/component-props';
+import { EnergyFlow } from './energy-flow';
 
 interface EdgeEnergyFlowsProps extends BaseVisualizationProps {
   speed?: number;

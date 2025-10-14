@@ -1,11 +1,12 @@
 // src/components/edge-labels.tsx
 import * as React from 'react';
+
+import { LABEL_OFFSET } from '../data/constants';
 import { edges } from '../data/geometry';
+import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
+import { createLabelData } from '../utils/label-factory';
 import { eulerFromNormalAndTangent } from '../utils/orientation';
 import { RichLabel } from './rich-label';
-import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
-import { LABEL_OFFSET } from '../data/constants';
-import { createLabelData } from '../utils/label-factory';
 
 interface EdgeLabelsProps {
   useMemoryOptimization?: boolean;

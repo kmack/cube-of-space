@@ -1,8 +1,9 @@
 // src/components/axis-energy-flows.tsx
 import * as React from 'react';
-import { EnergyFlow } from './energy-flow';
+
 import { HALF } from '../data/constants';
 import type { BaseVisualizationProps } from '../types/component-props';
+import { EnergyFlow } from './energy-flow';
 
 interface AxisEnergyFlowsProps extends BaseVisualizationProps {
   speed?: number;
@@ -21,21 +22,21 @@ export function AxisEnergyFlows({
       {
         name: 'vertical',
         startPos: [0, HALF, 0] as [number, number, number], // Above
-        endPos: [0, -HALF, 0] as [number, number, number],   // Below
+        endPos: [0, -HALF, 0] as [number, number, number], // Below
         direction: 'positive' as const,
         color: '#ffff00', // Yellow
       },
       {
         name: 'horizontal-x',
-        startPos: [HALF, 0, 0] as [number, number, number],  // East
-        endPos: [-HALF, 0, 0] as [number, number, number],   // West
+        startPos: [HALF, 0, 0] as [number, number, number], // East
+        endPos: [-HALF, 0, 0] as [number, number, number], // West
         direction: 'positive' as const,
         color: '#0000ff', // Blue
       },
       {
         name: 'horizontal-z',
-        startPos: [0, 0, HALF] as [number, number, number],  // North
-        endPos: [0, 0, -HALF] as [number, number, number],   // South
+        startPos: [0, 0, HALF] as [number, number, number], // North
+        endPos: [0, 0, -HALF] as [number, number, number], // South
         direction: 'positive' as const,
         color: '#ff0000', // Red
       },

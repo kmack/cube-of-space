@@ -1,5 +1,5 @@
 // src/data/geometry.ts
-import type { Face, Edge, Axis, Diagonal } from '../utils/types';
+import type { Axis, Diagonal, Edge, Face } from '../utils/types';
 import { HALF, MOTHER_OFFSET } from './constants';
 
 export const faces: Face[] = [

@@ -21,6 +21,7 @@ interface GamepadControlsProps {
   onToggleDoubleLetters?: () => void;
   onToggleSingleLetters?: () => void;
   onToggleFinalLetters?: () => void;
+  onToggleDoubleSidedLabels?: () => void;
 }
 
 /**
@@ -48,6 +49,7 @@ export function GamepadControls({
   onToggleDoubleLetters,
   onToggleSingleLetters,
   onToggleFinalLetters,
+  onToggleDoubleSidedLabels,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
@@ -55,6 +57,7 @@ export function GamepadControls({
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
   const lastAButtonRef = useRef<boolean>(false);
+  const lastBButtonRef = useRef<boolean>(false);
   const lastDpadUpRef = useRef<boolean>(false);
   const lastDpadDownRef = useRef<boolean>(false);
   const lastDpadLeftRef = useRef<boolean>(false);
@@ -106,6 +109,12 @@ export function GamepadControls({
         onToggleEnergyFlow?.();
       }
       lastAButtonRef.current = currentGamepad.buttons.a;
+
+      // B button: Toggle double-sided labels (with debouncing)
+      if (currentGamepad.buttons.b && !lastBButtonRef.current) {
+        onToggleDoubleSidedLabels?.();
+      }
+      lastBButtonRef.current = currentGamepad.buttons.b;
 
       // D-Pad Up: Toggle Mother Letters (with debouncing)
       if (currentGamepad.buttons.dpadUp && !lastDpadUpRef.current) {
@@ -281,6 +290,7 @@ export function GamepadControls({
     onToggleDoubleLetters,
     onToggleSingleLetters,
     onToggleFinalLetters,
+    onToggleDoubleSidedLabels,
   ]);
 
   return null;

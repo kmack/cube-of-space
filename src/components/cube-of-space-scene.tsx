@@ -72,6 +72,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     setLetters({ showDiagonals: !showDiagonals });
   }, [showDiagonals, setLetters]);
 
+  const handleToggleDoubleSidedLabels = React.useCallback(() => {
+    setLetters({ doubleSidedLabels: !doubleSidedLabels });
+  }, [doubleSidedLabels, setLetters]);
+
   // Faces controls
   const [{ showFaces, opaqueFaces }, setFaces] = useControls(
     'Faces',
@@ -245,6 +249,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         onToggleDoubleLetters={handleToggleDoubleLetters}
         onToggleSingleLetters={handleToggleSingleLetters}
         onToggleFinalLetters={handleToggleFinalLetters}
+        onToggleDoubleSidedLabels={handleToggleDoubleSidedLabels}
       />
 
       {/* Ground grid */}

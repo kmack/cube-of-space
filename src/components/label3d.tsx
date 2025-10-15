@@ -12,6 +12,7 @@ export type Label3DProps = {
   size?: number;
   gap?: number;
   color?: string;
+  doubleSided?: boolean;
 };
 
 function Label3DComponent({
@@ -21,6 +22,7 @@ function Label3DComponent({
   size = 0.08,
   gap = 0.08,
   color = 'white',
+  doubleSided = false,
 }: Label3DProps): React.JSX.Element {
   const titleSize = size;
   const hebrewLetterSize = size * 1.25;
@@ -64,6 +66,7 @@ function Label3DComponent({
           fontSize={hebrewLetterSize}
           color={color}
           material-toneMapped={false}
+          material-side={doubleSided ? 2 : 0}
           sdfGlyphSize={16}
         >
           {hebrewLetter}
@@ -77,6 +80,7 @@ function Label3DComponent({
         lineHeight={titleLH}
         color={color}
         material-toneMapped={false}
+        material-side={doubleSided ? 2 : 0}
         sdfGlyphSize={16}
       >
         {title}
@@ -92,6 +96,7 @@ function Label3DComponent({
           material-toneMapped={false}
           material-transparent
           material-opacity={0.9}
+          material-side={doubleSided ? 2 : 0}
           sdfGlyphSize={16}
         >
           {subtitle}

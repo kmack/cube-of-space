@@ -10,10 +10,12 @@ import { RichLabel } from './rich-label';
 
 interface FaceLabelsProps {
   useMemoryOptimization?: boolean;
+  doubleSided?: boolean;
 }
 
 function FaceLabelsComponent({
   useMemoryOptimization = true,
+  doubleSided = false,
 }: FaceLabelsProps): React.JSX.Element {
   // Memoize label data to avoid recreation on every render
   const centerLabelData = React.useMemo(
@@ -57,6 +59,7 @@ function FaceLabelsComponent({
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
               useMemoryOptimization={useMemoryOptimization}
+              doubleSided={doubleSided}
             />
           </group>
         );
@@ -83,6 +86,7 @@ function FaceLabelsComponent({
           hebrewFont="FrankRuhlLibre, serif"
           uiFont="Inter, sans-serif"
           useMemoryOptimization={useMemoryOptimization}
+          doubleSided={doubleSided}
         />
       </Billboard>
     </>

@@ -24,7 +24,13 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
   // Letters controls
   const [
-    { showEdges, showDoubleLetters, showMotherLetters, showDiagonals },
+    {
+      showEdges,
+      showDoubleLetters,
+      showMotherLetters,
+      showDiagonals,
+      doubleSidedLabels,
+    },
     setLetters,
   ] = useControls('Letters', () => ({
     showMotherLetters: {
@@ -42,6 +48,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     showDiagonals: {
       value: true,
       label: 'Final Letters',
+    },
+    doubleSidedLabels: {
+      value: false,
+      label: 'Double-Sided Labels',
     },
   }));
 
@@ -267,16 +277,16 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
       {/* Keep label components mounted, toggle visibility to prevent texture churn */}
       <group visible={showDoubleLetters}>
-        <FaceLabels />
+        <FaceLabels doubleSided={doubleSidedLabels} />
       </group>
       <group visible={showEdges}>
-        <EdgeLabels />
+        <EdgeLabels doubleSided={doubleSidedLabels} />
       </group>
       <group visible={showMotherLetters}>
-        <MotherLabels />
+        <MotherLabels doubleSided={doubleSidedLabels} />
       </group>
       <group visible={showDiagonals}>
-        <DiagonalLabels />
+        <DiagonalLabels doubleSided={doubleSidedLabels} />
       </group>
 
       {/* Energy Flow */}

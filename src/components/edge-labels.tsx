@@ -10,10 +10,12 @@ import { RichLabel } from './rich-label';
 
 interface EdgeLabelsProps {
   useMemoryOptimization?: boolean;
+  doubleSided?: boolean;
 }
 
 function EdgeLabelsComponent({
   useMemoryOptimization = true,
+  doubleSided = false,
 }: EdgeLabelsProps): React.JSX.Element {
   // Memoize edge label data and positions to avoid recalculation
   const edgeLabelInfo = React.useMemo(() => {
@@ -51,6 +53,7 @@ function EdgeLabelsComponent({
               hebrewFont="FrankRuhlLibre, serif"
               uiFont="Inter, sans-serif"
               useMemoryOptimization={useMemoryOptimization}
+              doubleSided={doubleSided}
             />
           </group>
         );

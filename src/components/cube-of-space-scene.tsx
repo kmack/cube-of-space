@@ -27,17 +27,17 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     { showEdges, showDoubleLetters, showMotherLetters, showDiagonals },
     setLetters,
   ] = useControls('Letters', () => ({
-    showEdges: {
+    showMotherLetters: {
       value: true,
-      label: 'Single Letters',
+      label: 'Mother Letters',
     },
     showDoubleLetters: {
       value: true,
       label: 'Double Letters',
     },
-    showMotherLetters: {
+    showEdges: {
       value: true,
-      label: 'Mother Letters',
+      label: 'Simple Letters',
     },
     showDiagonals: {
       value: true,

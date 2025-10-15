@@ -51,7 +51,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       label: 'Final Letters',
     },
     doubleSidedLabels: {
-      value: false,
+      value: true,
       label: 'Double-Sided Labels',
     },
   }));

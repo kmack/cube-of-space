@@ -8,6 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { HALF } from '../data/constants';
 import { AxisEnergyFlows } from './axis-energy-flows';
 import { AxisLines } from './axis-lines';
+import { DiagonalEnergyFlows } from './diagonal-energy-flows';
 import { DiagonalLabels } from './diagonal-labels';
 import { DiagonalLines } from './diagonal-lines';
 import { EdgeEnergyFlows } from './edge-energy-flows';
@@ -302,6 +303,12 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         opacity={energyOpacity}
       />
       <AxisEnergyFlows
+        visible={showEnergyFlow}
+        speed={energySpeed}
+        particleCount={energyParticles}
+        opacity={energyOpacity}
+      />
+      <DiagonalEnergyFlows
         visible={showEnergyFlow}
         speed={energySpeed}
         particleCount={energyParticles}

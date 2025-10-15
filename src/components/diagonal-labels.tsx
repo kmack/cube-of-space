@@ -147,7 +147,7 @@ function DiagonalLabelInner({
         canvasConfig={canvasConfig}
         width={128}
         height={32}
-        scale={LABEL_SCALE * 0.075}
+        scale={LABEL_SCALE * 0.15}
         useMemoryOptimization={useMemoryOptimization}
         doubleSided={doubleSided}
       />

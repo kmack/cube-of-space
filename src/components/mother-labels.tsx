@@ -12,10 +12,12 @@ import { RichLabel } from './rich-label';
 
 interface MotherLabelsProps {
   useMemoryOptimization?: boolean;
+  doubleSided?: boolean;
 }
 
 function MotherLabelsComponent({
   useMemoryOptimization = true,
+  doubleSided = false,
 }: MotherLabelsProps): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
   const info = axes.map((a, idx) => {
@@ -121,6 +123,7 @@ function MotherLabelsComponent({
                 hebrewFont="FrankRuhlLibre, serif"
                 uiFont="Inter, sans-serif"
                 useMemoryOptimization={useMemoryOptimization}
+                doubleSided={doubleSided}
               />
             </group>
           );

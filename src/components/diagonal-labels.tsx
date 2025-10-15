@@ -11,6 +11,7 @@ import { RichLabel } from './rich-label';
 
 interface DiagonalLabelsProps {
   useMemoryOptimization?: boolean;
+  doubleSided?: boolean;
 }
 
 interface DiagonalConfig {
@@ -23,9 +24,11 @@ const DiagonalLabel = React.memo(
   ({
     config,
     useMemoryOptimization,
+    doubleSided,
   }: {
     config: DiagonalConfig;
     useMemoryOptimization: boolean;
+    doubleSided: boolean;
   }): React.JSX.Element => {
     const d = config.diagonal;
     const canvasConfig = config.canvasConfig;
@@ -35,6 +38,7 @@ const DiagonalLabel = React.memo(
         diagonal={d}
         canvasConfig={canvasConfig}
         useMemoryOptimization={useMemoryOptimization}
+        doubleSided={doubleSided}
       />
     );
   }
@@ -47,10 +51,12 @@ function DiagonalLabelInner({
   diagonal: d,
   canvasConfig,
   useMemoryOptimization,
+  doubleSided,
 }: {
   diagonal: (typeof diagonals)[0];
   canvasConfig: CanvasLabelConfig;
   useMemoryOptimization: boolean;
+  doubleSided: boolean;
 }): React.JSX.Element {
   const ref = React.useRef<THREE.Group>(null!);
 
@@ -143,6 +149,7 @@ function DiagonalLabelInner({
         height={32}
         scale={LABEL_SCALE * 0.075}
         useMemoryOptimization={useMemoryOptimization}
+        doubleSided={doubleSided}
       />
     </group>
   );
@@ -150,6 +157,7 @@ function DiagonalLabelInner({
 
 export function DiagonalLabels({
   useMemoryOptimization = true,
+  doubleSided = false,
 }: DiagonalLabelsProps): React.JSX.Element {
   // Memoize diagonal configs to prevent recreation on every render
   const diagonalConfigs = React.useMemo(() => {
@@ -215,6 +223,7 @@ export function DiagonalLabels({
           key={i}
           config={config}
           useMemoryOptimization={useMemoryOptimization}
+          doubleSided={doubleSided}
         />
       ))}
     </>

@@ -72,6 +72,7 @@ function DiagonalLabelInner({
 }): React.JSX.Element {
   const ref = React.useRef<THREE.Group>(null!);
   const frameCountRef = React.useRef(0);
+  const isInitializedRef = React.useRef(false);
 
   // Reusable objects to prevent memory allocation every frame
   const tempObjects = React.useRef({
@@ -87,7 +88,29 @@ function DiagonalLabelInner({
   useFrame(({ camera }) => {
     if (!ref.current) return;
 
-    // Pause animations when not active (idle or tab hidden)
+    const tmp = tempObjects.current;
+
+    // Always initialize rotation on first frame (so label is visible)
+    if (!isInitializedRef.current) {
+      ref.current.getWorldPosition(tmp.worldPos);
+      tmp.toCamera.copy(camera.position).sub(tmp.worldPos).normalize();
+      const dot = tmp.toCamera.dot(tmp.tangent);
+      tmp.normal
+        .copy(tmp.toCamera)
+        .addScaledVector(tmp.tangent, -dot)
+        .normalize();
+      tmp.binormal.crossVectors(tmp.normal, tmp.tangent).normalize();
+      if (tmp.binormal.y < 0) {
+        tmp.binormal.multiplyScalar(-1);
+        tmp.tangent.multiplyScalar(-1);
+      }
+      tmp.matrix.makeBasis(tmp.tangent, tmp.binormal, tmp.normal);
+      ref.current.quaternion.setFromRotationMatrix(tmp.matrix);
+      tmp.tangent.set(d.tangent[0], d.tangent[1], d.tangent[2]).normalize();
+      isInitializedRef.current = true;
+    }
+
+    // Only update rotation when active (save battery when idle)
     if (!isAnimationActive) return;
 
     // Throttle to 30fps on mobile (skip every other frame)
@@ -95,8 +118,6 @@ function DiagonalLabelInner({
       frameCountRef.current++;
       if (frameCountRef.current % 2 !== 0) return;
     }
-
-    const tmp = tempObjects.current;
 
     ref.current.getWorldPosition(tmp.worldPos);
 

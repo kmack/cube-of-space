@@ -66,6 +66,7 @@ function MotherLabelsComponent({
         }): React.JSX.Element => {
           const ref = React.useRef<THREE.Group>(null!);
           const frameCountRef = React.useRef(0);
+          const isInitializedRef = React.useRef(false);
           const labelData = createLabelData(a.letter);
 
           // Calculate axis-specific offset to avoid z-fighting with axis lines
@@ -82,7 +83,17 @@ function MotherLabelsComponent({
           useFrame(({ camera }) => {
             if (!ref.current) return;
 
-            // Pause animations when not active (idle or tab hidden)
+            // Always initialize position on first frame
+            if (!isInitializedRef.current) {
+              const initialPos =
+                a.letter === 'Aleph'
+                  ? [pos[0], pos[1], pos[2]]
+                  : baseOffsetPos;
+              ref.current.position.set(...(initialPos as [number, number, number]));
+              isInitializedRef.current = true;
+            }
+
+            // Only update position when active (save battery when idle)
             if (!isAnimationActive) return;
 
             // Throttle to 30fps on mobile (skip every other frame)

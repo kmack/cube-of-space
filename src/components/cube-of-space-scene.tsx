@@ -7,7 +7,10 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 import { HALF } from '../data/constants';
 import { useIsMobile } from '../utils/mobile-detection';
-import { useAnimationActive } from '../utils/performance-hooks';
+import {
+  useIdleDetection,
+  usePageVisibility,
+} from '../utils/performance-hooks';
 import { AxisEnergyFlows } from './axis-energy-flows';
 import { AxisLines } from './axis-lines';
 import { DiagonalEnergyFlows } from './diagonal-energy-flows';
@@ -24,7 +27,8 @@ import { WireCube } from './wire-cube';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
   const isMobile = useIsMobile();
-  const isAnimationActive = useAnimationActive(10000); // 10 second idle timeout
+  const isPageVisible = usePageVisibility();
+  const isUserActive = useIdleDetection(10000); // 10 second idle timeout
   const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
@@ -295,14 +299,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <group visible={showMotherLetters}>
         <MotherLabels
           doubleSided={doubleSidedLabels}
-          isAnimationActive={isAnimationActive}
+          isAnimationActive={isUserActive}
           isMobile={isMobile}
         />
       </group>
       <group visible={showDiagonals}>
         <DiagonalLabels
           doubleSided={doubleSidedLabels}
-          isAnimationActive={isAnimationActive}
+          isAnimationActive={isUserActive}
           isMobile={isMobile}
         />
       </group>
@@ -313,7 +317,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
-        isAnimationActive={isAnimationActive}
+        isAnimationActive={isPageVisible}
         isMobile={isMobile}
       />
       <AxisEnergyFlows
@@ -321,7 +325,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
-        isAnimationActive={isAnimationActive}
+        isAnimationActive={isPageVisible}
         isMobile={isMobile}
       />
       <DiagonalEnergyFlows
@@ -329,7 +333,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
-        isAnimationActive={isAnimationActive}
+        isAnimationActive={isPageVisible}
         isMobile={isMobile}
       />
 

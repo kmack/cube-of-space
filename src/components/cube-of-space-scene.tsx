@@ -131,22 +131,29 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   );
 
   // Energy Flow controls
-  const [
-    {
-      showEnergyFlow,
-      energySpeed,
-      energyOpacity,
-      energyParticles,
-      axisFlowDirection,
-    },
-    setEnergyFlow,
-  ] = useControls(
+  const [{ showEnergyFlow, axisFlowDirection }, setEnergyFlow] = useControls(
     'Energy Flow',
     () => ({
       showEnergyFlow: {
         value: true,
         label: 'Show Energy Flow',
       },
+      axisFlowDirection: {
+        value: 'center-to-faces',
+        options: {
+          'Center to Faces': 'center-to-faces',
+          'Directional Flow': 'directional',
+        },
+        label: 'Axis Flow Direction',
+      },
+    }),
+    { collapsed: true }
+  );
+
+  // Energy Flow Effects controls (nested subfolder)
+  const { energySpeed, energyOpacity, energyParticles } = useControls(
+    'Energy Flow.Effects',
+    {
       energySpeed: {
         value: 1.0,
         min: 0.1,
@@ -168,15 +175,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         step: 2,
         label: 'Particles',
       },
-      axisFlowDirection: {
-        value: 'center-to-faces',
-        options: {
-          'Center to Faces': 'center-to-faces',
-          'Directional Flow': 'directional',
-        },
-        label: 'Axis Flow Direction',
-      },
-    }),
+    },
     { collapsed: true }
   );
 

@@ -17,6 +17,117 @@ interface MotherLabelsProps {
   isMobile?: boolean;
 }
 
+// Move Node component outside to prevent unmount/remount on parent re-renders
+const MotherLabelNode = React.memo(
+  ({
+    pos,
+    axisInfo,
+    flipRef,
+    useMemoryOptimization,
+    doubleSided,
+    isAnimationActive,
+    isMobile,
+  }: {
+    pos: [number, number, number];
+    axisInfo: { a: (typeof axes)[0]; t: THREE.Vector3 };
+    flipRef: [number, number, number] | undefined;
+    useMemoryOptimization: boolean;
+    doubleSided: boolean;
+    isAnimationActive: boolean;
+    isMobile: boolean;
+  }): React.JSX.Element => {
+    const { a, t } = axisInfo;
+    const ref = React.useRef<THREE.Group>(null!);
+    const frameCountRef = React.useRef(0);
+    const isInitializedRef = React.useRef(false);
+    const labelData = createLabelData(a.letter);
+
+    // Calculate axis-specific offset to avoid z-fighting with axis lines
+    const baseOffsetPos: [number, number, number] = [...pos];
+    if (a.letter === 'Mem') {
+      // East-West axis (X) - offset upward (positive Y)
+      baseOffsetPos[1] += LABEL_OFFSET;
+    } else if (a.letter === 'Shin') {
+      // North-South axis (Z) - offset upward (positive Y)
+      baseOffsetPos[1] += LABEL_OFFSET;
+    }
+
+    // Dynamic positioning for all mother letter labels
+    useFrame(({ camera }) => {
+      if (!ref.current) return;
+
+      // Calculate the desired position
+      let finalPos: [number, number, number];
+
+      if (a.letter === 'Aleph') {
+        // Vertical axis (Y) - offset toward camera dynamically
+        const labelPos = new THREE.Vector3(...pos);
+        const cameraPos = camera.position.clone();
+        const toCamera = cameraPos.sub(labelPos).normalize();
+        // Project the camera direction onto the horizontal plane (remove Y component)
+        toCamera.y = 0;
+        toCamera.normalize();
+
+        // Calculate dynamic offset position
+        finalPos = [
+          pos[0] + toCamera.x * LABEL_OFFSET,
+          pos[1],
+          pos[2] + toCamera.z * LABEL_OFFSET,
+        ];
+      } else {
+        // Use the pre-calculated base offset position for other axes
+        finalPos = baseOffsetPos;
+      }
+
+      // Always initialize position on first frame
+      if (!isInitializedRef.current) {
+        ref.current.position.set(...finalPos);
+        isInitializedRef.current = true;
+        return; // Skip the rest of the frame to avoid double update
+      }
+
+      // Only update position when active (save battery when idle)
+      if (!isAnimationActive) return;
+
+      // Throttle to 30fps on mobile (skip every other frame)
+      if (isMobile) {
+        frameCountRef.current++;
+        if (frameCountRef.current % 2 !== 0) return;
+      }
+
+      // Update the group position
+      ref.current.position.set(...finalPos);
+    });
+
+    useAxisFacingQuaternion(
+      ref,
+      pos, // Just pass the base position since the hook reads worldPosition anyway
+      [t.x, t.y, t.z],
+      flipRef,
+      a.normal
+    );
+
+    return (
+      <group ref={ref}>
+        <RichLabel
+          title={labelData.title}
+          subtitle={labelData.subtitle}
+          hebrewLetter={labelData.glyph}
+          imagePath={labelData.imagePath}
+          scale={LABEL_SCALE}
+          background={MOTHER_LABEL_BACKGROUND}
+          hebrewFont="FrankRuhlLibre, serif"
+          uiFont="Inter, sans-serif"
+          useMemoryOptimization={useMemoryOptimization}
+          doubleSided={doubleSided}
+        />
+      </group>
+    );
+  }
+);
+
+MotherLabelNode.displayName = 'MotherLabelNode';
+
 function MotherLabelsComponent({
   useMemoryOptimization = true,
   doubleSided = false,
@@ -59,103 +170,26 @@ function MotherLabelsComponent({
                 : undefined
             : undefined;
 
-        const Node = ({
-          pos,
-        }: {
-          pos: [number, number, number];
-        }): React.JSX.Element => {
-          const ref = React.useRef<THREE.Group>(null!);
-          const frameCountRef = React.useRef(0);
-          const isInitializedRef = React.useRef(false);
-          const labelData = createLabelData(a.letter);
-
-          // Calculate axis-specific offset to avoid z-fighting with axis lines
-          const baseOffsetPos: [number, number, number] = [...pos];
-          if (a.letter === 'Mem') {
-            // East-West axis (X) - offset upward (positive Y)
-            baseOffsetPos[1] += LABEL_OFFSET;
-          } else if (a.letter === 'Shin') {
-            // North-South axis (Z) - offset upward (positive Y)
-            baseOffsetPos[1] += LABEL_OFFSET;
-          }
-
-          // Dynamic positioning for all mother letter labels
-          useFrame(({ camera }) => {
-            if (!ref.current) return;
-
-            // Calculate the desired position
-            let finalPos: [number, number, number];
-
-            if (a.letter === 'Aleph') {
-              // Vertical axis (Y) - offset toward camera dynamically
-              const labelPos = new THREE.Vector3(...pos);
-              const cameraPos = camera.position.clone();
-              const toCamera = cameraPos.sub(labelPos).normalize();
-              // Project the camera direction onto the horizontal plane (remove Y component)
-              toCamera.y = 0;
-              toCamera.normalize();
-
-              // Calculate dynamic offset position
-              finalPos = [
-                pos[0] + toCamera.x * LABEL_OFFSET,
-                pos[1],
-                pos[2] + toCamera.z * LABEL_OFFSET,
-              ];
-            } else {
-              // Use the pre-calculated base offset position for other axes
-              finalPos = baseOffsetPos;
-            }
-
-            // Always initialize position on first frame
-            if (!isInitializedRef.current) {
-              ref.current.position.set(...finalPos);
-              isInitializedRef.current = true;
-              return; // Skip the rest of the frame to avoid double update
-            }
-
-            // Only update position when active (save battery when idle)
-            if (!isAnimationActive) return;
-
-            // Throttle to 30fps on mobile (skip every other frame)
-            if (isMobile) {
-              frameCountRef.current++;
-              if (frameCountRef.current % 2 !== 0) return;
-            }
-
-            // Update the group position
-            ref.current.position.set(...finalPos);
-          });
-
-          useAxisFacingQuaternion(
-            ref,
-            pos, // Just pass the base position since the hook reads worldPosition anyway
-            [t.x, t.y, t.z],
-            flipRef,
-            a.normal
-          );
-
-          return (
-            <group ref={ref}>
-              <RichLabel
-                title={labelData.title}
-                subtitle={labelData.subtitle}
-                hebrewLetter={labelData.glyph}
-                imagePath={labelData.imagePath}
-                scale={LABEL_SCALE}
-                background={MOTHER_LABEL_BACKGROUND}
-                hebrewFont="FrankRuhlLibre, serif"
-                uiFont="Inter, sans-serif"
-                useMemoryOptimization={useMemoryOptimization}
-                doubleSided={doubleSided}
-              />
-            </group>
-          );
-        };
-
         return (
           <React.Fragment key={idx}>
-            <Node pos={fromPos} />
-            <Node pos={toPos} />
+            <MotherLabelNode
+              pos={fromPos}
+              axisInfo={{ a, t }}
+              flipRef={flipRef}
+              useMemoryOptimization={useMemoryOptimization}
+              doubleSided={doubleSided}
+              isAnimationActive={isAnimationActive}
+              isMobile={isMobile}
+            />
+            <MotherLabelNode
+              pos={toPos}
+              axisInfo={{ a, t }}
+              flipRef={flipRef}
+              useMemoryOptimization={useMemoryOptimization}
+              doubleSided={doubleSided}
+              isAnimationActive={isAnimationActive}
+              isMobile={isMobile}
+            />
           </React.Fragment>
         );
       })}

@@ -12,6 +12,8 @@ import { RichLabel } from './rich-label';
 interface DiagonalLabelsProps {
   useMemoryOptimization?: boolean;
   doubleSided?: boolean;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 }
 
 interface DiagonalConfig {
@@ -25,10 +27,14 @@ const DiagonalLabel = React.memo(
     config,
     useMemoryOptimization,
     doubleSided,
+    isAnimationActive,
+    isMobile,
   }: {
     config: DiagonalConfig;
     useMemoryOptimization: boolean;
     doubleSided: boolean;
+    isAnimationActive: boolean;
+    isMobile: boolean;
   }): React.JSX.Element => {
     const d = config.diagonal;
     const canvasConfig = config.canvasConfig;
@@ -39,6 +45,8 @@ const DiagonalLabel = React.memo(
         canvasConfig={canvasConfig}
         useMemoryOptimization={useMemoryOptimization}
         doubleSided={doubleSided}
+        isAnimationActive={isAnimationActive}
+        isMobile={isMobile}
       />
     );
   }
@@ -52,13 +60,18 @@ function DiagonalLabelInner({
   canvasConfig,
   useMemoryOptimization,
   doubleSided,
+  isAnimationActive,
+  isMobile,
 }: {
   diagonal: (typeof diagonals)[0];
   canvasConfig: CanvasLabelConfig;
   useMemoryOptimization: boolean;
   doubleSided: boolean;
+  isAnimationActive: boolean;
+  isMobile: boolean;
 }): React.JSX.Element {
   const ref = React.useRef<THREE.Group>(null!);
+  const frameCountRef = React.useRef(0);
 
   // Reusable objects to prevent memory allocation every frame
   const tempObjects = React.useRef({
@@ -73,6 +86,15 @@ function DiagonalLabelInner({
   // Simple billboard behavior for diagonal labels
   useFrame(({ camera }) => {
     if (!ref.current) return;
+
+    // Pause animations when not active (idle or tab hidden)
+    if (!isAnimationActive) return;
+
+    // Throttle to 30fps on mobile (skip every other frame)
+    if (isMobile) {
+      frameCountRef.current++;
+      if (frameCountRef.current % 2 !== 0) return;
+    }
 
     const tmp = tempObjects.current;
 
@@ -158,6 +180,8 @@ function DiagonalLabelInner({
 export function DiagonalLabels({
   useMemoryOptimization = true,
   doubleSided = false,
+  isAnimationActive = true,
+  isMobile = false,
 }: DiagonalLabelsProps): React.JSX.Element {
   // Memoize diagonal configs to prevent recreation on every render
   const diagonalConfigs = React.useMemo(() => {
@@ -224,6 +248,8 @@ export function DiagonalLabels({
           config={config}
           useMemoryOptimization={useMemoryOptimization}
           doubleSided={doubleSided}
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
         />
       ))}
     </>

@@ -8,6 +8,8 @@ import { EnergyFlow } from './energy-flow';
 interface DiagonalEnergyFlowsProps extends BaseVisualizationProps {
   speed?: number;
   particleCount?: number;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 }
 
 export function DiagonalEnergyFlows({
@@ -15,6 +17,8 @@ export function DiagonalEnergyFlows({
   speed = 1.0,
   particleCount = 8,
   opacity = 0.6,
+  isAnimationActive = true,
+  isMobile = false,
 }: DiagonalEnergyFlowsProps): React.JSX.Element {
   // Define the four diagonal flows - from bottom corner to opposite top corner
   const diagonalFlowData = React.useMemo(() => {
@@ -78,6 +82,8 @@ export function DiagonalEnergyFlows({
           speed={speed}
           opacity={opacity}
           particleSize={0.018}
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
         />
       ))}
     </group>

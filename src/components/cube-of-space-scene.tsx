@@ -7,6 +7,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 import { HALF } from '../data/constants';
 import { useIsMobile } from '../utils/mobile-detection';
+import { useAnimationActive } from '../utils/performance-hooks';
 import { AxisEnergyFlows } from './axis-energy-flows';
 import { AxisLines } from './axis-lines';
 import { DiagonalEnergyFlows } from './diagonal-energy-flows';
@@ -23,6 +24,7 @@ import { WireCube } from './wire-cube';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
   const isMobile = useIsMobile();
+  const isAnimationActive = useAnimationActive(10000); // 10 second idle timeout
   const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
@@ -291,10 +293,18 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         <EdgeLabels doubleSided={doubleSidedLabels} />
       </group>
       <group visible={showMotherLetters}>
-        <MotherLabels doubleSided={doubleSidedLabels} />
+        <MotherLabels
+          doubleSided={doubleSidedLabels}
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
+        />
       </group>
       <group visible={showDiagonals}>
-        <DiagonalLabels doubleSided={doubleSidedLabels} />
+        <DiagonalLabels
+          doubleSided={doubleSidedLabels}
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
+        />
       </group>
 
       {/* Energy Flow */}
@@ -303,18 +313,24 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
+        isAnimationActive={isAnimationActive}
+        isMobile={isMobile}
       />
       <AxisEnergyFlows
         visible={showEnergyFlow}
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
+        isAnimationActive={isAnimationActive}
+        isMobile={isMobile}
       />
       <DiagonalEnergyFlows
         visible={showEnergyFlow}
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
+        isAnimationActive={isAnimationActive}
+        isMobile={isMobile}
       />
 
       {/* Edge Position Labels */}

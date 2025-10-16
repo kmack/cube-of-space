@@ -14,6 +14,8 @@ import { EnergyFlow } from './energy-flow';
 interface EdgeEnergyFlowsProps extends BaseVisualizationProps {
   speed?: number;
   particleCount?: number;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 }
 
 export function EdgeEnergyFlows({
@@ -21,6 +23,8 @@ export function EdgeEnergyFlows({
   speed = 1.0,
   particleCount = 8,
   opacity = 0.6,
+  isAnimationActive = true,
+  isMobile = false,
 }: EdgeEnergyFlowsProps): React.JSX.Element {
   // Memoize expensive edge flow calculations - these don't depend on any props
   const edgeFlowData = React.useMemo(() => {
@@ -96,6 +100,8 @@ export function EdgeEnergyFlows({
           speed={speed}
           opacity={opacity}
           particleSize={0.015}
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
         />
       ))}
     </group>

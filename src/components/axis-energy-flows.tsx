@@ -8,6 +8,8 @@ import { EnergyFlow } from './energy-flow';
 interface AxisEnergyFlowsProps extends BaseVisualizationProps {
   speed?: number;
   particleCount?: number;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 }
 
 export function AxisEnergyFlows({
@@ -15,6 +17,8 @@ export function AxisEnergyFlows({
   speed = 1.0,
   particleCount = 8,
   opacity = 0.6,
+  isAnimationActive = true,
+  isMobile = false,
 }: AxisEnergyFlowsProps): React.JSX.Element {
   // Define the three main axis flows - each axis has TWO flows emanating from center
   const axisFlowData = React.useMemo(() => {
@@ -86,6 +90,8 @@ export function AxisEnergyFlows({
           speed={speed}
           opacity={opacity}
           particleSize={0.02} // Slightly larger for central axes
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
         />
       ))}
     </group>

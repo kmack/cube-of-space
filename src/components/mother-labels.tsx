@@ -13,11 +13,15 @@ import { RichLabel } from './rich-label';
 interface MotherLabelsProps {
   useMemoryOptimization?: boolean;
   doubleSided?: boolean;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 }
 
 function MotherLabelsComponent({
   useMemoryOptimization = true,
   doubleSided = false,
+  isAnimationActive = true,
+  isMobile = false,
 }: MotherLabelsProps): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
   const info = axes.map((a, idx) => {
@@ -61,6 +65,7 @@ function MotherLabelsComponent({
           pos: [number, number, number];
         }): React.JSX.Element => {
           const ref = React.useRef<THREE.Group>(null!);
+          const frameCountRef = React.useRef(0);
           const labelData = createLabelData(a.letter);
 
           // Calculate axis-specific offset to avoid z-fighting with axis lines
@@ -76,6 +81,15 @@ function MotherLabelsComponent({
           // Dynamic positioning for all mother letter labels
           useFrame(({ camera }) => {
             if (!ref.current) return;
+
+            // Pause animations when not active (idle or tab hidden)
+            if (!isAnimationActive) return;
+
+            // Throttle to 30fps on mobile (skip every other frame)
+            if (isMobile) {
+              frameCountRef.current++;
+              if (frameCountRef.current % 2 !== 0) return;
+            }
 
             let finalPos: [number, number, number];
 

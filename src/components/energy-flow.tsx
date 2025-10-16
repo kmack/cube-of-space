@@ -14,6 +14,8 @@ export type EnergyFlowProps = {
   speed?: number;
   particleSize?: number;
   opacity?: number;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 };
 
 export function EnergyFlow({
@@ -25,10 +27,13 @@ export function EnergyFlow({
   speed = 1.0,
   particleSize = 0.02,
   opacity = 0.7,
+  isAnimationActive = true,
+  isMobile = false,
 }: EnergyFlowProps): React.JSX.Element {
   const meshRef = React.useRef<THREE.InstancedMesh>(null);
   const tempObject = React.useRef(new THREE.Object3D());
   const timeRef = React.useRef(0);
+  const frameCountRef = React.useRef(0);
 
   // Calculate edge vector and length
   const edgeVector = React.useMemo(() => {
@@ -56,6 +61,15 @@ export function EnergyFlow({
 
   useFrame((_, delta) => {
     if (!meshRef.current) return;
+
+    // Pause animations when not active (idle or tab hidden)
+    if (!isAnimationActive) return;
+
+    // Throttle to 30fps on mobile (skip every other frame)
+    if (isMobile) {
+      frameCountRef.current++;
+      if (frameCountRef.current % 2 !== 0) return;
+    }
 
     timeRef.current += delta * speed;
 

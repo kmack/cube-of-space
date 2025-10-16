@@ -83,25 +83,7 @@ function MotherLabelsComponent({
           useFrame(({ camera }) => {
             if (!ref.current) return;
 
-            // Always initialize position on first frame
-            if (!isInitializedRef.current) {
-              const initialPos =
-                a.letter === 'Aleph'
-                  ? [pos[0], pos[1], pos[2]]
-                  : baseOffsetPos;
-              ref.current.position.set(...(initialPos as [number, number, number]));
-              isInitializedRef.current = true;
-            }
-
-            // Only update position when active (save battery when idle)
-            if (!isAnimationActive) return;
-
-            // Throttle to 30fps on mobile (skip every other frame)
-            if (isMobile) {
-              frameCountRef.current++;
-              if (frameCountRef.current % 2 !== 0) return;
-            }
-
+            // Calculate the desired position
             let finalPos: [number, number, number];
 
             if (a.letter === 'Aleph') {
@@ -122,6 +104,22 @@ function MotherLabelsComponent({
             } else {
               // Use the pre-calculated base offset position for other axes
               finalPos = baseOffsetPos;
+            }
+
+            // Always initialize position on first frame
+            if (!isInitializedRef.current) {
+              ref.current.position.set(...finalPos);
+              isInitializedRef.current = true;
+              return; // Skip the rest of the frame to avoid double update
+            }
+
+            // Only update position when active (save battery when idle)
+            if (!isAnimationActive) return;
+
+            // Throttle to 30fps on mobile (skip every other frame)
+            if (isMobile) {
+              frameCountRef.current++;
+              if (frameCountRef.current % 2 !== 0) return;
             }
 
             // Update the group position

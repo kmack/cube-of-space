@@ -3,7 +3,7 @@ import { Billboard } from '@react-three/drei';
 import * as React from 'react';
 import * as THREE from 'three';
 
-import { LABEL_OFFSET } from '../data/constants';
+import { EDGE_POSITION_LABEL_OFFSET } from '../data/constants';
 import { edges } from '../data/geometry';
 import { LABEL_SCALE } from '../data/label-styles';
 import type { PositionedComponentProps } from '../types/component-props';
@@ -53,7 +53,7 @@ export function EdgePositionLabels({
         if (!positionText) return null;
 
         // Calculate position with offset to avoid overlap with edge labels
-        const positionOffset = LABEL_OFFSET * 10; // Larger offset to avoid overlap with edge labels
+        const positionOffset = EDGE_POSITION_LABEL_OFFSET;
         const offsetPos: [number, number, number] = [
           edge.pos[0] +
             (edge.pos[0] > 0

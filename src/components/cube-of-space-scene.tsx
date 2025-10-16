@@ -132,7 +132,13 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
   // Energy Flow controls
   const [
-    { showEnergyFlow, energySpeed, energyOpacity, energyParticles },
+    {
+      showEnergyFlow,
+      energySpeed,
+      energyOpacity,
+      energyParticles,
+      axisFlowDirection,
+    },
     setEnergyFlow,
   ] = useControls(
     'Energy Flow',
@@ -161,6 +167,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         max: 16,
         step: 2,
         label: 'Particles',
+      },
+      axisFlowDirection: {
+        value: 'center-to-faces',
+        options: {
+          'Center to Faces': 'center-to-faces',
+          'Directional Flow': 'directional',
+        },
+        label: 'Axis Flow Direction',
       },
     }),
     { collapsed: true }
@@ -325,6 +339,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
+        flowDirection={axisFlowDirection}
         isAnimationActive={isPageVisible}
         isMobile={isMobile}
       />

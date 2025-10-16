@@ -91,9 +91,7 @@ export function EdgePositionLabels({
               width={256}
               height={64}
               uiFont="Inter, sans-serif"
-              renderOrder={1}
               materialSide={THREE.DoubleSide}
-              depthTest={false}
               flipY={true}
               canvasConfig={
                 {

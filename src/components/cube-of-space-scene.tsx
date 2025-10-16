@@ -6,6 +6,7 @@ import * as React from 'react';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 import { HALF } from '../data/constants';
+import { useIsMobile } from '../utils/mobile-detection';
 import { AxisEnergyFlows } from './axis-energy-flows';
 import { AxisLines } from './axis-lines';
 import { DiagonalEnergyFlows } from './diagonal-energy-flows';
@@ -21,6 +22,7 @@ import { MotherLabels } from './mother-labels';
 import { WireCube } from './wire-cube';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
+  const isMobile = useIsMobile();
   const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
@@ -148,7 +150,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         label: 'Opacity',
       },
       energyParticles: {
-        value: 8,
+        value: isMobile ? 4 : 8,
         min: 4,
         max: 16,
         step: 2,
@@ -222,7 +224,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   return (
     <Canvas
       style={{ background: 'transparent' }}
-      dpr={[1, 2]}
+      dpr={isMobile ? [1, 1.5] : [1, 2]}
       camera={{ position: [4, 3, 6], fov: 50 }}
       onCreated={({ gl }) => {
         gl.domElement.style.userSelect = 'none'; // prevent selection of items

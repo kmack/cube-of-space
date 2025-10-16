@@ -1,16 +1,33 @@
 import { type FC, useEffect, useRef } from 'react';
 
+import { isMobileDevice } from '../utils/mobile-detection';
+
 export const AnimatedGradientBackground: FC = () => {
   const animationIdRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef<number>(0);
 
   useEffect(() => {
     // Initialize start time inside useEffect to avoid impure function call during render
     startTimeRef.current ??= Date.now();
 
+    // Target frame rate: 60fps for desktop, 15fps for mobile
+    const isMobile = isMobileDevice();
+    const targetFPS = isMobile ? 15 : 60;
+    const frameDuration = 1000 / targetFPS; // milliseconds per frame
+
     const animate = (): void => {
       const now = Date.now();
       const elapsed = (now - (startTimeRef.current ?? 0)) / 1000; // seconds
+
+      // Throttle animation based on target FPS
+      const timeSinceLastFrame = now - lastFrameTimeRef.current;
+      if (timeSinceLastFrame < frameDuration) {
+        animationIdRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      lastFrameTimeRef.current = now;
 
       // Oscillation parameters with different frequencies for subtle variation
       const time1 = elapsed * 0.3; // slow oscillation

@@ -101,14 +101,6 @@ function RichLabelComponent({
   const textureRef = React.useRef<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
 
-  // Detect mount/unmount
-  React.useEffect(() => {
-    console.log('[RichLabel MOUNT]:', title);
-    return () => {
-      console.log('[RichLabel UNMOUNT]:', title);
-    };
-  }, [title]);
-
   React.useEffect(() => {
     let mounted = true;
     let currentTexture: THREE.Texture | null = null;
@@ -216,20 +208,7 @@ function RichLabelComponent({
   // Update visibility imperatively to avoid React reconciliation issues
   React.useLayoutEffect(() => {
     if (meshRef.current) {
-      const wasVisible = meshRef.current.visible;
-      const shouldBeVisible = !!textureRef.current;
-
-      if (wasVisible !== shouldBeVisible) {
-        console.log('[RichLabel] Visibility change:', {
-          wasVisible,
-          shouldBeVisible,
-          hasTexture: !!textureRef.current,
-          hasTextureState: !!texture,
-          title,
-        });
-      }
-
-      meshRef.current.visible = shouldBeVisible;
+      meshRef.current.visible = !!textureRef.current;
     }
   });
 

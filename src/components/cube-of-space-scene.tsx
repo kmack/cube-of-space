@@ -132,7 +132,13 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
   // Energy Flow controls
   const [
-    { showEnergyFlow, energySpeed, energyOpacity, energyParticles },
+    {
+      showEnergyFlow,
+      energySpeed,
+      energyOpacity,
+      energyParticles,
+      axisFlowDirection,
+    },
     setEnergyFlow,
   ] = useControls(
     'Energy Flow',
@@ -162,6 +168,14 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         step: 2,
         label: 'Particles',
       },
+      axisFlowDirection: {
+        value: 'center-to-faces',
+        options: {
+          'Center to Faces': 'center-to-faces',
+          'Directional Flow': 'directional',
+        },
+        label: 'Axis Flow Direction',
+      },
     }),
     { collapsed: true }
   );
@@ -169,6 +183,15 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   const handleToggleEnergyFlow = React.useCallback(() => {
     setEnergyFlow({ showEnergyFlow: !showEnergyFlow });
   }, [showEnergyFlow, setEnergyFlow]);
+
+  const handleToggleAxisFlowDirection = React.useCallback(() => {
+    setEnergyFlow({
+      axisFlowDirection:
+        axisFlowDirection === 'center-to-faces'
+          ? 'directional'
+          : 'center-to-faces',
+    });
+  }, [axisFlowDirection, setEnergyFlow]);
 
   // Gamepad controls
   const {
@@ -254,6 +277,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         onToggleFaceVisibility={handleToggleFaceVisibility}
         onToggleFaceOpacity={handleToggleFaceOpacity}
         onToggleEnergyFlow={handleToggleEnergyFlow}
+        onToggleAxisFlowDirection={handleToggleAxisFlowDirection}
         onToggleMotherLetters={handleToggleMotherLetters}
         onToggleDoubleLetters={handleToggleDoubleLetters}
         onToggleSingleLetters={handleToggleSingleLetters}
@@ -325,6 +349,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
+        flowDirection={axisFlowDirection as 'center-to-faces' | 'directional'}
         isAnimationActive={isPageVisible}
         isMobile={isMobile}
       />

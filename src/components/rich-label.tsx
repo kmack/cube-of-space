@@ -202,10 +202,6 @@ export function RichLabel({
     };
   }, [planeGeometry]);
 
-  if (!texture) {
-    return <group />; // Return empty group while loading
-  }
-
   // Calculate scale - support both uniform and non-uniform scaling
   const scaleArray = Array.isArray(scale) ? scale : [scale, scale];
   const aspectRatio = width / height;
@@ -221,6 +217,7 @@ export function RichLabel({
       rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
       renderOrder={renderOrder}
       geometry={planeGeometry}
+      visible={!!texture}
     >
       <meshBasicMaterial
         map={texture}
@@ -288,10 +285,6 @@ export function ComplexRichLabel({
     };
   }, [planeGeometry]);
 
-  if (!texture) {
-    return <group />;
-  }
-
   const scaleArray = Array.isArray(scale) ? scale : [scale, scale];
   const aspectRatio = canvasConfig.width / canvasConfig.height;
   const finalScale: [number, number, number] = [
@@ -306,6 +299,7 @@ export function ComplexRichLabel({
       rotation={[Math.PI, 0, 0]}
       renderOrder={renderOrder}
       geometry={planeGeometry}
+      visible={!!texture}
     >
       <meshBasicMaterial
         map={texture}

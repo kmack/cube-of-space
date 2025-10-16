@@ -184,6 +184,15 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     setEnergyFlow({ showEnergyFlow: !showEnergyFlow });
   }, [showEnergyFlow, setEnergyFlow]);
 
+  const handleToggleAxisFlowDirection = React.useCallback(() => {
+    setEnergyFlow({
+      axisFlowDirection:
+        axisFlowDirection === 'center-to-faces'
+          ? 'directional'
+          : 'center-to-faces',
+    });
+  }, [axisFlowDirection, setEnergyFlow]);
+
   // Gamepad controls
   const {
     gamepadRotateSpeed,
@@ -268,6 +277,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         onToggleFaceVisibility={handleToggleFaceVisibility}
         onToggleFaceOpacity={handleToggleFaceOpacity}
         onToggleEnergyFlow={handleToggleEnergyFlow}
+        onToggleAxisFlowDirection={handleToggleAxisFlowDirection}
         onToggleMotherLetters={handleToggleMotherLetters}
         onToggleDoubleLetters={handleToggleDoubleLetters}
         onToggleSingleLetters={handleToggleSingleLetters}
@@ -339,7 +349,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         speed={energySpeed}
         particleCount={energyParticles}
         opacity={energyOpacity}
-        flowDirection={axisFlowDirection}
+        flowDirection={axisFlowDirection as 'center-to-faces' | 'directional'}
         isAnimationActive={isPageVisible}
         isMobile={isMobile}
       />

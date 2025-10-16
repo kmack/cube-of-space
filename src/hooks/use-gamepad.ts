@@ -14,6 +14,8 @@ export interface GamepadState {
   buttons: {
     a: boolean;
     b: boolean;
+    x: boolean;
+    y: boolean;
     dpadUp: boolean;
     dpadDown: boolean;
     dpadLeft: boolean;
@@ -46,6 +48,8 @@ export function useGamepad(): GamepadState {
     buttons: {
       a: false,
       b: false,
+      x: false,
+      y: false,
       dpadUp: false,
       dpadDown: false,
       dpadLeft: false,
@@ -80,6 +84,8 @@ export function useGamepad(): GamepadState {
           buttons: {
             a: false,
             b: false,
+            x: false,
+            y: false,
             dpadUp: false,
             dpadDown: false,
             dpadLeft: false,
@@ -115,9 +121,11 @@ export function useGamepad(): GamepadState {
         const rightTrigger =
           gamepad.buttons[7]?.value || (gamepad.axes[5] + 1) / 2 || 0;
 
-        // Face buttons (A = button 0, B = button 1)
+        // Face buttons (A = button 0, B = button 1, X = button 2, Y = button 3)
         const aButton = gamepad.buttons[0]?.pressed || false;
         const bButton = gamepad.buttons[1]?.pressed || false;
+        const xButton = gamepad.buttons[2]?.pressed || false;
+        const yButton = gamepad.buttons[3]?.pressed || false;
 
         // D-Pad buttons (Up = 12, Down = 13, Left = 14, Right = 15)
         const dpadUp = gamepad.buttons[12]?.pressed || false;
@@ -146,6 +154,8 @@ export function useGamepad(): GamepadState {
           buttons: {
             a: aButton,
             b: bButton,
+            x: xButton,
+            y: yButton,
             dpadUp,
             dpadDown,
             dpadLeft,
@@ -168,6 +178,8 @@ export function useGamepad(): GamepadState {
           buttons: {
             a: false,
             b: false,
+            x: false,
+            y: false,
             dpadUp: false,
             dpadDown: false,
             dpadLeft: false,

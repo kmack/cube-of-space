@@ -17,6 +17,7 @@ interface GamepadControlsProps {
   onToggleFaceVisibility?: () => void;
   onToggleFaceOpacity?: () => void;
   onToggleEnergyFlow?: () => void;
+  onToggleAxisFlowDirection?: () => void;
   onToggleMotherLetters?: () => void;
   onToggleDoubleLetters?: () => void;
   onToggleSingleLetters?: () => void;
@@ -45,6 +46,7 @@ export function GamepadControls({
   onToggleFaceVisibility,
   onToggleFaceOpacity,
   onToggleEnergyFlow,
+  onToggleAxisFlowDirection,
   onToggleMotherLetters,
   onToggleDoubleLetters,
   onToggleSingleLetters,
@@ -58,6 +60,7 @@ export function GamepadControls({
   const animationFrameRef = useRef<number | null>(null);
   const lastAButtonRef = useRef<boolean>(false);
   const lastBButtonRef = useRef<boolean>(false);
+  const lastYButtonRef = useRef<boolean>(false);
   const lastDpadUpRef = useRef<boolean>(false);
   const lastDpadDownRef = useRef<boolean>(false);
   const lastDpadLeftRef = useRef<boolean>(false);
@@ -115,6 +118,12 @@ export function GamepadControls({
         onToggleDoubleSidedLabels?.();
       }
       lastBButtonRef.current = currentGamepad.buttons.b;
+
+      // Y button: Toggle axis flow direction (with debouncing)
+      if (currentGamepad.buttons.y && !lastYButtonRef.current) {
+        onToggleAxisFlowDirection?.();
+      }
+      lastYButtonRef.current = currentGamepad.buttons.y;
 
       // D-Pad Up: Toggle Mother Letters (with debouncing)
       if (currentGamepad.buttons.dpadUp && !lastDpadUpRef.current) {
@@ -286,6 +295,7 @@ export function GamepadControls({
     onToggleFaceVisibility,
     onToggleFaceOpacity,
     onToggleEnergyFlow,
+    onToggleAxisFlowDirection,
     onToggleMotherLetters,
     onToggleDoubleLetters,
     onToggleSingleLetters,

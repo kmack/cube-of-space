@@ -278,9 +278,8 @@ export default [
         },
       ],
 
-      // React Hooks
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+      // React Hooks - Use recommended config as per React Compiler migration guide
+      ...reactHooks.configs.recommended.rules,
 
       // React Refresh (HMR safety)
       'react-refresh/only-export-components': [

@@ -2,12 +2,15 @@ import { type FC, useEffect, useRef } from 'react';
 
 export const AnimatedGradientBackground: FC = () => {
   const animationIdRef = useRef<number | undefined>(undefined);
-  const startTimeRef = useRef<number>(Date.now());
+  const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Initialize start time inside useEffect to avoid impure function call during render
+    startTimeRef.current ??= Date.now();
+
     const animate = (): void => {
       const now = Date.now();
-      const elapsed = (now - startTimeRef.current) / 1000; // seconds
+      const elapsed = (now - (startTimeRef.current ?? 0)) / 1000; // seconds
 
       // Oscillation parameters with different frequencies for subtle variation
       const time1 = elapsed * 0.3; // slow oscillation

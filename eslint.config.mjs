@@ -163,7 +163,7 @@ export default [
       'no-unused-vars': 'off',
 
       // Console policy for application code
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['debug', 'info', 'warn', 'error'] }],
 
       // TypeScript specific overrides for React Three Fiber
       '@typescript-eslint/consistent-type-imports': 'warn',

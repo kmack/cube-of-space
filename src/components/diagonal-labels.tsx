@@ -12,6 +12,8 @@ import { RichLabel } from './rich-label';
 interface DiagonalLabelsProps {
   useMemoryOptimization?: boolean;
   doubleSided?: boolean;
+  isAnimationActive?: boolean;
+  isMobile?: boolean;
 }
 
 interface DiagonalConfig {
@@ -25,10 +27,14 @@ const DiagonalLabel = React.memo(
     config,
     useMemoryOptimization,
     doubleSided,
+    isAnimationActive,
+    isMobile,
   }: {
     config: DiagonalConfig;
     useMemoryOptimization: boolean;
     doubleSided: boolean;
+    isAnimationActive: boolean;
+    isMobile: boolean;
   }): React.JSX.Element => {
     const d = config.diagonal;
     const canvasConfig = config.canvasConfig;
@@ -39,6 +45,8 @@ const DiagonalLabel = React.memo(
         canvasConfig={canvasConfig}
         useMemoryOptimization={useMemoryOptimization}
         doubleSided={doubleSided}
+        isAnimationActive={isAnimationActive}
+        isMobile={isMobile}
       />
     );
   }
@@ -52,13 +60,19 @@ function DiagonalLabelInner({
   canvasConfig,
   useMemoryOptimization,
   doubleSided,
+  isAnimationActive,
+  isMobile,
 }: {
   diagonal: (typeof diagonals)[0];
   canvasConfig: CanvasLabelConfig;
   useMemoryOptimization: boolean;
   doubleSided: boolean;
+  isAnimationActive: boolean;
+  isMobile: boolean;
 }): React.JSX.Element {
   const ref = React.useRef<THREE.Group>(null!);
+  const frameCountRef = React.useRef(0);
+  const isInitializedRef = React.useRef(false);
 
   // Reusable objects to prevent memory allocation every frame
   const tempObjects = React.useRef({
@@ -75,6 +89,35 @@ function DiagonalLabelInner({
     if (!ref.current) return;
 
     const tmp = tempObjects.current;
+
+    // Always initialize rotation on first frame (so label is visible)
+    if (!isInitializedRef.current) {
+      ref.current.getWorldPosition(tmp.worldPos);
+      tmp.toCamera.copy(camera.position).sub(tmp.worldPos).normalize();
+      const dot = tmp.toCamera.dot(tmp.tangent);
+      tmp.normal
+        .copy(tmp.toCamera)
+        .addScaledVector(tmp.tangent, -dot)
+        .normalize();
+      tmp.binormal.crossVectors(tmp.normal, tmp.tangent).normalize();
+      if (tmp.binormal.y < 0) {
+        tmp.binormal.multiplyScalar(-1);
+        tmp.tangent.multiplyScalar(-1);
+      }
+      tmp.matrix.makeBasis(tmp.tangent, tmp.binormal, tmp.normal);
+      ref.current.quaternion.setFromRotationMatrix(tmp.matrix);
+      tmp.tangent.set(d.tangent[0], d.tangent[1], d.tangent[2]).normalize();
+      isInitializedRef.current = true;
+    }
+
+    // Only update rotation when active (save battery when idle)
+    if (!isAnimationActive) return;
+
+    // Throttle to 30fps on mobile (skip every other frame)
+    if (isMobile) {
+      frameCountRef.current++;
+      if (frameCountRef.current % 2 !== 0) return;
+    }
 
     ref.current.getWorldPosition(tmp.worldPos);
 
@@ -158,6 +201,8 @@ function DiagonalLabelInner({
 export function DiagonalLabels({
   useMemoryOptimization = true,
   doubleSided = false,
+  isAnimationActive = true,
+  isMobile = false,
 }: DiagonalLabelsProps): React.JSX.Element {
   // Memoize diagonal configs to prevent recreation on every render
   const diagonalConfigs = React.useMemo(() => {
@@ -224,6 +269,8 @@ export function DiagonalLabels({
           config={config}
           useMemoryOptimization={useMemoryOptimization}
           doubleSided={doubleSided}
+          isAnimationActive={isAnimationActive}
+          isMobile={isMobile}
         />
       ))}
     </>

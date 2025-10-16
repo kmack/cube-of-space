@@ -1,16 +1,41 @@
 import { type FC, useEffect, useRef } from 'react';
 
+import { isMobileDevice } from '../utils/mobile-detection';
+import { usePageVisibility } from '../utils/performance-hooks';
+
 export const AnimatedGradientBackground: FC = () => {
   const animationIdRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef<number>(0);
+  const isVisible = usePageVisibility();
 
   useEffect(() => {
     // Initialize start time inside useEffect to avoid impure function call during render
     startTimeRef.current ??= Date.now();
 
+    // Target frame rate: 60fps for desktop, 15fps for mobile
+    const isMobile = isMobileDevice();
+    const targetFPS = isMobile ? 15 : 60;
+    const frameDuration = 1000 / targetFPS; // milliseconds per frame
+
     const animate = (): void => {
       const now = Date.now();
       const elapsed = (now - (startTimeRef.current ?? 0)) / 1000; // seconds
+
+      // Pause animation when tab is hidden
+      if (!isVisible) {
+        animationIdRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      // Throttle animation based on target FPS
+      const timeSinceLastFrame = now - lastFrameTimeRef.current;
+      if (timeSinceLastFrame < frameDuration) {
+        animationIdRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      lastFrameTimeRef.current = now;
 
       // Oscillation parameters with different frequencies for subtle variation
       const time1 = elapsed * 0.3; // slow oscillation
@@ -63,7 +88,7 @@ export const AnimatedGradientBackground: FC = () => {
       document.body.style.backgroundImage = '';
       document.body.style.backgroundColor = '';
     };
-  }, []);
+  }, [isVisible]);
 
   // This component doesn't render anything visible
   return null;

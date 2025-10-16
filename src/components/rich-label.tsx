@@ -71,7 +71,7 @@ export type RichLabelProps = {
   flipY?: boolean;
 };
 
-export function RichLabel({
+function RichLabelComponent({
   title,
   subtitle,
   hebrewLetter,
@@ -98,6 +98,7 @@ export function RichLabel({
   // Convert doubleSided boolean to THREE.Side if materialSide not explicitly set
   const effectiveMaterialSide = doubleSided ? THREE.DoubleSide : materialSide;
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
+  const textureRef = React.useRef<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
@@ -155,6 +156,7 @@ export function RichLabel({
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy); // Use up to 4x anisotropic filtering
           currentTexture = tex;
+          textureRef.current = tex;
           setTexture(tex);
         } else {
           // Dispose texture if component unmounted before promise resolved
@@ -172,8 +174,9 @@ export function RichLabel({
         currentTexture.dispose();
         currentTexture = null;
       }
+      textureRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- useMemoryOptimization intentionally excluded to prevent unnecessary texture recreation
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- useMemoryOptimization and gl intentionally excluded to prevent unnecessary texture recreation
   }, [
     title,
     subtitle,
@@ -189,11 +192,11 @@ export function RichLabel({
     hebrewFont,
     uiFont,
     canvasConfig,
-    gl,
   ]);
 
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+  const meshRef = React.useRef<THREE.Mesh>(null!);
 
   // Dispose geometry on unmount to prevent memory leaks
   React.useEffect(() => {
@@ -202,9 +205,12 @@ export function RichLabel({
     };
   }, [planeGeometry]);
 
-  if (!texture) {
-    return <group />; // Return empty group while loading
-  }
+  // Update visibility imperatively to avoid React reconciliation issues
+  React.useLayoutEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.visible = !!textureRef.current;
+    }
+  });
 
   // Calculate scale - support both uniform and non-uniform scaling
   const scaleArray = Array.isArray(scale) ? scale : [scale, scale];
@@ -217,6 +223,7 @@ export function RichLabel({
 
   return (
     <mesh
+      ref={meshRef}
       scale={finalScale}
       rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
       renderOrder={renderOrder}
@@ -234,8 +241,39 @@ export function RichLabel({
   );
 }
 
+// Memoize with custom comparison to prevent re-renders
+// Only re-render if the actual texture content would change (title, subtitle, etc.)
+export const RichLabel = React.memo(
+  RichLabelComponent,
+  (prevProps, nextProps) => {
+    // Return true to SKIP re-render, false to allow re-render
+    // Compare only the props that would actually change the texture content
+    return (
+      prevProps.title === nextProps.title &&
+      prevProps.subtitle === nextProps.subtitle &&
+      prevProps.hebrewLetter === nextProps.hebrewLetter &&
+      prevProps.letterName === nextProps.letterName &&
+      prevProps.assocGlyph === nextProps.assocGlyph &&
+      prevProps.assocName === nextProps.assocName &&
+      prevProps.imagePath === nextProps.imagePath &&
+      prevProps.color === nextProps.color &&
+      prevProps.width === nextProps.width &&
+      prevProps.height === nextProps.height &&
+      prevProps.hebrewFont === nextProps.hebrewFont &&
+      prevProps.uiFont === nextProps.uiFont &&
+      prevProps.scale === nextProps.scale &&
+      prevProps.renderOrder === nextProps.renderOrder &&
+      prevProps.doubleSided === nextProps.doubleSided &&
+      prevProps.depthTest === nextProps.depthTest &&
+      prevProps.flipY === nextProps.flipY &&
+      prevProps.useMemoryOptimization === nextProps.useMemoryOptimization
+      // Intentionally exclude: background, canvasConfig (would cause re-renders on parent state changes)
+    );
+  }
+);
+
 // Enhanced version for complex layouts with multiple images and text areas
-export function ComplexRichLabel({
+function ComplexRichLabelComponent({
   canvasConfig,
   scale = 1,
   renderOrder = 0,
@@ -245,6 +283,7 @@ export function ComplexRichLabel({
   renderOrder?: number;
 }): React.JSX.Element {
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
+  const textureRef = React.useRef<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
@@ -258,6 +297,7 @@ export function ComplexRichLabel({
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy);
           currentTexture = tex;
+          textureRef.current = tex;
           setTexture(tex);
         } else {
           // Dispose texture if component unmounted before promise resolved
@@ -275,11 +315,14 @@ export function ComplexRichLabel({
         currentTexture.dispose();
         currentTexture = null;
       }
+      textureRef.current = null;
     };
-  }, [canvasConfig, gl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- gl intentionally excluded to prevent unnecessary texture recreation
+  }, [canvasConfig]);
 
   // Memoize geometry to avoid recreation - MUST be before conditional returns (Rules of Hooks)
   const planeGeometry = React.useMemo(() => new THREE.PlaneGeometry(1, 1), []);
+  const meshRef = React.useRef<THREE.Mesh>(null!);
 
   // Dispose geometry on unmount to prevent memory leaks
   React.useEffect(() => {
@@ -288,9 +331,12 @@ export function ComplexRichLabel({
     };
   }, [planeGeometry]);
 
-  if (!texture) {
-    return <group />;
-  }
+  // Update visibility imperatively to avoid React reconciliation issues
+  React.useLayoutEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.visible = !!textureRef.current;
+    }
+  });
 
   const scaleArray = Array.isArray(scale) ? scale : [scale, scale];
   const aspectRatio = canvasConfig.width / canvasConfig.height;
@@ -302,6 +348,7 @@ export function ComplexRichLabel({
 
   return (
     <mesh
+      ref={meshRef}
       scale={finalScale}
       rotation={[Math.PI, 0, 0]}
       renderOrder={renderOrder}
@@ -317,3 +364,16 @@ export function ComplexRichLabel({
     </mesh>
   );
 }
+
+// Memoize with custom comparison to prevent unnecessary re-renders
+export const ComplexRichLabel = React.memo(
+  ComplexRichLabelComponent,
+  (prevProps, nextProps) => {
+    // Return true to SKIP re-render
+    return (
+      prevProps.scale === nextProps.scale &&
+      prevProps.renderOrder === nextProps.renderOrder
+      // Intentionally exclude: canvasConfig (object reference changes)
+    );
+  }
+);

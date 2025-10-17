@@ -13,6 +13,7 @@ import {
 } from '../utils/performance-hooks';
 import { AxisEnergyFlows } from './axis-energy-flows';
 import { AxisLines } from './axis-lines';
+import { CameraReset } from './camera-reset';
 import { DiagonalEnergyFlows } from './diagonal-energy-flows';
 import { DiagonalLabels } from './diagonal-labels';
 import { DiagonalLines } from './diagonal-lines';
@@ -282,6 +283,12 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         onToggleSingleLetters={handleToggleSingleLetters}
         onToggleFinalLetters={handleToggleFinalLetters}
         onToggleDoubleSidedLabels={handleToggleDoubleSidedLabels}
+      />
+      <CameraReset
+        controlsRef={orbitControlsRef}
+        defaultPosition={[4, 3, 6]}
+        defaultTarget={[0, 0, 0]}
+        animationDuration={1000}
       />
 
       {/* Ground grid */}

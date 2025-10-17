@@ -10,4 +10,9 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    // Suppress chunk size warning for 3D visualization app with Three.js
+    // 391 KB gzipped is acceptable for this use case
+    chunkSizeWarningLimit: 1500,
+  },
 });

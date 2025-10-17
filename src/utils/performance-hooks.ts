@@ -1,6 +1,8 @@
 // src/utils/performance-hooks.ts
 import { useEffect, useRef, useState } from 'react';
 
+import { APP_CONFIG } from '../config/app-config';
+
 /**
  * Tracks page visibility using the Page Visibility API
  * Returns true when the page is visible, false when hidden/backgrounded
@@ -29,9 +31,11 @@ export function usePageVisibility(): boolean {
  * Detects user idle state with configurable timeout
  * Returns true when user is active, false after timeout period of inactivity
  *
- * @param timeoutMs - Milliseconds of inactivity before considering user idle (default: 10000)
+ * @param timeoutMs - Milliseconds of inactivity before considering user idle
  */
-export function useIdleDetection(timeoutMs: number = 10000): boolean {
+export function useIdleDetection(
+  timeoutMs: number = APP_CONFIG.performance.idleTimeoutMs
+): boolean {
   const [isActive, setIsActive] = useState<boolean>(true);
   const timeoutRef = useRef<number | undefined>(undefined);
 
@@ -102,11 +106,11 @@ export function useAnimationActive(idleTimeoutMs: number = 10000): boolean {
  * Returns a function that returns true when the frame should be processed
  *
  * @param isMobile - Whether the device is mobile
- * @param targetFPS - Target FPS for mobile (default: 30)
+ * @param targetFPS - Target FPS for mobile
  */
 export function useFrameThrottle(
   isMobile: boolean,
-  targetFPS: number = 30
+  targetFPS: number = APP_CONFIG.performance.mobileTargetFPS
 ): () => boolean {
   const frameCountRef = useRef<number>(0);
   const skipFrames = Math.round(60 / targetFPS) - 1; // For 30fps: skip 1 frame

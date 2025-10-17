@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { AnimatedGradientBackground } from './components/animated-gradient-background';
 import { CubeOfSpaceScene } from './components/cube-of-space-scene';
+import { SceneErrorBoundary } from './components/scene-error-boundary';
 
 export function App(): React.JSX.Element {
   return (
@@ -18,7 +19,9 @@ export function App(): React.JSX.Element {
         }}
       />
       <AnimatedGradientBackground />
-      <CubeOfSpaceScene />
+      <SceneErrorBoundary>
+        <CubeOfSpaceScene />
+      </SceneErrorBoundary>
     </>
   );
 }

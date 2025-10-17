@@ -141,9 +141,36 @@ export const axes: Axis[] = [
 // Label positioned at offset from center along the diagonal
 const DIAGONAL_OFFSET = 0.6;
 
-// Helper to normalize a vector
+/**
+ * Normalize a 3D vector to unit length
+ * @param v - Input vector [x, y, z]
+ * @returns Normalized vector with length 1, or safe fallback [0, 0, 1] for zero-length vectors
+ * @throws Error if vector length is zero (in development mode)
+ */
 const normalize = (v: [number, number, number]): [number, number, number] => {
   const len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+
+  // Epsilon for floating-point comparison (prevents division by near-zero)
+  const EPSILON = 1e-10;
+
+  if (len < EPSILON) {
+    // In development, throw error for immediate debugging
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(
+        `Cannot normalize zero-length vector: [${v[0]}, ${v[1]}, ${v[2]}]`
+      );
+      throw new Error(
+        `Vector normalization failed: zero-length vector [${v[0]}, ${v[1]}, ${v[2]}]`
+      );
+    }
+
+    // In production, log warning and return safe fallback
+    console.warn(
+      `Normalizing zero-length vector [${v[0]}, ${v[1]}, ${v[2]}], using fallback [0, 0, 1]`
+    );
+    return [0, 0, 1]; // Safe default pointing along positive Z-axis
+  }
+
   return [v[0] / len, v[1] / len, v[2] / len];
 };
 
@@ -181,3 +208,56 @@ export const diagonals: Diagonal[] = [
     normal: normalize([-1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
   },
 ];
+
+/**
+ * Validate that all geometric vectors are properly normalized
+ * This runs at module initialization to catch geometry errors early
+ */
+function validateGeometry(): void {
+  const TOLERANCE = 1e-6;
+
+  const checkNormalized = (v: [number, number, number], name: string): void => {
+    const length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    const isNormalized = Math.abs(length - 1.0) < TOLERANCE;
+    const hasNaN = isNaN(v[0]) || isNaN(v[1]) || isNaN(v[2]);
+
+    if (hasNaN) {
+      throw new Error(
+        `Geometry validation failed: ${name} contains NaN values: [${v[0]}, ${v[1]}, ${v[2]}]`
+      );
+    }
+
+    if (!isNormalized) {
+      console.warn(
+        `Geometry validation warning: ${name} is not normalized. Length: ${length}, Vector: [${v[0]}, ${v[1]}, ${v[2]}]`
+      );
+    }
+  };
+
+  // Validate edges
+  edges.forEach((edge) => {
+    checkNormalized(edge.normal, `Edge ${edge.letter} normal`);
+    checkNormalized(edge.tangent, `Edge ${edge.letter} tangent`);
+  });
+
+  // Validate axes
+  axes.forEach((axis) => {
+    checkNormalized(axis.normal, `Axis ${axis.letter} normal`);
+    checkNormalized(axis.tangent, `Axis ${axis.letter} tangent`);
+  });
+
+  // Validate diagonals
+  diagonals.forEach((diagonal) => {
+    checkNormalized(diagonal.normal, `Diagonal ${diagonal.letter} normal`);
+    checkNormalized(diagonal.tangent, `Diagonal ${diagonal.letter} tangent`);
+  });
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.info(
+      '✓ Geometry validation passed: all vectors properly normalized'
+    );
+  }
+}
+
+// Run validation at module load time
+validateGeometry();

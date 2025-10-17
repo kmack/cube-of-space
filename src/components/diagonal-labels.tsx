@@ -7,14 +7,11 @@ import { diagonals } from '../data/geometry';
 import { LABEL_SCALE } from '../data/label-styles';
 import type { CanvasLabelConfig } from '../utils/canvas-texture';
 import { createLabelData } from '../utils/label-factory';
+import type { AnimatedLabelProps } from '../utils/label-utils';
+import { LABEL_FONTS } from '../utils/label-utils';
 import { RichLabel } from './rich-label';
 
-interface DiagonalLabelsProps {
-  useMemoryOptimization?: boolean;
-  doubleSided?: boolean;
-  isAnimationActive?: boolean;
-  isMobile?: boolean;
-}
+type DiagonalLabelsProps = AnimatedLabelProps;
 
 interface DiagonalConfig {
   diagonal: (typeof diagonals)[0];
@@ -236,7 +233,7 @@ export function DiagonalLabels({
             y: 16,
             style: {
               fontSize: 18,
-              fontFamily: 'FrankRuhlLibre, serif',
+              fontFamily: LABEL_FONTS.hebrew,
               color: 'white',
               textAlign: 'center',
               textBaseline: 'middle',
@@ -248,7 +245,7 @@ export function DiagonalLabels({
             y: 16,
             style: {
               fontSize: 12,
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: LABEL_FONTS.ui,
               color: 'white',
               textAlign: 'left',
               textBaseline: 'middle',

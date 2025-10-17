@@ -5,6 +5,7 @@ import { useControls } from 'leva';
 import * as React from 'react';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
+import { APP_CONFIG } from '../config/app-config';
 import { HALF } from '../data/constants';
 import { useIsMobile } from '../utils/mobile-detection';
 import {
@@ -29,7 +30,7 @@ import { WireCube } from './wire-cube';
 export function CubeOfSpaceScene(): React.JSX.Element {
   const isMobile = useIsMobile();
   const isPageVisible = usePageVisibility();
-  const isUserActive = useIdleDetection(10000); // 10 second idle timeout
+  const isUserActive = useIdleDetection(APP_CONFIG.performance.idleTimeoutMs);
   const orbitControlsRef = React.useRef<OrbitControlsImpl>(null);
 
   // Letters controls
@@ -170,9 +171,11 @@ export function CubeOfSpaceScene(): React.JSX.Element {
         label: 'Opacity',
       },
       energyParticles: {
-        value: isMobile ? 4 : 8,
-        min: 4,
-        max: 16,
+        value: isMobile
+          ? APP_CONFIG.rendering.particleCount.mobile
+          : APP_CONFIG.rendering.particleCount.desktop,
+        min: APP_CONFIG.rendering.particleCount.mobile,
+        max: APP_CONFIG.rendering.particleCount.max,
         step: 2,
         label: 'Particles',
       },
@@ -203,28 +206,28 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     'Gamepad',
     {
       gamepadRotateSpeed: {
-        value: 10.0,
+        value: APP_CONFIG.controls.gamepad.rotateSpeed,
         min: 1.0,
         max: 20.0,
         step: 0.5,
         label: 'Rotation Speed',
       },
       gamepadZoomSpeed: {
-        value: 3.0,
+        value: APP_CONFIG.controls.gamepad.zoomSpeed,
         min: 0.5,
         max: 10.0,
         step: 0.5,
         label: 'Zoom Speed',
       },
       gamepadPanSpeed: {
-        value: 2.0,
+        value: APP_CONFIG.controls.gamepad.panSpeed,
         min: 0.5,
         max: 8.0,
         step: 0.5,
         label: 'Pan Speed',
       },
       gamepadRotationCurve: {
-        value: 2.5,
+        value: APP_CONFIG.controls.gamepad.rotationCurve,
         min: 1.0,
         max: 4.0,
         step: 0.1,
@@ -253,8 +256,15 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   return (
     <Canvas
       style={{ background: 'transparent' }}
-      dpr={isMobile ? [1, 1.5] : [1, 2]}
-      camera={{ position: [4, 3, 6], fov: 50 }}
+      dpr={
+        (isMobile
+          ? APP_CONFIG.rendering.dpr.mobile
+          : APP_CONFIG.rendering.dpr.desktop) as [number, number]
+      }
+      camera={{
+        position: APP_CONFIG.camera.defaultPosition as [number, number, number],
+        fov: APP_CONFIG.camera.fov,
+      }}
       onCreated={({ gl }) => {
         gl.domElement.style.userSelect = 'none'; // prevent selection of items
         gl.setClearColor(0x000000, 0); // transparent clear color
@@ -265,8 +275,8 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       <OrbitControls
         ref={orbitControlsRef}
         enableDamping
-        dampingFactor={0.15}
-        rotateSpeed={0.9}
+        dampingFactor={APP_CONFIG.controls.orbit.dampingFactor}
+        rotateSpeed={APP_CONFIG.controls.orbit.rotateSpeed}
       />
       <GamepadControls
         controlsRef={orbitControlsRef}
@@ -286,9 +296,13 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       />
       <CameraReset
         controlsRef={orbitControlsRef}
-        defaultPosition={[4, 3, 6]}
-        defaultTarget={[0, 0, 0]}
-        animationDuration={1000}
+        defaultPosition={
+          APP_CONFIG.camera.defaultPosition as [number, number, number]
+        }
+        defaultTarget={
+          APP_CONFIG.camera.defaultTarget as [number, number, number]
+        }
+        animationDuration={APP_CONFIG.camera.resetAnimationDuration}
       />
 
       {/* Ground grid */}

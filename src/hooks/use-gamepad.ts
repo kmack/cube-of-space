@@ -1,6 +1,8 @@
 // src/hooks/use-gamepad.ts
 import { useEffect, useRef, useState } from 'react';
 
+import { APP_CONFIG } from '../config/app-config';
+
 export interface GamepadState {
   connected: boolean;
   leftStickX: number;
@@ -27,7 +29,7 @@ export interface GamepadState {
   };
 }
 
-const DEADZONE = 0.15; // Ignore small stick movements
+const DEADZONE = APP_CONFIG.controls.gamepad.deadzone; // Ignore small stick movements
 
 function applyDeadzone(value: number, deadzone: number): number {
   if (Math.abs(value) < deadzone) return 0;

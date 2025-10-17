@@ -6,3 +6,18 @@
 body {
   margin: 0;
 }
+
+/* Prevent selection on canvas elements to avoid unintended text highlighting */
+canvas {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none; /* Prevents iOS touch callout menu */
+}
+
+/* Allow Leva controls to remain selectable for copying values */
+.leva-container * {
+  user-select: auto;
+  -webkit-user-select: auto;
+}

@@ -58,17 +58,9 @@ export function GamepadControls({
   const gamepadRef = useRef(gamepad);
   const lastUpdateRef = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
-  const lastAButtonRef = useRef<boolean>(false);
-  const lastBButtonRef = useRef<boolean>(false);
-  const lastYButtonRef = useRef<boolean>(false);
-  const lastDpadUpRef = useRef<boolean>(false);
-  const lastDpadDownRef = useRef<boolean>(false);
-  const lastDpadLeftRef = useRef<boolean>(false);
-  const lastDpadRightRef = useRef<boolean>(false);
-  const lastLeftBumperRef = useRef<boolean>(false);
-  const lastRightBumperRef = useRef<boolean>(false);
-  const lastLeftStickPressRef = useRef<boolean>(false);
-  const lastRightStickPressRef = useRef<boolean>(false);
+
+  // Map-based button state tracking for cleaner debouncing
+  const buttonStates = useRef<Map<string, boolean>>(new Map());
 
   // Keep gamepad ref up to date
   useEffect(() => {
@@ -107,83 +99,91 @@ export function GamepadControls({
       const currentGamepad = gamepadRef.current;
       let hasGamepadInput = false;
 
-      // A button: Toggle energy flow visibility (with debouncing)
-      if (currentGamepad.buttons.a && !lastAButtonRef.current) {
-        onToggleEnergyFlow?.();
-      }
-      lastAButtonRef.current = currentGamepad.buttons.a;
+      // Helper function for button debouncing with Map
+      const handleButton = (
+        key: string,
+        isPressed: boolean,
+        callback?: () => void
+      ): void => {
+        const wasPressed = buttonStates.current.get(key) ?? false;
+        if (isPressed && !wasPressed) {
+          callback?.();
+        }
+        buttonStates.current.set(key, isPressed);
+      };
 
-      // B button: Toggle double-sided labels (with debouncing)
-      if (currentGamepad.buttons.b && !lastBButtonRef.current) {
-        onToggleDoubleSidedLabels?.();
-      }
-      lastBButtonRef.current = currentGamepad.buttons.b;
+      // A button: Toggle energy flow visibility
+      handleButton('a', currentGamepad.buttons.a, onToggleEnergyFlow);
 
-      // Y button: Toggle axis flow direction (with debouncing)
-      if (currentGamepad.buttons.y && !lastYButtonRef.current) {
-        onToggleAxisFlowDirection?.();
-      }
-      lastYButtonRef.current = currentGamepad.buttons.y;
+      // B button: Toggle double-sided labels
+      handleButton('b', currentGamepad.buttons.b, onToggleDoubleSidedLabels);
 
-      // D-Pad Up: Toggle Mother Letters (with debouncing)
-      if (currentGamepad.buttons.dpadUp && !lastDpadUpRef.current) {
-        onToggleMotherLetters?.();
-      }
-      lastDpadUpRef.current = currentGamepad.buttons.dpadUp;
+      // Y button: Toggle axis flow direction
+      handleButton('y', currentGamepad.buttons.y, onToggleAxisFlowDirection);
 
-      // D-Pad Right: Toggle Double Letters (with debouncing)
-      if (currentGamepad.buttons.dpadRight && !lastDpadRightRef.current) {
-        onToggleDoubleLetters?.();
-      }
-      lastDpadRightRef.current = currentGamepad.buttons.dpadRight;
+      // D-Pad Up: Toggle Mother Letters
+      handleButton(
+        'dpadUp',
+        currentGamepad.buttons.dpadUp,
+        onToggleMotherLetters
+      );
 
-      // D-Pad Down: Toggle Single Letters (with debouncing)
-      if (currentGamepad.buttons.dpadDown && !lastDpadDownRef.current) {
-        onToggleSingleLetters?.();
-      }
-      lastDpadDownRef.current = currentGamepad.buttons.dpadDown;
+      // D-Pad Right: Toggle Double Letters
+      handleButton(
+        'dpadRight',
+        currentGamepad.buttons.dpadRight,
+        onToggleDoubleLetters
+      );
 
-      // D-Pad Left: Toggle Final Letters (with debouncing)
-      if (currentGamepad.buttons.dpadLeft && !lastDpadLeftRef.current) {
-        onToggleFinalLetters?.();
-      }
-      lastDpadLeftRef.current = currentGamepad.buttons.dpadLeft;
+      // D-Pad Down: Toggle Single Letters
+      handleButton(
+        'dpadDown',
+        currentGamepad.buttons.dpadDown,
+        onToggleSingleLetters
+      );
 
-      // Left bumper (LB): Toggle face visibility (with debouncing)
-      if (currentGamepad.buttons.leftBumper && !lastLeftBumperRef.current) {
-        onToggleFaceVisibility?.();
-      }
-      lastLeftBumperRef.current = currentGamepad.buttons.leftBumper;
+      // D-Pad Left: Toggle Final Letters
+      handleButton(
+        'dpadLeft',
+        currentGamepad.buttons.dpadLeft,
+        onToggleFinalLetters
+      );
 
-      // Right bumper (RB): Toggle face opacity (with debouncing)
-      if (currentGamepad.buttons.rightBumper && !lastRightBumperRef.current) {
-        onToggleFaceOpacity?.();
-      }
-      lastRightBumperRef.current = currentGamepad.buttons.rightBumper;
+      // Left bumper (LB): Toggle face visibility
+      handleButton(
+        'leftBumper',
+        currentGamepad.buttons.leftBumper,
+        onToggleFaceVisibility
+      );
 
-      // Left stick press: Reset pan (target position) to origin (with debouncing)
-      if (
-        currentGamepad.buttons.leftStickPress &&
-        !lastLeftStickPressRef.current
-      ) {
-        // Button just pressed (rising edge)
-        orbitControls.target.set(...defaultTarget);
-        orbitControls.update();
-      }
-      lastLeftStickPressRef.current = currentGamepad.buttons.leftStickPress;
+      // Right bumper (RB): Toggle face opacity
+      handleButton(
+        'rightBumper',
+        currentGamepad.buttons.rightBumper,
+        onToggleFaceOpacity
+      );
 
-      // Right stick press: Reset view to defaults (with debouncing)
-      if (
-        currentGamepad.buttons.rightStickPress &&
-        !lastRightStickPressRef.current
-      ) {
-        // Button just pressed (rising edge)
-        camera.position.set(...defaultCameraPosition);
-        orbitControls.target.set(...defaultTarget);
-        camera.updateMatrixWorld();
-        orbitControls.update();
-      }
-      lastRightStickPressRef.current = currentGamepad.buttons.rightStickPress;
+      // Left stick press: Reset pan (target position) to origin
+      handleButton(
+        'leftStickPress',
+        currentGamepad.buttons.leftStickPress,
+        () => {
+          orbitControls.target.set(...defaultTarget);
+          orbitControls.update();
+        }
+      );
+
+      // Right stick press: Reset view to defaults
+      handleButton(
+        'rightStickPress',
+        currentGamepad.buttons.rightStickPress,
+        () => {
+          camera.position.set(...defaultCameraPosition);
+          orbitControls.target.set(...defaultTarget);
+          camera.updateMatrixWorld();
+          orbitControls.update();
+        }
+      );
 
       // Left stick: Pan in screen space (like right-mouse-button drag)
       if (

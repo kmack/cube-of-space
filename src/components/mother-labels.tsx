@@ -7,15 +7,12 @@ import { LABEL_OFFSET, MOTHER_OFFSET, UP } from '../data/constants';
 import { axes } from '../data/geometry';
 import { LABEL_SCALE, MOTHER_LABEL_BACKGROUND } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
+import type { AnimatedLabelProps } from '../utils/label-utils';
+import { LABEL_FONTS } from '../utils/label-utils';
 import { useAxisFacingQuaternion } from '../utils/orientation';
 import { RichLabel } from './rich-label';
 
-interface MotherLabelsProps {
-  useMemoryOptimization?: boolean;
-  doubleSided?: boolean;
-  isAnimationActive?: boolean;
-  isMobile?: boolean;
-}
+type MotherLabelsProps = AnimatedLabelProps;
 
 // Move Node component outside to prevent unmount/remount on parent re-renders
 const MotherLabelNode = React.memo(
@@ -116,8 +113,8 @@ const MotherLabelNode = React.memo(
           imagePath={labelData.imagePath}
           scale={LABEL_SCALE}
           background={MOTHER_LABEL_BACKGROUND}
-          hebrewFont="FrankRuhlLibre, serif"
-          uiFont="Inter, sans-serif"
+          hebrewFont={LABEL_FONTS.hebrew}
+          uiFont={LABEL_FONTS.ui}
           useMemoryOptimization={useMemoryOptimization}
           doubleSided={doubleSided}
         />

@@ -1,17 +1,15 @@
 // src/components/edge-labels.tsx
 import * as React from 'react';
 
-import { LABEL_OFFSET } from '../data/constants';
 import { edges } from '../data/geometry';
 import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
+import type { BaseLabelProps } from '../utils/label-utils';
+import { calculateAxisAlignedOffset, LABEL_FONTS } from '../utils/label-utils';
 import { eulerFromNormalAndTangent } from '../utils/orientation';
 import { RichLabel } from './rich-label';
 
-interface EdgeLabelsProps {
-  useMemoryOptimization?: boolean;
-  doubleSided?: boolean;
-}
+type EdgeLabelsProps = BaseLabelProps;
 
 function EdgeLabelsComponent({
   useMemoryOptimization = true,
@@ -23,14 +21,7 @@ function EdgeLabelsComponent({
       const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
       const labelData = createLabelData(e.letter);
       // Calculate offset position - push label outward from center along edge normal
-      const offsetPos: [number, number, number] = [
-        e.pos[0] +
-          (e.pos[0] > 0 ? LABEL_OFFSET : e.pos[0] < 0 ? -LABEL_OFFSET : 0),
-        e.pos[1] +
-          (e.pos[1] > 0 ? LABEL_OFFSET : e.pos[1] < 0 ? -LABEL_OFFSET : 0),
-        e.pos[2] +
-          (e.pos[2] > 0 ? LABEL_OFFSET : e.pos[2] < 0 ? -LABEL_OFFSET : 0),
-      ];
+      const offsetPos = calculateAxisAlignedOffset(e.pos);
       return { labelData, offsetPos, rotation: rot };
     });
   }, []);
@@ -50,8 +41,8 @@ function EdgeLabelsComponent({
               imagePath={info.labelData.imagePath}
               scale={LABEL_SCALE}
               background={EDGE_LABEL_BACKGROUND}
-              hebrewFont="FrankRuhlLibre, serif"
-              uiFont="Inter, sans-serif"
+              hebrewFont={LABEL_FONTS.hebrew}
+              uiFont={LABEL_FONTS.ui}
               useMemoryOptimization={useMemoryOptimization}
               doubleSided={doubleSided}
             />

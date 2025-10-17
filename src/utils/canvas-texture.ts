@@ -63,15 +63,34 @@ export type CanvasLabelConfig = {
   // Memory optimization options
   useOptimizedFormat?: boolean; // Use LUMINANCE_ALPHA for B&W images
   targetResolution?: { width: number; height: number }; // Render at lower res for upscaling
+  // Cancellation support
+  signal?: AbortSignal; // Allow cancellation of async texture creation
 };
 
 /**
  * Creates a canvas texture with rich content (text + images)
+ * Supports cancellation via AbortSignal for proper cleanup on component unmount
  */
 export function createCanvasTexture(
   config: CanvasLabelConfig
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   return new Promise((resolve, reject) => {
+    // Check if already aborted before starting
+    if (config.signal?.aborted) {
+      const error = new Error('Texture creation aborted');
+      error.name = 'AbortError';
+      reject(error);
+      return;
+    }
+
+    // Set up abort listener for true cancellation
+    const abortHandler = (): void => {
+      const error = new Error('Texture creation aborted');
+      error.name = 'AbortError';
+      reject(error);
+    };
+    config.signal?.addEventListener('abort', abortHandler, { once: true });
+
     // Use target resolution for memory optimization if specified
     const renderWidth = config.targetResolution?.width ?? config.width;
     const renderHeight = config.targetResolution?.height ?? config.height;
@@ -112,8 +131,10 @@ export function createCanvasTexture(
     }
 
     // Load and draw images, then draw text
-    loadImages(config.images ?? [])
+    loadImages(config.images ?? [], config.signal)
       .then((loadedImages) => {
+        // Clean up abort listener on success
+        config.signal?.removeEventListener('abort', abortHandler);
         // Draw images with scaling
         loadedImages.forEach((img, index) => {
           // eslint-disable-next-line security/detect-object-injection -- index is loop counter, safe array access
@@ -227,7 +248,18 @@ export function createCanvasTexture(
           resolve(texture);
         }
       })
-      .catch(reject);
+      .catch((error: unknown) => {
+        // Clean up abort listener on error
+        config.signal?.removeEventListener('abort', abortHandler);
+        // Ensure error is properly typed as Error
+        const wrappedError =
+          error instanceof Error
+            ? error
+            : new Error(
+                `Texture creation failed: ${error instanceof Object ? JSON.stringify(error) : String(error)}`
+              );
+        reject(wrappedError);
+      });
   });
 }
 
@@ -298,10 +330,18 @@ function drawText(
 }
 
 async function loadImages(
-  imageConfigs: ImageConfig[]
+  imageConfigs: ImageConfig[],
+  signal?: AbortSignal
 ): Promise<HTMLImageElement[]> {
   if (imageConfigs.length === 0) {
     return [];
+  }
+
+  // Check if already aborted
+  if (signal?.aborted) {
+    const error = new Error('Image loading aborted');
+    error.name = 'AbortError';
+    throw error;
   }
 
   const promises = imageConfigs.map((config) => {
@@ -310,11 +350,36 @@ async function loadImages(
       return imageCache.get(config.src)!;
     }
 
-    // Create and cache the promise
+    // Create and cache the promise with abort support
     const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
+      if (signal?.aborted) {
+        const error = new Error('Image loading aborted');
+        error.name = 'AbortError';
+        reject(error);
+        return;
+      }
+
       const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
+
+      // Set up abort handler
+      const abortHandler = (): void => {
+        img.src = ''; // Cancel image loading
+        const error = new Error('Image loading aborted');
+        error.name = 'AbortError';
+        reject(error);
+      };
+      signal?.addEventListener('abort', abortHandler, { once: true });
+
+      img.onload = () => {
+        signal?.removeEventListener('abort', abortHandler);
+        resolve(img);
+      };
+      img.onerror = () => {
+        signal?.removeEventListener('abort', abortHandler);
+        const error = new Error(`Failed to load image: ${config.src}`);
+        error.name = 'ImageLoadError';
+        reject(error);
+      };
       img.src = config.src;
     });
 
@@ -344,6 +409,7 @@ export function createStructuredHebrewLabel(
     background?: BackgroundStyle;
     imagePath?: string;
     useMemoryOptimization?: boolean;
+    signal?: AbortSignal;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
@@ -597,6 +663,7 @@ export function createStructuredHebrewLabel(
     targetResolution: useOptimization
       ? { width: targetWidth, height: targetHeight }
       : undefined,
+    signal: options.signal,
   });
 }
 
@@ -616,6 +683,7 @@ export function createHebrewLabelTexture(
     background?: BackgroundStyle;
     imagePath?: string;
     useMemoryOptimization?: boolean;
+    signal?: AbortSignal;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   // Apply memory optimization defaults
@@ -780,5 +848,6 @@ export function createHebrewLabelTexture(
     targetResolution: useOptimization
       ? { width: targetWidth, height: targetHeight }
       : undefined,
+    signal: options.signal,
   });
 }

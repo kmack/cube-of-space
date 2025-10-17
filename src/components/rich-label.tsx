@@ -102,7 +102,8 @@ function RichLabelComponent({
   const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
-    let mounted = true;
+    // Create AbortController for true cancellation
+    const abortController = new AbortController();
     let currentTexture: THREE.Texture | null = null;
 
     // Use custom canvas config if provided, otherwise use Hebrew label helper
@@ -119,6 +120,7 @@ function RichLabelComponent({
                   height: Math.min(canvasConfig.height, 480),
                 }
               : undefined),
+          signal: abortController.signal,
         })
       : letterName && assocGlyph && assocName
         ? createStructuredHebrewLabel(
@@ -136,6 +138,7 @@ function RichLabelComponent({
               uiFont,
               imagePath,
               useMemoryOptimization,
+              signal: abortController.signal,
             }
           )
         : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
@@ -147,11 +150,13 @@ function RichLabelComponent({
             uiFont,
             imagePath,
             useMemoryOptimization,
+            signal: abortController.signal,
           });
 
     texturePromise
       .then((tex) => {
-        if (mounted) {
+        // Check if component is still mounted
+        if (!abortController.signal.aborted) {
           // Enable anisotropic filtering for better quality on scaled textures
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy); // Use up to 4x anisotropic filtering
@@ -164,11 +169,17 @@ function RichLabelComponent({
         }
       })
       .catch((error) => {
+        // Silently ignore AbortErrors as they are expected during unmount
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
         console.error('Failed to create label texture:', error);
       });
 
     return () => {
-      mounted = false;
+      // Abort any pending texture creation
+      abortController.abort();
+
       // Dispose the current texture when component unmounts or dependencies change
       if (currentTexture) {
         currentTexture.dispose();
@@ -287,12 +298,17 @@ function ComplexRichLabelComponent({
   const gl = useThree((state) => state.gl);
 
   React.useEffect(() => {
-    let mounted = true;
+    // Create AbortController for true cancellation
+    const abortController = new AbortController();
     let currentTexture: THREE.Texture | null = null;
 
-    createCanvasTexture(canvasConfig)
+    createCanvasTexture({
+      ...canvasConfig,
+      signal: abortController.signal,
+    })
       .then((tex) => {
-        if (mounted) {
+        // Check if component is still mounted
+        if (!abortController.signal.aborted) {
           // Enable anisotropic filtering for better quality
           const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
           tex.anisotropy = Math.min(4, maxAnisotropy);
@@ -305,11 +321,17 @@ function ComplexRichLabelComponent({
         }
       })
       .catch((error) => {
+        // Silently ignore AbortErrors as they are expected during unmount
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
         console.error('Failed to create complex label texture:', error);
       });
 
     return () => {
-      mounted = false;
+      // Abort any pending texture creation
+      abortController.abort();
+
       // Dispose the current texture when component unmounts or dependencies change
       if (currentTexture) {
         currentTexture.dispose();

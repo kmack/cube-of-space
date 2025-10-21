@@ -14,6 +14,7 @@ type EdgeLabelsProps = BaseLabelProps;
 function EdgeLabelsComponent({
   useMemoryOptimization = true,
   doubleSided = false,
+  showColorBorders = true,
 }: EdgeLabelsProps): React.JSX.Element {
   // Memoize edge label data and positions to avoid recalculation
   const edgeLabelInfo = React.useMemo(() => {
@@ -38,6 +39,13 @@ function EdgeLabelsComponent({
               letterName={info.labelData.letterName}
               assocGlyph={info.labelData.assocGlyph}
               assocName={info.labelData.assocName}
+              colorName={info.labelData.color}
+              colorValue={info.labelData.colorValue}
+              note={info.labelData.note}
+              significance={info.labelData.significance}
+              gematria={info.labelData.gematria}
+              alchemy={info.labelData.alchemy}
+              showColorBorders={showColorBorders}
               imagePath={info.labelData.imagePath}
               scale={LABEL_SCALE}
               background={EDGE_LABEL_BACKGROUND}

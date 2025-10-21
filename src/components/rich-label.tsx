@@ -36,6 +36,15 @@ export type RichLabelProps = {
   assocGlyph?: string;
   assocName?: string;
 
+  // Additional correspondences
+  colorName?: string;
+  colorValue?: string;
+  note?: string;
+  significance?: string;
+  gematria?: number;
+  alchemy?: string;
+  showColorBorders?: boolean;
+
   // Styling
   color?: string;
   background?: BackgroundStyle;
@@ -80,6 +89,13 @@ function RichLabelComponent({
   letterName,
   assocGlyph,
   assocName,
+  colorName,
+  colorValue,
+  note,
+  significance,
+  gematria,
+  alchemy,
+  showColorBorders = true,
   color = 'white',
   background,
   width = LABEL_WIDTH_WITH_IMAGE,
@@ -139,6 +155,13 @@ function RichLabelComponent({
               imagePath,
               useMemoryOptimization,
               signal: abortController.signal,
+              colorName,
+              colorValue,
+              note,
+              significance,
+              gematria,
+              alchemy,
+              showColorBorders,
             }
           )
         : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
@@ -195,6 +218,13 @@ function RichLabelComponent({
     letterName,
     assocGlyph,
     assocName,
+    colorName,
+    colorValue,
+    note,
+    significance,
+    gematria,
+    alchemy,
+    showColorBorders,
     imagePath,
     color,
     width,
@@ -266,6 +296,13 @@ export const RichLabel = React.memo(
       prevProps.letterName === nextProps.letterName &&
       prevProps.assocGlyph === nextProps.assocGlyph &&
       prevProps.assocName === nextProps.assocName &&
+      prevProps.colorName === nextProps.colorName &&
+      prevProps.colorValue === nextProps.colorValue &&
+      prevProps.note === nextProps.note &&
+      prevProps.significance === nextProps.significance &&
+      prevProps.gematria === nextProps.gematria &&
+      prevProps.alchemy === nextProps.alchemy &&
+      prevProps.showColorBorders === nextProps.showColorBorders &&
       prevProps.imagePath === nextProps.imagePath &&
       prevProps.color === nextProps.color &&
       prevProps.width === nextProps.width &&

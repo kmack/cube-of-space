@@ -410,6 +410,14 @@ export function createStructuredHebrewLabel(
     imagePath?: string;
     useMemoryOptimization?: boolean;
     signal?: AbortSignal;
+    // Additional correspondence fields
+    colorName?: string;
+    colorValue?: string;
+    note?: string;
+    significance?: string;
+    gematria?: number;
+    alchemy?: string;
+    showColorBorders?: boolean;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
@@ -534,6 +542,77 @@ export function createStructuredHebrewLabel(
         opacity: 0.9,
       },
     });
+
+    // Additional correspondences below (if provided)
+    if (
+      options.colorName ||
+      options.note ||
+      options.significance ||
+      options.gematria !== undefined ||
+      options.alchemy
+    ) {
+      const correspondenceY = belowCardY + 50;
+      const lineHeight = 28;
+
+      // Build correspondence strings
+      const correspondences: string[] = [];
+
+      if (options.colorName && options.colorValue) {
+        correspondences.push(`Color: ${options.colorName}`);
+      }
+      if (options.note) {
+        correspondences.push(`Note: ${options.note}`);
+      }
+      if (options.significance) {
+        correspondences.push(`Meaning: ${options.significance}`);
+      }
+      if (options.gematria !== undefined) {
+        correspondences.push(`Gematria: ${options.gematria}`);
+      }
+      if (options.alchemy) {
+        correspondences.push(`Alchemy: ${options.alchemy}`);
+      }
+
+      // Render correspondences in two columns
+      const leftColumnX = width / 2 - 180;
+      const rightColumnX = width / 2 + 60;
+
+      correspondences.forEach((text, index) => {
+        const isLeftColumn = index % 2 === 0;
+        const xPos = isLeftColumn ? leftColumnX : rightColumnX;
+        const line = Math.floor(index / 2);
+
+        texts.push({
+          content: text,
+          x: xPos,
+          y: correspondenceY + line * lineHeight,
+          style: {
+            fontSize: 18,
+            fontFamily: uiFont,
+            color,
+            textAlign: 'left',
+            textBaseline: 'middle',
+            opacity: 0.85,
+          },
+        });
+      });
+
+      // Add color border if colorValue is provided and showColorBorders is enabled
+      // Only modify border when explicitly enabled to avoid mutating the original background
+      if (options.colorValue && options.background) {
+        if (options.showColorBorders !== false) {
+          // Clone the background to avoid mutating the original
+          options.background = {
+            ...options.background,
+            border: {
+              width: 4,
+              color: options.colorValue,
+            },
+          };
+        }
+        // When showColorBorders is false, keep the original background/border unchanged
+      }
+    }
   } else {
     // Centered layout without image
     let currentY = 70;

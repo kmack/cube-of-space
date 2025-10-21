@@ -434,12 +434,26 @@ export function createStructuredHebrewLabel(
   const uiFont = options.uiFont ?? 'Inter, sans-serif';
   const symbolFont = options.symbolFont ?? '"Symbola", "Noto Sans Symbols 2"';
 
+  // Create a local background copy to avoid mutating the original reference
+  // This prevents unnecessary re-renders when the background object changes
+  const background: BackgroundStyle | undefined = options.background
+    ? options.showColorBorders !== false && options.colorValue
+      ? {
+          ...options.background,
+          border: {
+            width: 4,
+            color: options.colorValue,
+          },
+        }
+      : options.background
+    : undefined;
+
   const texts: CanvasLabelConfig['texts'] = [];
   const images: ImageConfig[] = [];
 
   const hasBlackWhiteImage = !!options.imagePath?.includes('major-arcana');
   const hasTransparentBackground =
-    !options.background?.color || options.background.color === 'transparent';
+    !background?.color || background.color === 'transparent';
 
   if (options.imagePath) {
     // Tarot card layout
@@ -596,22 +610,6 @@ export function createStructuredHebrewLabel(
           },
         });
       });
-
-      // Add color border if colorValue is provided and showColorBorders is enabled
-      // Only modify border when explicitly enabled to avoid mutating the original background
-      if (options.colorValue && options.background) {
-        if (options.showColorBorders !== false) {
-          // Clone the background to avoid mutating the original
-          options.background = {
-            ...options.background,
-            border: {
-              width: 4,
-              color: options.colorValue,
-            },
-          };
-        }
-        // When showColorBorders is false, keep the original background/border unchanged
-      }
     }
   } else {
     // Centered layout without image
@@ -734,7 +732,7 @@ export function createStructuredHebrewLabel(
   return createCanvasTexture({
     width,
     height,
-    background: options.background,
+    background,
     texts,
     images,
     useOptimizedFormat:

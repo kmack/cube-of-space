@@ -468,12 +468,16 @@ export function createStructuredHebrewLabel(
     });
 
     // Title above the card
+    const paddingValue = background?.padding ?? 2;
+    const topMargin = paddingValue * 3;
+    const titleFontSize = 32;
+
     texts.push({
       content: title,
       x: width / 2,
-      y: 40,
+      y: topMargin + titleFontSize / 2, // Position from top with padding
       style: {
-        fontSize: 32,
+        fontSize: titleFontSize,
         fontFamily: uiFont,
         color,
         textAlign: 'center',

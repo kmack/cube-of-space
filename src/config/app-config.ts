@@ -48,7 +48,7 @@ export const APP_CONFIG = {
    */
   camera: {
     /** Default camera position [x, y, z] */
-    defaultPosition: [4, 3, 6] as const,
+    defaultPosition: [-3.5, 2, -3] as const,
     /** Default camera look-at target [x, y, z] */
     defaultTarget: [0, 0, 0] as const,
     /** Field of view in degrees */

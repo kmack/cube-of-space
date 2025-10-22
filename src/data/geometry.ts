@@ -26,30 +26,33 @@ const westX = -HALF;
 const southZ = +HALF;
 const northZ = -HALF;
 
+// Helper constant for normalizing diagonal vectors (1/√2)
+const INV_SQRT2 = 1 / Math.sqrt(2);
+
 export const edges: Edge[] = [
   // Corner verticals
   {
     letter: 'Heh',
     pos: [eastX, 0, northZ],
-    normal: [+1, 0, -1],
+    normal: [INV_SQRT2, 0, -INV_SQRT2],
     tangent: [0, 1, 0],
   }, // NE
   {
     letter: 'Vav',
     pos: [eastX, 0, southZ],
-    normal: [+1, 0, +1],
+    normal: [INV_SQRT2, 0, INV_SQRT2],
     tangent: [0, 1, 0],
   }, // SE
   {
     letter: 'Lamed',
     pos: [westX, 0, northZ],
-    normal: [-1, 0, -1],
+    normal: [-INV_SQRT2, 0, -INV_SQRT2],
     tangent: [0, 1, 0],
   }, // NW
   {
     letter: 'Nun',
     pos: [westX, 0, southZ],
-    normal: [-1, 0, +1],
+    normal: [-INV_SQRT2, 0, INV_SQRT2],
     tangent: [0, 1, 0],
   }, // SW
 
@@ -57,13 +60,13 @@ export const edges: Edge[] = [
   {
     letter: 'Zain',
     pos: [eastX, topY, 0],
-    normal: [+1, +1, 0],
+    normal: [INV_SQRT2, INV_SQRT2, 0],
     tangent: [0, 0, -1],
   }, // East-Above
   {
     letter: 'Cheth',
     pos: [eastX, botY, 0],
-    normal: [+1, -1, 0],
+    normal: [INV_SQRT2, -INV_SQRT2, 0],
     tangent: [0, 0, -1],
   }, // East-Below (fixed tangent):contentReference[oaicite:3]{index=3}
 
@@ -71,13 +74,13 @@ export const edges: Edge[] = [
   {
     letter: 'Teth',
     pos: [0, topY, northZ],
-    normal: [0, 1, -1],
+    normal: [0, INV_SQRT2, -INV_SQRT2],
     tangent: [-1, 0, 0],
   }, // North-Above
   {
     letter: 'Yod',
     pos: [0, botY, northZ],
-    normal: [0, -1, -1],
+    normal: [0, -INV_SQRT2, -INV_SQRT2],
     tangent: [-1, 0, 0],
   }, // North-Below (fixed tangent):contentReference[oaicite:4]{index=4}
 
@@ -85,13 +88,13 @@ export const edges: Edge[] = [
   {
     letter: 'Samekh',
     pos: [westX, topY, 0],
-    normal: [-1, +1, 0],
+    normal: [-INV_SQRT2, INV_SQRT2, 0],
     tangent: [0, 0, +1],
   }, // West-Above
   {
     letter: 'Ayin',
     pos: [westX, botY, 0],
-    normal: [-1, -1, 0],
+    normal: [-INV_SQRT2, -INV_SQRT2, 0],
     tangent: [0, 0, +1],
   }, // West-Below (fixed tangent):contentReference[oaicite:5]{index=5}
 
@@ -99,13 +102,13 @@ export const edges: Edge[] = [
   {
     letter: 'Tzaddi',
     pos: [0, topY, southZ],
-    normal: [0, +1, +1],
+    normal: [0, INV_SQRT2, INV_SQRT2],
     tangent: [+1, 0, 0],
   }, // South-Above
   {
     letter: 'Qoph',
     pos: [0, botY, southZ],
-    normal: [0, -1, +1],
+    normal: [0, -INV_SQRT2, INV_SQRT2],
     tangent: [+1, 0, 0],
   }, // South-Below (fixed tangent):contentReference[oaicite:6]{index=6},
 ];

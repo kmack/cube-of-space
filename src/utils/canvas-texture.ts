@@ -449,7 +449,7 @@ export function createStructuredHebrewLabel(
     const sourceWidth = 416 - 96;
     const sourceHeight = 512 - 0;
     const aspectRatio = sourceWidth / sourceHeight;
-    const cardHeight = height - 160;
+    const cardHeight = height - 190; // Increased margin to make room for correspondence fields
     const cardWidth = Math.floor(cardHeight * aspectRatio);
     const cardX = (width - cardWidth) / 2;
     const cardY = 80;
@@ -547,6 +547,7 @@ export function createStructuredHebrewLabel(
     });
 
     // Additional correspondences below (if provided)
+    // Compact layout to fit within optimized canvas height
     if (
       options.colorName ||
       options.note ||
@@ -554,48 +555,49 @@ export function createStructuredHebrewLabel(
       options.gematria !== undefined ||
       options.alchemy
     ) {
-      const correspondenceY = belowCardY + 50;
-      const lineHeight = 28;
+      const correspondenceY = belowCardY + 25; // Compact spacing
+      const lineHeight = 20; // Compact line height
 
-      // Build correspondence strings
+      // Build correspondence strings (compact format)
       const correspondences: string[] = [];
 
       if (options.colorName && options.colorValue) {
-        correspondences.push(`Color: ${options.colorName}`);
+        correspondences.push(`${options.colorName}`);
       }
       if (options.note) {
-        correspondences.push(`Note: ${options.note}`);
+        correspondences.push(`${options.note}`);
       }
       if (options.significance) {
-        correspondences.push(`Meaning: ${options.significance}`);
+        correspondences.push(`${options.significance}`);
       }
       if (options.gematria !== undefined) {
         correspondences.push(`Gematria: ${options.gematria}`);
       }
       if (options.alchemy) {
-        correspondences.push(`Alchemy: ${options.alchemy}`);
+        correspondences.push(`${options.alchemy}`);
       }
 
-      // Render correspondences in two columns
-      const leftColumnX = width / 2 - 180;
-      const rightColumnX = width / 2 + 60;
+      // Render correspondences in three columns for better space usage
+      const col1X = width / 2 - 240;
+      const col2X = width / 2 - 80;
+      const col3X = width / 2 + 80;
 
       correspondences.forEach((text, index) => {
-        const isLeftColumn = index % 2 === 0;
-        const xPos = isLeftColumn ? leftColumnX : rightColumnX;
-        const line = Math.floor(index / 2);
+        const column = index % 3;
+        const xPos = column === 0 ? col1X : column === 1 ? col2X : col3X;
+        const line = Math.floor(index / 3);
 
         texts.push({
           content: text,
           x: xPos,
           y: correspondenceY + line * lineHeight,
           style: {
-            fontSize: 18,
+            fontSize: 15, // Reduced from 18
             fontFamily: uiFont,
             color,
             textAlign: 'left',
             textBaseline: 'middle',
-            opacity: 0.85,
+            opacity: 0.8,
           },
         });
       });

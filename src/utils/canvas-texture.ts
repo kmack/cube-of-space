@@ -481,30 +481,32 @@ export function createStructuredHebrewLabel(
       },
     });
 
-    // Below card layout: |Hebrew| LetterName    |Glyph| AssocName
+    // Below card layout: Hebrew letter/name aligned to left edge, attribution aligned to right edge
     const belowCardY = cardY + cardHeight + 45;
     const hebrewSize = 48;
-    const nameOffset = 40; // spacing between glyph and name
+    const glyphNameGap = 10; // spacing between glyph and name
+    const cardLeftEdge = cardX;
+    const cardRightEdge = cardX + cardWidth;
 
-    // Hebrew letter |ה|
+    // Hebrew letter |ה| - aligned to left edge of card
     texts.push({
       content: hebrewLetter,
-      x: width / 2 - 180,
+      x: cardLeftEdge,
       y: belowCardY,
       style: {
         fontSize: hebrewSize,
         fontFamily: hebrewFont,
         color,
-        textAlign: 'center',
+        textAlign: 'left',
         textBaseline: 'middle',
         opacity: 0.95,
       },
     });
 
-    // Letter name: "Heh"
+    // Letter name: "Heh" - positioned after Hebrew letter
     texts.push({
       content: letterName,
-      x: width / 2 - 180 + nameOffset,
+      x: cardLeftEdge + hebrewSize + 10,
       y: belowCardY,
       style: {
         fontSize: 24,
@@ -516,31 +518,31 @@ export function createStructuredHebrewLabel(
       },
     });
 
-    // Association glyph: ♈
+    // Association glyph: ♈ - right-aligned to right edge of card
     texts.push({
       content: assocGlyph,
-      x: width / 2 + 60,
+      x: cardRightEdge,
       y: belowCardY,
       style: {
         fontSize: hebrewSize,
         fontFamily: `${symbolFont}, ${hebrewFont}`,
         color,
-        textAlign: 'center',
+        textAlign: 'right',
         textBaseline: 'middle',
         opacity: 0.95,
       },
     });
 
-    // Association name: "Aries"
+    // Association name: "Aries" - positioned before glyph
     texts.push({
       content: assocName,
-      x: width / 2 + 60 + nameOffset,
+      x: cardRightEdge - hebrewSize - glyphNameGap,
       y: belowCardY,
       style: {
         fontSize: 24,
         fontFamily: uiFont,
         color,
-        textAlign: 'left',
+        textAlign: 'right',
         textBaseline: 'middle',
         opacity: 0.9,
       },

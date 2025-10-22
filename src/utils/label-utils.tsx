@@ -12,6 +12,7 @@ import { createLabelData } from './label-factory';
 export interface BaseLabelProps {
   useMemoryOptimization?: boolean;
   doubleSided?: boolean;
+  showColorBorders?: boolean;
 }
 
 /**
@@ -87,6 +88,13 @@ export interface RichLabelCommonProps {
   letterName?: string;
   assocGlyph?: string;
   assocName?: string;
+  colorName?: string;
+  colorValue?: string;
+  note?: string;
+  significance?: string;
+  gematria?: number;
+  alchemy?: string;
+  intelligence?: string;
   imagePath?: string;
   scale: number;
   background: string;
@@ -119,6 +127,13 @@ export function createRichLabelProps(
     letterName: labelData.letterName,
     assocGlyph: labelData.assocGlyph,
     assocName: labelData.assocName,
+    colorName: labelData.color,
+    colorValue: labelData.colorValue,
+    note: labelData.note,
+    significance: labelData.significance,
+    gematria: labelData.gematria,
+    alchemy: labelData.alchemy,
+    intelligence: labelData.intelligence,
     imagePath: labelData.imagePath,
     scale,
     background,

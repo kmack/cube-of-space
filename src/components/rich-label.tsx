@@ -36,6 +36,16 @@ export type RichLabelProps = {
   assocGlyph?: string;
   assocName?: string;
 
+  // Additional correspondences
+  colorName?: string;
+  colorValue?: string;
+  note?: string;
+  significance?: string;
+  gematria?: number;
+  alchemy?: string;
+  intelligence?: string;
+  showColorBorders?: boolean;
+
   // Styling
   color?: string;
   background?: BackgroundStyle;
@@ -80,6 +90,14 @@ function RichLabelComponent({
   letterName,
   assocGlyph,
   assocName,
+  colorName,
+  colorValue,
+  note,
+  significance,
+  gematria,
+  alchemy,
+  intelligence,
+  showColorBorders = true,
   color = 'white',
   background,
   width = LABEL_WIDTH_WITH_IMAGE,
@@ -100,6 +118,9 @@ function RichLabelComponent({
   const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
   const textureRef = React.useRef<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
+
+  // Note: Border is now handled via overlay mesh, not baked into texture
+  // This avoids expensive texture regeneration on toggle
 
   React.useEffect(() => {
     // Create AbortController for true cancellation
@@ -139,6 +160,14 @@ function RichLabelComponent({
               imagePath,
               useMemoryOptimization,
               signal: abortController.signal,
+              colorName,
+              colorValue,
+              note,
+              significance,
+              gematria,
+              alchemy,
+              intelligence,
+              showColorBorders,
             }
           )
         : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
@@ -195,6 +224,12 @@ function RichLabelComponent({
     letterName,
     assocGlyph,
     assocName,
+    colorName,
+    note,
+    significance,
+    gematria,
+    alchemy,
+    intelligence,
     imagePath,
     color,
     width,
@@ -232,23 +267,135 @@ function RichLabelComponent({
     1,
   ];
 
+  // Border outline geometry - only created when needed
+  // This avoids texture regeneration for border toggle
+  const borderLineGeometry = React.useMemo(() => {
+    if (!showColorBorders || !colorValue || !background?.borderRadius)
+      return null;
+
+    // Extract border radius from background config
+    const radius = background.borderRadius / 1000; // Normalize to match Three.js scale
+    const padding = (background.padding ?? 0) / 1000;
+
+    // Calculate dimensions accounting for padding
+    const halfWidth = 0.5 - padding;
+    const halfHeight = 0.5 - padding;
+
+    // Clamp radius to not exceed half the smallest dimension
+    const maxRadius = Math.min(halfWidth, halfHeight);
+    const effectiveRadius = Math.min(radius, maxRadius);
+
+    // Create rounded rectangle outline with continuous path
+    const segments = 8; // Number of segments per corner arc
+    const points: THREE.Vector3[] = [];
+
+    // Start from right edge at vertical center, going counter-clockwise
+    // Right edge - from center going down to bottom-right corner
+    points.push(new THREE.Vector3(halfWidth, 0, 0));
+    points.push(new THREE.Vector3(halfWidth, -halfHeight + effectiveRadius, 0));
+
+    // Bottom-right corner arc (clockwise from right to bottom)
+    for (let i = 0; i <= segments; i++) {
+      const angle = 0 - (Math.PI / 2) * (i / segments); // 0° to -90°
+      const x = halfWidth - effectiveRadius + effectiveRadius * Math.cos(angle);
+      const y =
+        -halfHeight + effectiveRadius + effectiveRadius * Math.sin(angle);
+      points.push(new THREE.Vector3(x, y, 0));
+    }
+
+    // Bottom edge - from bottom-right corner to bottom-left corner
+    points.push(
+      new THREE.Vector3(-halfWidth + effectiveRadius, -halfHeight, 0)
+    );
+
+    // Bottom-left corner arc (clockwise from bottom to left)
+    for (let i = 0; i <= segments; i++) {
+      const angle = -Math.PI / 2 - (Math.PI / 2) * (i / segments); // -90° to -180°
+      const x =
+        -halfWidth + effectiveRadius + effectiveRadius * Math.cos(angle);
+      const y =
+        -halfHeight + effectiveRadius + effectiveRadius * Math.sin(angle);
+      points.push(new THREE.Vector3(x, y, 0));
+    }
+
+    // Left edge - from bottom-left corner to top-left corner
+    points.push(new THREE.Vector3(-halfWidth, halfHeight - effectiveRadius, 0));
+
+    // Top-left corner arc (clockwise from left to top)
+    for (let i = 0; i <= segments; i++) {
+      const angle = Math.PI - (Math.PI / 2) * (i / segments); // 180° to 90°
+      const x =
+        -halfWidth + effectiveRadius + effectiveRadius * Math.cos(angle);
+      const y =
+        halfHeight - effectiveRadius + effectiveRadius * Math.sin(angle);
+      points.push(new THREE.Vector3(x, y, 0));
+    }
+
+    // Top edge - from top-left corner to top-right corner
+    points.push(new THREE.Vector3(halfWidth - effectiveRadius, halfHeight, 0));
+
+    // Top-right corner arc (clockwise from top to right)
+    for (let i = 0; i <= segments; i++) {
+      const angle = Math.PI / 2 - (Math.PI / 2) * (i / segments); // 90° to 0°
+      const x = halfWidth - effectiveRadius + effectiveRadius * Math.cos(angle);
+      const y =
+        halfHeight - effectiveRadius + effectiveRadius * Math.sin(angle);
+      points.push(new THREE.Vector3(x, y, 0));
+    }
+
+    // Right edge - from top-right corner back to start
+    points.push(new THREE.Vector3(halfWidth, 0, 0));
+
+    return new THREE.BufferGeometry().setFromPoints(points);
+  }, [
+    showColorBorders,
+    colorValue,
+    background?.borderRadius,
+    background?.padding,
+  ]);
+
+  // Dispose border geometry on unmount
+  React.useEffect(() => {
+    return () => {
+      if (borderLineGeometry) {
+        borderLineGeometry.dispose();
+      }
+    };
+  }, [borderLineGeometry]);
+
   return (
-    <mesh
-      ref={meshRef}
-      scale={finalScale}
-      rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
-      renderOrder={renderOrder}
-      geometry={planeGeometry}
-    >
-      <meshBasicMaterial
-        map={texture}
-        transparent
-        side={effectiveMaterialSide}
-        toneMapped={false}
-        depthWrite={false}
-        depthTest={depthTest}
-      />
-    </mesh>
+    <group>
+      {/* Main label texture */}
+      <mesh
+        ref={meshRef}
+        scale={finalScale}
+        rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
+        renderOrder={renderOrder}
+        geometry={planeGeometry}
+      >
+        <meshBasicMaterial
+          map={texture}
+          transparent
+          side={effectiveMaterialSide}
+          toneMapped={false}
+          depthWrite={false}
+          depthTest={depthTest}
+        />
+      </mesh>
+
+      {/* Colored border overlay - only rendered when enabled */}
+      {showColorBorders && colorValue && borderLineGeometry && (
+        <lineSegments
+          scale={finalScale}
+          rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
+          renderOrder={renderOrder + 1}
+          position={[0, 0, 0.001]}
+        >
+          <primitive object={borderLineGeometry} attach="geometry" />
+          <lineBasicMaterial color={colorValue} />
+        </lineSegments>
+      )}
+    </group>
   );
 }
 
@@ -266,6 +413,14 @@ export const RichLabel = React.memo(
       prevProps.letterName === nextProps.letterName &&
       prevProps.assocGlyph === nextProps.assocGlyph &&
       prevProps.assocName === nextProps.assocName &&
+      prevProps.colorName === nextProps.colorName &&
+      prevProps.colorValue === nextProps.colorValue &&
+      prevProps.note === nextProps.note &&
+      prevProps.significance === nextProps.significance &&
+      prevProps.gematria === nextProps.gematria &&
+      prevProps.alchemy === nextProps.alchemy &&
+      prevProps.intelligence === nextProps.intelligence &&
+      prevProps.showColorBorders === nextProps.showColorBorders &&
       prevProps.imagePath === nextProps.imagePath &&
       prevProps.color === nextProps.color &&
       prevProps.width === nextProps.width &&
@@ -279,6 +434,7 @@ export const RichLabel = React.memo(
       prevProps.flipY === nextProps.flipY &&
       prevProps.useMemoryOptimization === nextProps.useMemoryOptimization
       // Intentionally exclude: background, canvasConfig (would cause re-renders on parent state changes)
+      // colorValue and showColorBorders ARE included to allow border toggle to work
     );
   }
 );

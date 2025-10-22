@@ -410,6 +410,15 @@ export function createStructuredHebrewLabel(
     imagePath?: string;
     useMemoryOptimization?: boolean;
     signal?: AbortSignal;
+    // Additional correspondence fields
+    colorName?: string;
+    colorValue?: string;
+    note?: string;
+    significance?: string;
+    gematria?: number;
+    alchemy?: string;
+    intelligence?: string;
+    showColorBorders?: boolean;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
@@ -426,19 +435,22 @@ export function createStructuredHebrewLabel(
   const uiFont = options.uiFont ?? 'Inter, sans-serif';
   const symbolFont = options.symbolFont ?? '"Symbola", "Noto Sans Symbols 2"';
 
+  // Use the background as-is from options - border styling is now handled at component level
+  const background: BackgroundStyle | undefined = options.background;
+
   const texts: CanvasLabelConfig['texts'] = [];
   const images: ImageConfig[] = [];
 
   const hasBlackWhiteImage = !!options.imagePath?.includes('major-arcana');
   const hasTransparentBackground =
-    !options.background?.color || options.background.color === 'transparent';
+    !background?.color || background.color === 'transparent';
 
   if (options.imagePath) {
     // Tarot card layout
     const sourceWidth = 416 - 96;
     const sourceHeight = 512 - 0;
     const aspectRatio = sourceWidth / sourceHeight;
-    const cardHeight = height - 160;
+    const cardHeight = height - 190; // Increased margin to make room for correspondence fields
     const cardWidth = Math.floor(cardHeight * aspectRatio);
     const cardX = (width - cardWidth) / 2;
     const cardY = 80;
@@ -456,12 +468,16 @@ export function createStructuredHebrewLabel(
     });
 
     // Title above the card
+    const paddingValue = background?.padding ?? 2;
+    const topMargin = paddingValue * 3;
+    const titleFontSize = 32;
+
     texts.push({
       content: title,
       x: width / 2,
-      y: 40,
+      y: topMargin + titleFontSize / 2, // Position from top with padding
       style: {
-        fontSize: 32,
+        fontSize: titleFontSize,
         fontFamily: uiFont,
         color,
         textAlign: 'center',
@@ -470,30 +486,32 @@ export function createStructuredHebrewLabel(
       },
     });
 
-    // Below card layout: |Hebrew| LetterName    |Glyph| AssocName
+    // Below card layout: Hebrew letter/name aligned to left edge, attribution aligned to right edge
     const belowCardY = cardY + cardHeight + 45;
     const hebrewSize = 48;
-    const nameOffset = 40; // spacing between glyph and name
+    const glyphNameGap = 10; // spacing between glyph and name
+    const cardLeftEdge = cardX;
+    const cardRightEdge = cardX + cardWidth;
 
-    // Hebrew letter |ה|
+    // Hebrew letter |ה| - aligned to left edge of card
     texts.push({
       content: hebrewLetter,
-      x: width / 2 - 180,
+      x: cardLeftEdge,
       y: belowCardY,
       style: {
         fontSize: hebrewSize,
         fontFamily: hebrewFont,
         color,
-        textAlign: 'center',
+        textAlign: 'left',
         textBaseline: 'middle',
         opacity: 0.95,
       },
     });
 
-    // Letter name: "Heh"
+    // Letter name: "Heh" - positioned after Hebrew letter
     texts.push({
       content: letterName,
-      x: width / 2 - 180 + nameOffset,
+      x: cardLeftEdge + hebrewSize + 10,
       y: belowCardY,
       style: {
         fontSize: 24,
@@ -505,35 +523,144 @@ export function createStructuredHebrewLabel(
       },
     });
 
-    // Association glyph: ♈
+    // Association glyph: ♈ - right-aligned to right edge of card
     texts.push({
       content: assocGlyph,
-      x: width / 2 + 60,
+      x: cardRightEdge,
       y: belowCardY,
       style: {
         fontSize: hebrewSize,
         fontFamily: `${symbolFont}, ${hebrewFont}`,
         color,
-        textAlign: 'center',
+        textAlign: 'right',
         textBaseline: 'middle',
         opacity: 0.95,
       },
     });
 
-    // Association name: "Aries"
+    // Association name: "Aries" - positioned before glyph
     texts.push({
       content: assocName,
-      x: width / 2 + 60 + nameOffset,
+      x: cardRightEdge - hebrewSize - glyphNameGap,
       y: belowCardY,
       style: {
         fontSize: 24,
         fontFamily: uiFont,
         color,
-        textAlign: 'left',
+        textAlign: 'right',
         textBaseline: 'middle',
         opacity: 0.9,
       },
     });
+
+    // Additional correspondences in lower-right corner block
+    if (
+      options.colorName ||
+      options.note ||
+      options.significance ||
+      options.gematria !== undefined ||
+      options.alchemy
+    ) {
+      const lineHeight = 40; // Line spacing (doubled)
+      // Double the spacing from label border to rounded rectangle
+      const paddingValue = background?.padding ?? 2;
+      const rightMargin = paddingValue * 2.5; // Distance from right edge
+      const bottomMargin = paddingValue * 2; // Distance from bottom edge
+
+      // Build correspondence strings (compact format)
+      const correspondences: string[] = [];
+
+      if (options.colorName && options.colorValue) {
+        correspondences.push(`${options.colorName}`);
+      }
+      if (options.gematria !== undefined) {
+        correspondences.push(`Gematria: ${options.gematria}`);
+      }
+      if (options.note) {
+        correspondences.push(`${options.note}`);
+      }
+      if (options.significance) {
+        correspondences.push(`${options.significance}`);
+      }
+      if (options.alchemy) {
+        correspondences.push(`${options.alchemy}`);
+      }
+
+      // Position in lower-right corner, stacked vertically from bottom up
+      const blockHeight = correspondences.length * lineHeight;
+      const startY = height - bottomMargin - blockHeight + lineHeight / 2;
+
+      correspondences.forEach((text, index) => {
+        texts.push({
+          content: text,
+          x: width - rightMargin,
+          y: startY + index * lineHeight,
+          style: {
+            fontSize: 30, // Doubled from 15
+            fontFamily: uiFont,
+            color,
+            textAlign: 'right', // Right-aligned for lower-right corner
+            textBaseline: 'middle',
+            opacity: 0.75,
+          },
+        });
+      });
+    }
+
+    // Intelligence text in lower-left corner with word-wrapping
+    if (options.intelligence) {
+      const paddingValue = background?.padding ?? 2;
+      const leftMargin = paddingValue * 2.5; // Distance from left edge of label
+      const bottomMargin = paddingValue * 2.5; // Distance from bottom edge of label
+      const maxWidth = cardLeftEdge - leftMargin; // Wrap before reaching card's left edge
+      const fontSize = 30;
+      const lineHeight = 30;
+
+      // Simple word-wrap: split by spaces and build lines that fit
+      const words = options.intelligence.split(' ');
+      const lines: string[] = [];
+      let currentLine = '';
+
+      // Approximate character width (will be refined by canvas measurement if needed)
+      const approxCharWidth = fontSize * 0.6;
+
+      words.forEach((word) => {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const estimatedWidth = testLine.length * approxCharWidth;
+
+        if (estimatedWidth <= maxWidth && currentLine) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) {
+            lines.push(currentLine);
+          }
+          currentLine = word;
+        }
+      });
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+
+      // Position from bottom up
+      const blockHeight = lines.length * lineHeight;
+      const startY = height - bottomMargin - blockHeight + lineHeight / 2;
+
+      lines.forEach((line, index) => {
+        texts.push({
+          content: line,
+          x: leftMargin,
+          y: startY + index * lineHeight,
+          style: {
+            fontSize,
+            fontFamily: uiFont,
+            color,
+            textAlign: 'left',
+            textBaseline: 'middle',
+            opacity: 0.75,
+          },
+        });
+      });
+    }
   } else {
     // Centered layout without image
     let currentY = 70;
@@ -655,7 +782,7 @@ export function createStructuredHebrewLabel(
   return createCanvasTexture({
     width,
     height,
-    background: options.background,
+    background,
     texts,
     images,
     useOptimizedFormat:

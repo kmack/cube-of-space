@@ -18,6 +18,7 @@ type FaceLabelsProps = BaseLabelProps;
 function FaceLabelsComponent({
   useMemoryOptimization = true,
   doubleSided = false,
+  showColorBorders = true,
 }: FaceLabelsProps): React.JSX.Element {
   // Memoize center label data to avoid recreation on every render
   const centerLabelData = useLabelData(center.letter);
@@ -45,6 +46,14 @@ function FaceLabelsComponent({
               letterName={info.labelData.letterName}
               assocGlyph={info.labelData.assocGlyph}
               assocName={info.labelData.assocName}
+              colorName={info.labelData.color}
+              colorValue={info.labelData.colorValue}
+              note={info.labelData.note}
+              significance={info.labelData.significance}
+              gematria={info.labelData.gematria}
+              alchemy={info.labelData.alchemy}
+              intelligence={info.labelData.intelligence}
+              showColorBorders={showColorBorders}
               imagePath={info.labelData.imagePath}
               scale={LABEL_SCALE}
               background={FACE_LABEL_BACKGROUND}
@@ -72,6 +81,14 @@ function FaceLabelsComponent({
           letterName={centerLabelData.letterName}
           assocGlyph={centerLabelData.assocGlyph}
           assocName={centerLabelData.assocName}
+          colorName={centerLabelData.color}
+          colorValue={centerLabelData.colorValue}
+          note={centerLabelData.note}
+          significance={centerLabelData.significance}
+          gematria={centerLabelData.gematria}
+          alchemy={centerLabelData.alchemy}
+          intelligence={centerLabelData.intelligence}
+          showColorBorders={showColorBorders}
           imagePath={centerLabelData.imagePath}
           scale={LABEL_SCALE}
           background={FACE_LABEL_BACKGROUND}

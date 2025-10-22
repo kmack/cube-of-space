@@ -41,6 +41,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
       showMotherLetters,
       showDiagonals,
       doubleSidedLabels,
+      showColorBorders,
     },
     setLetters,
   ] = useControls('Letters', () => ({
@@ -63,6 +64,10 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     doubleSidedLabels: {
       value: true,
       label: 'Double-Sided Labels',
+    },
+    showColorBorders: {
+      value: true,
+      label: 'Show Color Borders',
     },
   }));
 
@@ -335,14 +340,21 @@ export function CubeOfSpaceScene(): React.JSX.Element {
 
       {/* Keep label components mounted, toggle visibility to prevent texture churn */}
       <group visible={showDoubleLetters}>
-        <FaceLabels doubleSided={doubleSidedLabels} />
+        <FaceLabels
+          doubleSided={doubleSidedLabels}
+          showColorBorders={showColorBorders}
+        />
       </group>
       <group visible={showEdges}>
-        <EdgeLabels doubleSided={doubleSidedLabels} />
+        <EdgeLabels
+          doubleSided={doubleSidedLabels}
+          showColorBorders={showColorBorders}
+        />
       </group>
       <group visible={showMotherLetters}>
         <MotherLabels
           doubleSided={doubleSidedLabels}
+          showColorBorders={showColorBorders}
           isAnimationActive={isUserActive}
           isMobile={isMobile}
         />

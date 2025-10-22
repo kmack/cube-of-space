@@ -81,4 +81,12 @@ export interface LabelData {
   letterName: string; // e.g., "Aleph"
   assocGlyph: string; // e.g., "♈" or "🜁"
   assocName: string; // e.g., "Aries" or "Air"
+  // Additional correspondences
+  color: string; // Color name (e.g., "Yellow", "Blue")
+  colorValue: string; // CSS color value (e.g., "#FFFF00")
+  note: string; // Musical note (e.g., "E", "G#")
+  significance: string; // Letter meaning (e.g., "bull", "water")
+  gematria: number; // Numeric value
+  alchemy: string; // Alchemical correspondence (e.g., "Air", "Gold")
+  intelligence: string; // The Intelligence from Sepher Yetzirah
 }

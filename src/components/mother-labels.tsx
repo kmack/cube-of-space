@@ -22,6 +22,7 @@ const MotherLabelNode = React.memo(
     flipRef,
     useMemoryOptimization,
     doubleSided,
+    showColorBorders,
     isAnimationActive,
     isMobile,
   }: {
@@ -30,6 +31,7 @@ const MotherLabelNode = React.memo(
     flipRef: [number, number, number] | undefined;
     useMemoryOptimization: boolean;
     doubleSided: boolean;
+    showColorBorders: boolean;
     isAnimationActive: boolean;
     isMobile: boolean;
   }): React.JSX.Element => {
@@ -110,6 +112,17 @@ const MotherLabelNode = React.memo(
           title={labelData.title}
           subtitle={labelData.subtitle}
           hebrewLetter={labelData.glyph}
+          letterName={labelData.letterName}
+          assocGlyph={labelData.assocGlyph}
+          assocName={labelData.assocName}
+          colorName={labelData.color}
+          colorValue={labelData.colorValue}
+          note={labelData.note}
+          significance={labelData.significance}
+          gematria={labelData.gematria}
+          alchemy={labelData.alchemy}
+          intelligence={labelData.intelligence}
+          showColorBorders={showColorBorders}
           imagePath={labelData.imagePath}
           scale={LABEL_SCALE}
           background={MOTHER_LABEL_BACKGROUND}
@@ -128,6 +141,7 @@ MotherLabelNode.displayName = 'MotherLabelNode';
 function MotherLabelsComponent({
   useMemoryOptimization = true,
   doubleSided = false,
+  showColorBorders = true,
   isAnimationActive = true,
   isMobile = false,
 }: MotherLabelsProps): React.JSX.Element {
@@ -175,6 +189,7 @@ function MotherLabelsComponent({
               flipRef={flipRef}
               useMemoryOptimization={useMemoryOptimization}
               doubleSided={doubleSided}
+              showColorBorders={showColorBorders}
               isAnimationActive={isAnimationActive}
               isMobile={isMobile}
             />
@@ -184,6 +199,7 @@ function MotherLabelsComponent({
               flipRef={flipRef}
               useMemoryOptimization={useMemoryOptimization}
               doubleSided={doubleSided}
+              showColorBorders={showColorBorders}
               isAnimationActive={isAnimationActive}
               isMobile={isMobile}
             />

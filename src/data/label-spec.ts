@@ -70,6 +70,7 @@ export type LetterSpec = {
   significance: string; // Letter meaning/significance
   gematria: number; // Numeric value
   alchemy: string; // Alchemical correspondence
+  intelligence: string; // The Intelligence from Sepher Yetzirah
 };
 
 const ZODIAC_GLYPHS: Record<
@@ -142,6 +143,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Bull',
     gematria: 1,
     alchemy: 'Air',
+    intelligence: 'The Fiery Intelligence',
   },
   Mem: {
     letterChar: 'מ',
@@ -155,6 +157,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Water',
     gematria: 40,
     alchemy: 'Water',
+    intelligence: 'The Renewing Intelligence',
   },
   Shin: {
     letterChar: 'ש',
@@ -168,6 +171,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Tooth',
     gematria: 300,
     alchemy: 'Fire',
+    intelligence: 'The Perpetual Intelligence',
   },
 
   // Doubles (planets)
@@ -183,6 +187,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'House',
     gematria: 2,
     alchemy: 'Mercury',
+    intelligence: 'The Transparent Intelligence',
   },
   Gimel: {
     letterChar: 'ג',
@@ -196,6 +201,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Camel',
     gematria: 3,
     alchemy: 'Silver',
+    intelligence: 'The Uniting Intelligence',
   },
   Daleth: {
     letterChar: 'ד',
@@ -209,6 +215,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Door',
     gematria: 4,
     alchemy: 'Copper',
+    intelligence: 'The Luminous Intelligence',
   },
   Kaph: {
     letterChar: 'כ',
@@ -222,6 +229,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Closed Hand',
     gematria: 20,
     alchemy: 'Tin',
+    intelligence: 'The Faithful Intelligence',
   },
   Peh: {
     letterChar: 'פ',
@@ -235,6 +243,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Mouth',
     gematria: 80,
     alchemy: 'Iron',
+    intelligence: 'The Natural Intelligence',
   },
   Resh: {
     letterChar: 'ר',
@@ -248,6 +257,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Head',
     gematria: 200,
     alchemy: 'Gold',
+    intelligence: 'The Collecting Intelligence',
   },
   Tav: {
     letterChar: 'ת',
@@ -261,6 +271,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Mark',
     gematria: 400,
     alchemy: 'Lead',
+    intelligence: 'The Administrative Intelligence',
   },
 
   // Simples (zodiac)
@@ -276,6 +287,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Window',
     gematria: 5,
     alchemy: 'Fiery',
+    intelligence: 'The Constituting Intelligence',
   },
   Vav: {
     letterChar: 'ו',
@@ -289,6 +301,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Hook',
     gematria: 6,
     alchemy: 'Earthy',
+    intelligence: 'The Triumphant and Eternal Intelligence',
   },
   Zain: {
     letterChar: 'ז',
@@ -302,6 +315,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Sword',
     gematria: 7,
     alchemy: 'Airy',
+    intelligence: 'The Disposing Intelligence',
   },
   Cheth: {
     letterChar: 'ח',
@@ -315,6 +329,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Fence',
     gematria: 8,
     alchemy: 'Watery',
+    intelligence: 'The Intelligence of the House of Influence',
   },
   Teth: {
     letterChar: 'ט',
@@ -328,6 +343,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Serpent',
     gematria: 9,
     alchemy: 'Fiery',
+    intelligence: 'The Intelligence of the Secret of All Spiritual Activities',
   },
   Yod: {
     letterChar: 'י',
@@ -341,6 +357,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Open Hand',
     gematria: 10,
     alchemy: 'Earthy',
+    intelligence: 'The Intelligence of Will',
   },
   Lamed: {
     letterChar: 'ל',
@@ -354,6 +371,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Ox Goad',
     gematria: 30,
     alchemy: 'Airy',
+    intelligence: 'The Stable Intelligence',
   },
   Nun: {
     letterChar: 'נ',
@@ -367,6 +385,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Fish',
     gematria: 50,
     alchemy: 'Watery',
+    intelligence: 'The Imaginative Intelligence',
   },
   Samekh: {
     letterChar: 'ס',
@@ -380,6 +399,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Prop',
     gematria: 60,
     alchemy: 'Fiery',
+    intelligence: 'The Probative Intelligence',
   },
   Ayin: {
     letterChar: 'ע',
@@ -393,6 +413,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Eye',
     gematria: 70,
     alchemy: 'Earthy',
+    intelligence: 'The Renovating Intelligence',
   },
   Tzaddi: {
     letterChar: 'צ',
@@ -406,6 +427,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Fish-Hook',
     gematria: 90,
     alchemy: 'Airy',
+    intelligence: 'The Intelligence of Meditation',
   },
   Qoph: {
     letterChar: 'ק',
@@ -419,6 +441,8 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Back Of Head',
     gematria: 100,
     alchemy: 'Watery',
+    intelligence:
+      'The Intelligence of All the Activities of the Spiritual Being',
   },
 
   // Final Letters (diagonal lines through center)
@@ -434,6 +458,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Closed Hand',
     gematria: 20,
     alchemy: 'Tin',
+    intelligence: 'The Faithful Intelligence',
   },
   'Nun-final': {
     letterChar: 'ן',
@@ -447,6 +472,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Fish',
     gematria: 50,
     alchemy: 'Watery',
+    intelligence: 'The Imaginative Intelligence',
   },
   'Peh-final': {
     letterChar: 'ף',
@@ -460,6 +486,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Mouth',
     gematria: 80,
     alchemy: 'Iron',
+    intelligence: 'The Natural Intelligence',
   },
   'Tzaddi-final': {
     letterChar: 'ץ',
@@ -473,6 +500,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Fish-Hook',
     gematria: 90,
     alchemy: 'Airy',
+    intelligence: 'The Intelligence of Meditation',
   },
   'Mem-final': {
     letterChar: 'ם',
@@ -486,6 +514,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     significance: 'Water',
     gematria: 40,
     alchemy: 'Water',
+    intelligence: 'The Renewing Intelligence',
   },
 };
 

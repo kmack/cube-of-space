@@ -117,6 +117,9 @@ function RichLabelComponent({
   const textureRef = React.useRef<THREE.Texture | null>(null);
   const gl = useThree((state) => state.gl);
 
+  // Note: Border is now handled via overlay mesh, not baked into texture
+  // This avoids expensive texture regeneration on toggle
+
   React.useEffect(() => {
     // Create AbortController for true cancellation
     const abortController = new AbortController();
@@ -219,12 +222,10 @@ function RichLabelComponent({
     assocGlyph,
     assocName,
     colorName,
-    colorValue,
     note,
     significance,
     gematria,
     alchemy,
-    showColorBorders,
     imagePath,
     color,
     width,
@@ -262,23 +263,64 @@ function RichLabelComponent({
     1,
   ];
 
+  // Border outline geometry - only created when needed
+  // This avoids texture regeneration for border toggle
+  const borderLineGeometry = React.useMemo(() => {
+    if (!showColorBorders || !colorValue) return null;
+
+    // Create rectangle outline geometry
+    const points = [
+      new THREE.Vector3(-0.5, -0.5, 0),
+      new THREE.Vector3(0.5, -0.5, 0),
+      new THREE.Vector3(0.5, 0.5, 0),
+      new THREE.Vector3(-0.5, 0.5, 0),
+      new THREE.Vector3(-0.5, -0.5, 0), // Close the loop
+    ];
+    return new THREE.BufferGeometry().setFromPoints(points);
+  }, [showColorBorders, colorValue]);
+
+  // Dispose border geometry on unmount
+  React.useEffect(() => {
+    return () => {
+      if (borderLineGeometry) {
+        borderLineGeometry.dispose();
+      }
+    };
+  }, [borderLineGeometry]);
+
   return (
-    <mesh
-      ref={meshRef}
-      scale={finalScale}
-      rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
-      renderOrder={renderOrder}
-      geometry={planeGeometry}
-    >
-      <meshBasicMaterial
-        map={texture}
-        transparent
-        side={effectiveMaterialSide}
-        toneMapped={false}
-        depthWrite={false}
-        depthTest={depthTest}
-      />
-    </mesh>
+    <group>
+      {/* Main label texture */}
+      <mesh
+        ref={meshRef}
+        scale={finalScale}
+        rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
+        renderOrder={renderOrder}
+        geometry={planeGeometry}
+      >
+        <meshBasicMaterial
+          map={texture}
+          transparent
+          side={effectiveMaterialSide}
+          toneMapped={false}
+          depthWrite={false}
+          depthTest={depthTest}
+        />
+      </mesh>
+
+      {/* Colored border overlay - only rendered when enabled */}
+      {showColorBorders && colorValue && borderLineGeometry && (
+        <lineSegments
+          scale={finalScale}
+          rotation={flipY ? [Math.PI, 0, 0] : [0, 0, 0]}
+          renderOrder={renderOrder + 1}
+          position={[0, 0, 0.001]}
+        >
+          <primitive object={borderLineGeometry} attach="geometry" />
+          <lineBasicMaterial color={colorValue} />
+        </lineSegments>
+      )}
+    </group>
   );
 }
 
@@ -316,6 +358,7 @@ export const RichLabel = React.memo(
       prevProps.flipY === nextProps.flipY &&
       prevProps.useMemoryOptimization === nextProps.useMemoryOptimization
       // Intentionally exclude: background, canvasConfig (would cause re-renders on parent state changes)
+      // colorValue and showColorBorders ARE included to allow border toggle to work
     );
   }
 );

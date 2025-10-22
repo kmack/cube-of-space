@@ -434,19 +434,8 @@ export function createStructuredHebrewLabel(
   const uiFont = options.uiFont ?? 'Inter, sans-serif';
   const symbolFont = options.symbolFont ?? '"Symbola", "Noto Sans Symbols 2"';
 
-  // Create a local background copy to avoid mutating the original reference
-  // This prevents unnecessary re-renders when the background object changes
-  const background: BackgroundStyle | undefined = options.background
-    ? options.showColorBorders !== false && options.colorValue
-      ? {
-          ...options.background,
-          border: {
-            width: 4,
-            color: options.colorValue,
-          },
-        }
-      : options.background
-    : undefined;
+  // Use the background as-is from options - border styling is now handled at component level
+  const background: BackgroundStyle | undefined = options.background;
 
   const texts: CanvasLabelConfig['texts'] = [];
   const images: ImageConfig[] = [];

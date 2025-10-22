@@ -546,8 +546,7 @@ export function createStructuredHebrewLabel(
       },
     });
 
-    // Additional correspondences below (if provided)
-    // Compact layout to fit within optimized canvas height
+    // Additional correspondences in lower-right corner block
     if (
       options.colorName ||
       options.note ||
@@ -555,8 +554,11 @@ export function createStructuredHebrewLabel(
       options.gematria !== undefined ||
       options.alchemy
     ) {
-      const correspondenceY = belowCardY + 25; // Compact spacing
-      const lineHeight = 20; // Compact line height
+      const lineHeight = 40; // Line spacing (doubled)
+      // Double the spacing from label border to rounded rectangle
+      const paddingValue = background?.padding ?? 2;
+      const rightMargin = paddingValue * 2.5; // Distance from right edge
+      const bottomMargin = paddingValue * 2; // Distance from bottom edge
 
       // Build correspondence strings (compact format)
       const correspondences: string[] = [];
@@ -564,40 +566,35 @@ export function createStructuredHebrewLabel(
       if (options.colorName && options.colorValue) {
         correspondences.push(`${options.colorName}`);
       }
+      if (options.gematria !== undefined) {
+        correspondences.push(`Gematria: ${options.gematria}`);
+      }
       if (options.note) {
         correspondences.push(`${options.note}`);
       }
       if (options.significance) {
         correspondences.push(`${options.significance}`);
       }
-      if (options.gematria !== undefined) {
-        correspondences.push(`Gematria: ${options.gematria}`);
-      }
       if (options.alchemy) {
         correspondences.push(`${options.alchemy}`);
       }
 
-      // Render correspondences in three columns for better space usage
-      const col1X = width / 2 - 240;
-      const col2X = width / 2 - 80;
-      const col3X = width / 2 + 80;
+      // Position in lower-right corner, stacked vertically from bottom up
+      const blockHeight = correspondences.length * lineHeight;
+      const startY = height - bottomMargin - blockHeight + lineHeight / 2;
 
       correspondences.forEach((text, index) => {
-        const column = index % 3;
-        const xPos = column === 0 ? col1X : column === 1 ? col2X : col3X;
-        const line = Math.floor(index / 3);
-
         texts.push({
           content: text,
-          x: xPos,
-          y: correspondenceY + line * lineHeight,
+          x: width - rightMargin,
+          y: startY + index * lineHeight,
           style: {
-            fontSize: 15, // Reduced from 18
+            fontSize: 30, // Doubled from 15
             fontFamily: uiFont,
             color,
-            textAlign: 'left',
+            textAlign: 'right', // Right-aligned for lower-right corner
             textBaseline: 'middle',
-            opacity: 0.8,
+            opacity: 0.75,
           },
         });
       });

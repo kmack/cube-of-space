@@ -417,6 +417,7 @@ export function createStructuredHebrewLabel(
     significance?: string;
     gematria?: number;
     alchemy?: string;
+    intelligence?: string;
     showColorBorders?: boolean;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
@@ -595,6 +596,61 @@ export function createStructuredHebrewLabel(
             fontFamily: uiFont,
             color,
             textAlign: 'right', // Right-aligned for lower-right corner
+            textBaseline: 'middle',
+            opacity: 0.75,
+          },
+        });
+      });
+    }
+
+    // Intelligence text in lower-left corner with word-wrapping
+    if (options.intelligence) {
+      const paddingValue = background?.padding ?? 2;
+      const leftMargin = paddingValue * 2.5; // Distance from left edge of label
+      const bottomMargin = paddingValue * 2.5; // Distance from bottom edge of label
+      const maxWidth = cardLeftEdge - leftMargin; // Wrap before reaching card's left edge
+      const fontSize = 30;
+      const lineHeight = 30;
+
+      // Simple word-wrap: split by spaces and build lines that fit
+      const words = options.intelligence.split(' ');
+      const lines: string[] = [];
+      let currentLine = '';
+
+      // Approximate character width (will be refined by canvas measurement if needed)
+      const approxCharWidth = fontSize * 0.6;
+
+      words.forEach((word) => {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const estimatedWidth = testLine.length * approxCharWidth;
+
+        if (estimatedWidth <= maxWidth && currentLine) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) {
+            lines.push(currentLine);
+          }
+          currentLine = word;
+        }
+      });
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+
+      // Position from bottom up
+      const blockHeight = lines.length * lineHeight;
+      const startY = height - bottomMargin - blockHeight + lineHeight / 2;
+
+      lines.forEach((line, index) => {
+        texts.push({
+          content: line,
+          x: leftMargin,
+          y: startY + index * lineHeight,
+          style: {
+            fontSize,
+            fontFamily: uiFont,
+            color,
+            textAlign: 'left',
             textBaseline: 'middle',
             opacity: 0.75,
           },

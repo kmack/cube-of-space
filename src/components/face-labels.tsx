@@ -52,6 +52,7 @@ function FaceLabelsComponent({
               significance={info.labelData.significance}
               gematria={info.labelData.gematria}
               alchemy={info.labelData.alchemy}
+              intelligence={info.labelData.intelligence}
               showColorBorders={showColorBorders}
               imagePath={info.labelData.imagePath}
               scale={LABEL_SCALE}
@@ -86,6 +87,7 @@ function FaceLabelsComponent({
           significance={centerLabelData.significance}
           gematria={centerLabelData.gematria}
           alchemy={centerLabelData.alchemy}
+          intelligence={centerLabelData.intelligence}
           showColorBorders={showColorBorders}
           imagePath={centerLabelData.imagePath}
           scale={LABEL_SCALE}

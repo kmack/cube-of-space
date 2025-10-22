@@ -43,6 +43,7 @@ export type RichLabelProps = {
   significance?: string;
   gematria?: number;
   alchemy?: string;
+  intelligence?: string;
   showColorBorders?: boolean;
 
   // Styling
@@ -95,6 +96,7 @@ function RichLabelComponent({
   significance,
   gematria,
   alchemy,
+  intelligence,
   showColorBorders = true,
   color = 'white',
   background,
@@ -164,6 +166,7 @@ function RichLabelComponent({
               significance,
               gematria,
               alchemy,
+              intelligence,
               showColorBorders,
             }
           )
@@ -226,6 +229,7 @@ function RichLabelComponent({
     significance,
     gematria,
     alchemy,
+    intelligence,
     imagePath,
     color,
     width,
@@ -415,6 +419,7 @@ export const RichLabel = React.memo(
       prevProps.significance === nextProps.significance &&
       prevProps.gematria === nextProps.gematria &&
       prevProps.alchemy === nextProps.alchemy &&
+      prevProps.intelligence === nextProps.intelligence &&
       prevProps.showColorBorders === nextProps.showColorBorders &&
       prevProps.imagePath === nextProps.imagePath &&
       prevProps.color === nextProps.color &&

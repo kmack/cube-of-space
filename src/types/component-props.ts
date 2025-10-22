@@ -88,4 +88,5 @@ export interface LabelData {
   significance: string; // Letter meaning (e.g., "bull", "water")
   gematria: number; // Numeric value
   alchemy: string; // Alchemical correspondence (e.g., "Air", "Gold")
+  intelligence: string; // The Intelligence from Sepher Yetzirah
 }

@@ -94,6 +94,7 @@ export interface RichLabelCommonProps {
   significance?: string;
   gematria?: number;
   alchemy?: string;
+  intelligence?: string;
   imagePath?: string;
   scale: number;
   background: string;
@@ -132,6 +133,7 @@ export function createRichLabelProps(
     significance: labelData.significance,
     gematria: labelData.gematria,
     alchemy: labelData.alchemy,
+    intelligence: labelData.intelligence,
     imagePath: labelData.imagePath,
     scale,
     background,

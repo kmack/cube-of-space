@@ -121,6 +121,7 @@ const MotherLabelNode = React.memo(
           significance={labelData.significance}
           gematria={labelData.gematria}
           alchemy={labelData.alchemy}
+          intelligence={labelData.intelligence}
           showColorBorders={showColorBorders}
           imagePath={labelData.imagePath}
           scale={LABEL_SCALE}

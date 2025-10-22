@@ -29,5 +29,6 @@ export function createLabelData(letter: HebrewLetter): LabelData {
     significance: spec.significance,
     gematria: spec.gematria,
     alchemy: spec.alchemy,
+    intelligence: spec.intelligence,
   };
 }

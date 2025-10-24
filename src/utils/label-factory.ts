@@ -1,6 +1,10 @@
 // src/utils/label-factory.ts
 import type { HebrewLetter } from '../data/label-spec';
-import { associationToGlyph, getSpec } from '../data/label-spec';
+import {
+  associationToGlyph,
+  getSpec,
+  outerPlanetToGlyph,
+} from '../data/label-spec';
 import type { LabelData } from '../types/component-props';
 import { getTarotImagePath } from './tarot-images';
 
@@ -15,10 +19,18 @@ export function createLabelData(letter: HebrewLetter): LabelData {
   const spec = getSpec(letter);
   const assocGlyph = associationToGlyph(spec.association);
   const assocName = spec.association.value;
+
+  // Build subtitle with outer planet if present (Mother letters only)
+  let subtitle = `${spec.letterName} — ${assocName} ${assocGlyph}`;
+  if (spec.outerPlanet) {
+    const outerGlyph = outerPlanetToGlyph(spec.outerPlanet);
+    subtitle += ` / ${spec.outerPlanet} ${outerGlyph}`;
+  }
+
   return {
     title: `Key ${spec.keyNumber} – ${spec.keyName}`,
     glyph: spec.letterChar,
-    subtitle: `${spec.letterName} — ${assocName} ${assocGlyph}`,
+    subtitle,
     imagePath: getTarotImagePath(spec.keyNumber),
     letterName: spec.letterName,
     assocGlyph,
@@ -30,5 +42,9 @@ export function createLabelData(letter: HebrewLetter): LabelData {
     gematria: spec.gematria,
     alchemy: spec.alchemy,
     intelligence: spec.intelligence,
+    outerPlanet: spec.outerPlanet,
+    outerPlanetGlyph: spec.outerPlanet
+      ? outerPlanetToGlyph(spec.outerPlanet)
+      : undefined,
   };
 }

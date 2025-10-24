@@ -419,6 +419,9 @@ export function createStructuredHebrewLabel(
     alchemy?: string;
     intelligence?: string;
     showColorBorders?: boolean;
+    // Outer planet attribution (Mother letters only)
+    outerPlanet?: string;
+    outerPlanetGlyph?: string;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
@@ -583,7 +586,12 @@ export function createStructuredHebrewLabel(
         correspondences.push(`${options.significance}`);
       }
       if (options.alchemy) {
-        correspondences.push(`${options.alchemy}`);
+        // Add outer planet in parentheses after alchemy (Mother letters only)
+        const alchemyText =
+          options.outerPlanet && options.outerPlanetGlyph
+            ? `${options.alchemy} (${options.outerPlanet} ${options.outerPlanetGlyph})`
+            : options.alchemy;
+        correspondences.push(alchemyText);
       }
 
       // Position in lower-right corner, stacked vertically from bottom up

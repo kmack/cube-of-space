@@ -89,4 +89,7 @@ export interface LabelData {
   gematria: number; // Numeric value
   alchemy: string; // Alchemical correspondence (e.g., "Air", "Gold")
   intelligence: string; // The Intelligence from Sepher Yetzirah
+  // Secondary outer planet attribution (Mother letters only)
+  outerPlanet?: string; // e.g., "Uranus", "Neptune", "Pluto"
+  outerPlanetGlyph?: string; // e.g., "♅", "♆", "♇"
 }

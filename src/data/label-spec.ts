@@ -58,6 +58,9 @@ type Assoc =
         | 'Pisces';
     };
 
+// Secondary outer planet attribution for Mother letters only
+type OuterPlanet = 'Uranus' | 'Neptune' | 'Pluto';
+
 export type LetterSpec = {
   letterChar: string; // Hebrew glyph as a single char (or image elsewhere)
   letterName: string; // English name (display string)
@@ -71,6 +74,7 @@ export type LetterSpec = {
   gematria: number; // Numeric value
   alchemy: string; // Alchemical correspondence
   intelligence: string; // The Intelligence from Sepher Yetzirah
+  outerPlanet?: OuterPlanet; // Secondary outer planet attribution (Mother letters only)
 };
 
 const ZODIAC_GLYPHS: Record<
@@ -113,6 +117,12 @@ const ELEMENT_GLYPHS: Record<
   Fire: '🜂', // alchemical symbol
 };
 
+const OUTER_PLANET_GLYPHS: Record<OuterPlanet, string> = {
+  Uranus: '♅',
+  Neptune: '♆',
+  Pluto: '♇',
+};
+
 export function associationToGlyph(a: Assoc): string {
   switch (a.kind) {
     case 'zodiac':
@@ -124,13 +134,18 @@ export function associationToGlyph(a: Assoc): string {
   }
 }
 
+export function outerPlanetToGlyph(planet: OuterPlanet): string {
+  // eslint-disable-next-line security/detect-object-injection -- planet is TypeScript-typed OuterPlanet, safe indexed access
+  return OUTER_PLANET_GLYPHS[planet];
+}
+
 // ————————————
 // Canonical attributions (B.O.T.A. / Golden Dawn):
 // Mothers (elements), Doubles (planets), Simples (zodiac)
 // ————————————
 
 const S: Record<HebrewLetter, LetterSpec> = {
-  // Mothers
+  // Mothers (with secondary outer planet attributions)
   Aleph: {
     letterChar: 'א',
     letterName: 'Aleph',
@@ -144,6 +159,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     gematria: 1,
     alchemy: 'Air',
     intelligence: 'The Fiery Intelligence',
+    outerPlanet: 'Uranus',
   },
   Mem: {
     letterChar: 'מ',
@@ -158,6 +174,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     gematria: 40,
     alchemy: 'Water',
     intelligence: 'The Renewing Intelligence',
+    outerPlanet: 'Neptune',
   },
   Shin: {
     letterChar: 'ש',
@@ -172,6 +189,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     gematria: 300,
     alchemy: 'Fire',
     intelligence: 'The Perpetual Intelligence',
+    outerPlanet: 'Pluto',
   },
 
   // Doubles (planets)
@@ -515,6 +533,7 @@ const S: Record<HebrewLetter, LetterSpec> = {
     gematria: 40,
     alchemy: 'Water',
     intelligence: 'The Renewing Intelligence',
+    outerPlanet: 'Neptune',
   },
 };
 

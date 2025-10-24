@@ -8,9 +8,8 @@ import { axes } from '../data/geometry';
 import { LABEL_SCALE, MOTHER_LABEL_BACKGROUND } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
 import type { AnimatedLabelProps } from '../utils/label-utils';
-import { LABEL_FONTS } from '../utils/label-utils';
 import { useAxisFacingQuaternion } from '../utils/orientation';
-import { RichLabel } from './rich-label';
+import { StandardRichLabel } from './standard-rich-label';
 
 type MotherLabelsProps = AnimatedLabelProps;
 
@@ -108,30 +107,13 @@ const MotherLabelNode = React.memo(
 
     return (
       <group ref={ref}>
-        <RichLabel
-          title={labelData.title}
-          subtitle={labelData.subtitle}
-          hebrewLetter={labelData.glyph}
-          letterName={labelData.letterName}
-          assocGlyph={labelData.assocGlyph}
-          assocName={labelData.assocName}
-          colorName={labelData.color}
-          colorValue={labelData.colorValue}
-          note={labelData.note}
-          significance={labelData.significance}
-          gematria={labelData.gematria}
-          alchemy={labelData.alchemy}
-          intelligence={labelData.intelligence}
-          outerPlanet={labelData.outerPlanet}
-          outerPlanetGlyph={labelData.outerPlanetGlyph}
-          showColorBorders={showColorBorders}
-          imagePath={labelData.imagePath}
+        <StandardRichLabel
+          labelData={labelData}
           scale={LABEL_SCALE}
           background={MOTHER_LABEL_BACKGROUND}
-          hebrewFont={LABEL_FONTS.hebrew}
-          uiFont={LABEL_FONTS.ui}
           useMemoryOptimization={useMemoryOptimization}
           doubleSided={doubleSided}
+          showColorBorders={showColorBorders}
         />
       </group>
     );

@@ -5,9 +5,9 @@ import { edges } from '../data/geometry';
 import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
 import type { BaseLabelProps } from '../utils/label-utils';
-import { calculateAxisAlignedOffset, LABEL_FONTS } from '../utils/label-utils';
+import { calculateAxisAlignedOffset } from '../utils/label-utils';
 import { eulerFromNormalAndTangent } from '../utils/orientation';
-import { RichLabel } from './rich-label';
+import { StandardRichLabel } from './standard-rich-label';
 
 type EdgeLabelsProps = BaseLabelProps;
 
@@ -32,28 +32,13 @@ function EdgeLabelsComponent({
       {edgeLabelInfo.map((info, i) => {
         return (
           <group key={i} position={info.offsetPos} rotation={info.rotation}>
-            <RichLabel
-              title={info.labelData.title}
-              subtitle={info.labelData.subtitle}
-              hebrewLetter={info.labelData.glyph}
-              letterName={info.labelData.letterName}
-              assocGlyph={info.labelData.assocGlyph}
-              assocName={info.labelData.assocName}
-              colorName={info.labelData.color}
-              colorValue={info.labelData.colorValue}
-              note={info.labelData.note}
-              significance={info.labelData.significance}
-              gematria={info.labelData.gematria}
-              alchemy={info.labelData.alchemy}
-              intelligence={info.labelData.intelligence}
-              showColorBorders={showColorBorders}
-              imagePath={info.labelData.imagePath}
+            <StandardRichLabel
+              labelData={info.labelData}
               scale={LABEL_SCALE}
               background={EDGE_LABEL_BACKGROUND}
-              hebrewFont={LABEL_FONTS.hebrew}
-              uiFont={LABEL_FONTS.ui}
               useMemoryOptimization={useMemoryOptimization}
               doubleSided={doubleSided}
+              showColorBorders={showColorBorders}
             />
           </group>
         );

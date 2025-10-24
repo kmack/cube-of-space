@@ -556,42 +556,6 @@ export function createStructuredHebrewLabel(
       },
     });
 
-    // Outer planet attribution (Mother letters only) - line below association
-    if (options.outerPlanet && options.outerPlanetGlyph) {
-      const outerPlanetY = belowCardY + 36; // Position below association line
-      const outerPlanetFontSize = 20;
-
-      // Outer planet glyph - right-aligned to right edge of card
-      texts.push({
-        content: options.outerPlanetGlyph,
-        x: cardRightEdge,
-        y: outerPlanetY,
-        style: {
-          fontSize: 40,
-          fontFamily: `${symbolFont}, ${hebrewFont}`,
-          color,
-          textAlign: 'right',
-          textBaseline: 'middle',
-          opacity: 0.85,
-        },
-      });
-
-      // Outer planet name - positioned before glyph
-      texts.push({
-        content: options.outerPlanet,
-        x: cardRightEdge - 40 - glyphNameGap,
-        y: outerPlanetY,
-        style: {
-          fontSize: outerPlanetFontSize,
-          fontFamily: uiFont,
-          color,
-          textAlign: 'right',
-          textBaseline: 'middle',
-          opacity: 0.75, // Slightly lower opacity to distinguish secondary attribution
-        },
-      });
-    }
-
     // Additional correspondences in lower-right corner block
     if (
       options.colorName ||
@@ -622,7 +586,12 @@ export function createStructuredHebrewLabel(
         correspondences.push(`${options.significance}`);
       }
       if (options.alchemy) {
-        correspondences.push(`${options.alchemy}`);
+        // Add outer planet in parentheses after alchemy (Mother letters only)
+        const alchemyText =
+          options.outerPlanet && options.outerPlanetGlyph
+            ? `${options.alchemy} (${options.outerPlanet} ${options.outerPlanetGlyph})`
+            : options.alchemy;
+        correspondences.push(alchemyText);
       }
 
       // Position in lower-right corner, stacked vertically from bottom up

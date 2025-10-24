@@ -46,6 +46,10 @@ export type RichLabelProps = {
   intelligence?: string;
   showColorBorders?: boolean;
 
+  // Outer planet attribution (Mother letters only)
+  outerPlanet?: string;
+  outerPlanetGlyph?: string;
+
   // Styling
   color?: string;
   background?: BackgroundStyle;
@@ -98,6 +102,8 @@ function RichLabelComponent({
   alchemy,
   intelligence,
   showColorBorders = true,
+  outerPlanet,
+  outerPlanetGlyph,
   color = 'white',
   background,
   width = LABEL_WIDTH_WITH_IMAGE,
@@ -168,6 +174,8 @@ function RichLabelComponent({
               alchemy,
               intelligence,
               showColorBorders,
+              outerPlanet,
+              outerPlanetGlyph,
             }
           )
         : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
@@ -421,6 +429,8 @@ export const RichLabel = React.memo(
       prevProps.alchemy === nextProps.alchemy &&
       prevProps.intelligence === nextProps.intelligence &&
       prevProps.showColorBorders === nextProps.showColorBorders &&
+      prevProps.outerPlanet === nextProps.outerPlanet &&
+      prevProps.outerPlanetGlyph === nextProps.outerPlanetGlyph &&
       prevProps.imagePath === nextProps.imagePath &&
       prevProps.color === nextProps.color &&
       prevProps.width === nextProps.width &&

@@ -419,6 +419,9 @@ export function createStructuredHebrewLabel(
     alchemy?: string;
     intelligence?: string;
     showColorBorders?: boolean;
+    // Outer planet attribution (Mother letters only)
+    outerPlanet?: string;
+    outerPlanetGlyph?: string;
   } = {}
 ): Promise<THREE.CanvasTexture | THREE.DataTexture> {
   const useOptimization = options.useMemoryOptimization !== false;
@@ -552,6 +555,42 @@ export function createStructuredHebrewLabel(
         opacity: 0.9,
       },
     });
+
+    // Outer planet attribution (Mother letters only) - line below association
+    if (options.outerPlanet && options.outerPlanetGlyph) {
+      const outerPlanetY = belowCardY + 36; // Position below association line
+      const outerPlanetFontSize = 20;
+
+      // Outer planet glyph - right-aligned to right edge of card
+      texts.push({
+        content: options.outerPlanetGlyph,
+        x: cardRightEdge,
+        y: outerPlanetY,
+        style: {
+          fontSize: 40,
+          fontFamily: `${symbolFont}, ${hebrewFont}`,
+          color,
+          textAlign: 'right',
+          textBaseline: 'middle',
+          opacity: 0.85,
+        },
+      });
+
+      // Outer planet name - positioned before glyph
+      texts.push({
+        content: options.outerPlanet,
+        x: cardRightEdge - 40 - glyphNameGap,
+        y: outerPlanetY,
+        style: {
+          fontSize: outerPlanetFontSize,
+          fontFamily: uiFont,
+          color,
+          textAlign: 'right',
+          textBaseline: 'middle',
+          opacity: 0.75, // Slightly lower opacity to distinguish secondary attribution
+        },
+      });
+    }
 
     // Additional correspondences in lower-right corner block
     if (

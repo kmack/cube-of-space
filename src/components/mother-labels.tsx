@@ -3,10 +3,14 @@ import { useFrame } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
 
-import { LABEL_OFFSET, MOTHER_OFFSET, UP } from '../data/constants';
+import { MOTHER_OFFSET, UP } from '../data/constants';
 import { axes } from '../data/geometry';
 import { LABEL_SCALE, MOTHER_LABEL_BACKGROUND } from '../data/label-styles';
 import { createLabelData } from '../utils/label-factory';
+import {
+  LabelPositioningStrategyFactory,
+  LabelPositioningUtils,
+} from '../utils/label-positioning';
 import type { AnimatedLabelProps } from '../utils/label-utils';
 import { useAxisFacingQuaternion } from '../utils/orientation';
 import { StandardRichLabel } from './standard-rich-label';
@@ -40,42 +44,24 @@ const MotherLabelNode = React.memo(
     const isInitializedRef = React.useRef(false);
     const labelData = createLabelData(a.letter);
 
-    // Calculate axis-specific offset to avoid z-fighting with axis lines
-    const baseOffsetPos: [number, number, number] = [...pos];
-    if (a.letter === 'Mem') {
-      // East-West axis (X) - offset upward (positive Y)
-      baseOffsetPos[1] += LABEL_OFFSET;
-    } else if (a.letter === 'Shin') {
-      // North-South axis (Z) - offset upward (positive Y)
-      baseOffsetPos[1] += LABEL_OFFSET;
-    }
+    // Create positioning strategy based on axis letter
+    // Aleph (vertical) uses dynamic camera-based positioning
+    // Mem/Shin (horizontal) use static upward offset
+    const positioningStrategy = React.useMemo(
+      () => LabelPositioningStrategyFactory.createStrategy(a.letter),
+      [a.letter]
+    );
 
-    // Dynamic positioning for all mother letter labels
+    // Dynamic positioning using strategy pattern
     useFrame(({ camera }) => {
       if (!ref.current) return;
 
-      // Calculate the desired position
-      let finalPos: [number, number, number];
-
-      if (a.letter === 'Aleph') {
-        // Vertical axis (Y) - offset toward camera dynamically
-        const labelPos = new THREE.Vector3(...pos);
-        const cameraPos = camera.position.clone();
-        const toCamera = cameraPos.sub(labelPos).normalize();
-        // Project the camera direction onto the horizontal plane (remove Y component)
-        toCamera.y = 0;
-        toCamera.normalize();
-
-        // Calculate dynamic offset position
-        finalPos = [
-          pos[0] + toCamera.x * LABEL_OFFSET,
-          pos[1],
-          pos[2] + toCamera.z * LABEL_OFFSET,
-        ];
-      } else {
-        // Use the pre-calculated base offset position for other axes
-        finalPos = baseOffsetPos;
-      }
+      // Calculate position using the appropriate strategy
+      const finalPos = LabelPositioningUtils.calculateFramePosition(
+        pos,
+        positioningStrategy,
+        camera
+      );
 
       // Always initialize position on first frame
       if (!isInitializedRef.current) {

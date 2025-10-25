@@ -1,4 +1,5 @@
 // src/data/geometry.ts
+import { GeometryValidationService } from '../utils/geometry-validation';
 import type { Axis, Diagonal, Edge, Face } from '../utils/types';
 import { HALF, MOTHER_OFFSET } from './constants';
 
@@ -212,55 +213,6 @@ export const diagonals: Diagonal[] = [
   },
 ];
 
-/**
- * Validate that all geometric vectors are properly normalized
- * This runs at module initialization to catch geometry errors early
- */
-function validateGeometry(): void {
-  const TOLERANCE = 1e-6;
-
-  const checkNormalized = (v: [number, number, number], name: string): void => {
-    const length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-    const isNormalized = Math.abs(length - 1.0) < TOLERANCE;
-    const hasNaN = isNaN(v[0]) || isNaN(v[1]) || isNaN(v[2]);
-
-    if (hasNaN) {
-      throw new Error(
-        `Geometry validation failed: ${name} contains NaN values: [${v[0]}, ${v[1]}, ${v[2]}]`
-      );
-    }
-
-    if (!isNormalized) {
-      console.warn(
-        `Geometry validation warning: ${name} is not normalized. Length: ${length}, Vector: [${v[0]}, ${v[1]}, ${v[2]}]`
-      );
-    }
-  };
-
-  // Validate edges
-  edges.forEach((edge) => {
-    checkNormalized(edge.normal, `Edge ${edge.letter} normal`);
-    checkNormalized(edge.tangent, `Edge ${edge.letter} tangent`);
-  });
-
-  // Validate axes
-  axes.forEach((axis) => {
-    checkNormalized(axis.normal, `Axis ${axis.letter} normal`);
-    checkNormalized(axis.tangent, `Axis ${axis.letter} tangent`);
-  });
-
-  // Validate diagonals
-  diagonals.forEach((diagonal) => {
-    checkNormalized(diagonal.normal, `Diagonal ${diagonal.letter} normal`);
-    checkNormalized(diagonal.tangent, `Diagonal ${diagonal.letter} tangent`);
-  });
-
-  if (process.env.NODE_ENV !== 'production') {
-    console.info(
-      '✓ Geometry validation passed: all vectors properly normalized'
-    );
-  }
-}
-
-// Run validation at module load time
-validateGeometry();
+// Run validation at module load time using the validation service
+// This catches geometry errors early during development
+GeometryValidationService.validateGeometryOrThrow(edges, axes, diagonals);

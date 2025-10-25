@@ -9,6 +9,7 @@ import type { CanvasLabelConfig } from '../utils/canvas-texture';
 import { createLabelData } from '../utils/label-factory';
 import type { AnimatedLabelProps } from '../utils/label-utils';
 import { LABEL_FONTS } from '../utils/label-utils';
+import { useFrameThrottle } from '../utils/performance-hooks';
 import { RichLabel } from './rich-label';
 
 type DiagonalLabelsProps = AnimatedLabelProps;
@@ -68,8 +69,8 @@ function DiagonalLabelInner({
   isMobile: boolean;
 }): React.JSX.Element {
   const ref = React.useRef<THREE.Group>(null!);
-  const frameCountRef = React.useRef(0);
   const isInitializedRef = React.useRef(false);
+  const shouldProcessFrame = useFrameThrottle(isMobile);
 
   // Reusable objects to prevent memory allocation every frame
   const tempObjects = React.useRef({
@@ -111,10 +112,7 @@ function DiagonalLabelInner({
     if (!isAnimationActive) return;
 
     // Throttle to 30fps on mobile (skip every other frame)
-    if (isMobile) {
-      frameCountRef.current++;
-      if (frameCountRef.current % 2 !== 0) return;
-    }
+    if (!shouldProcessFrame()) return;
 
     ref.current.getWorldPosition(tmp.worldPos);
 

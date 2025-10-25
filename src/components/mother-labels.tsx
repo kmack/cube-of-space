@@ -13,6 +13,7 @@ import {
 } from '../utils/label-positioning';
 import type { AnimatedLabelProps } from '../utils/label-utils';
 import { useAxisFacingQuaternion } from '../utils/orientation';
+import { useFrameThrottle } from '../utils/performance-hooks';
 import { StandardRichLabel } from './standard-rich-label';
 
 type MotherLabelsProps = AnimatedLabelProps;
@@ -40,9 +41,9 @@ const MotherLabelNode = React.memo(
   }): React.JSX.Element => {
     const { a, t } = axisInfo;
     const ref = React.useRef<THREE.Group>(null!);
-    const frameCountRef = React.useRef(0);
     const isInitializedRef = React.useRef(false);
     const labelData = createLabelData(a.letter);
+    const shouldProcessFrame = useFrameThrottle(isMobile);
 
     // Create positioning strategy based on axis letter
     // Aleph (vertical) uses dynamic camera-based positioning
@@ -74,10 +75,7 @@ const MotherLabelNode = React.memo(
       if (!isAnimationActive) return;
 
       // Throttle to 30fps on mobile (skip every other frame)
-      if (isMobile) {
-        frameCountRef.current++;
-        if (frameCountRef.current % 2 !== 0) return;
-      }
+      if (!shouldProcessFrame()) return;
 
       // Update the group position
       ref.current.position.set(...finalPos);

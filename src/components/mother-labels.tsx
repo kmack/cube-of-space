@@ -4,8 +4,8 @@ import * as React from 'react';
 import * as THREE from 'three';
 
 import { MOTHER_OFFSET, UP } from '../data/constants';
-import { axes } from '../data/geometry';
 import { LABEL_SCALE, MOTHER_LABEL_BACKGROUND } from '../data/label-styles';
+import { GeometryRepository, type rawAxes } from '../utils/geometry-repository';
 import { createLabelData } from '../utils/label-factory';
 import {
   LabelPositioningStrategyFactory,
@@ -31,7 +31,7 @@ const MotherLabelNode = React.memo(
     isMobile,
   }: {
     pos: [number, number, number];
-    axisInfo: { a: (typeof axes)[0]; t: THREE.Vector3 };
+    axisInfo: { a: (typeof rawAxes)[0]; t: THREE.Vector3 };
     flipRef: [number, number, number] | undefined;
     useMemoryOptimization: boolean;
     doubleSided: boolean;
@@ -114,7 +114,7 @@ function MotherLabelsComponent({
   isMobile = false,
 }: MotherLabelsProps): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
-  const info = axes.map((a, idx) => {
+  const info = GeometryRepository.getAllAxes().map((a, idx) => {
     const t = new THREE.Vector3(
       a.to[0] - a.from[0],
       a.to[1] - a.from[1],

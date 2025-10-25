@@ -2,8 +2,8 @@
 import { Billboard } from '@react-three/drei';
 import * as React from 'react';
 
-import { center, faces } from '../data/geometry';
 import { FACE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
+import { GeometryRepository } from '../utils/geometry-repository';
 import { createLabelData } from '../utils/label-factory';
 import type { BaseLabelProps } from '../utils/label-utils';
 import { calculateAxisAlignedOffset, useLabelData } from '../utils/label-utils';
@@ -17,11 +17,11 @@ function FaceLabelsComponent({
   showColorBorders = true,
 }: FaceLabelsProps): React.JSX.Element {
   // Memoize center label data to avoid recreation on every render
-  const centerLabelData = useLabelData(center.letter);
+  const centerLabelData = useLabelData(GeometryRepository.getCenter().letter);
 
   // Memoize face label data and positions
   const faceLabelInfo = React.useMemo(() => {
-    return faces.map((f) => {
+    return GeometryRepository.getAllFaces().map((f) => {
       const labelData = createLabelData(f.letter);
       // Calculate offset position - push label outward from center along face normal
       const offsetPos = calculateAxisAlignedOffset(f.pos);
@@ -53,7 +53,7 @@ function FaceLabelsComponent({
         lockX={false}
         lockY={false}
         lockZ={false}
-        position={center.pos}
+        position={GeometryRepository.getCenter().pos}
       >
         <StandardRichLabel
           labelData={centerLabelData}

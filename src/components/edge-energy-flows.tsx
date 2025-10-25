@@ -5,9 +5,9 @@ import {
   type EdgeHebrewLetter,
   ENERGY_FLOW_CONFIG,
 } from '../data/energy-flow-config';
-import { edges } from '../data/geometry';
 import type { BaseVisualizationProps } from '../types/component-props';
 import { EnergyFlowGeometry } from '../utils/energy-flow-geometry';
+import { GeometryRepository } from '../utils/geometry-repository';
 import { EnergyFlow } from './energy-flow';
 
 interface EdgeEnergyFlowsProps extends BaseVisualizationProps {
@@ -28,7 +28,7 @@ export function EdgeEnergyFlows({
   // Memoize edge flow calculations using geometry service
   // Separates complex geometric calculations from component logic
   const edgeFlowData = React.useMemo(() => {
-    return edges.map((edge) => {
+    return GeometryRepository.getAllEdges().map((edge) => {
       // Use geometry service to calculate flow positions
       const { startPos, endPos } =
         EnergyFlowGeometry.calculateEdgeFlowPositions(edge);

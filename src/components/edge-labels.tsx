@@ -1,8 +1,8 @@
 // src/components/edge-labels.tsx
 import * as React from 'react';
 
-import { edges } from '../data/geometry';
 import { EDGE_LABEL_BACKGROUND, LABEL_SCALE } from '../data/label-styles';
+import { GeometryRepository } from '../utils/geometry-repository';
 import { createLabelData } from '../utils/label-factory';
 import type { BaseLabelProps } from '../utils/label-utils';
 import { calculateAxisAlignedOffset } from '../utils/label-utils';
@@ -18,7 +18,7 @@ function EdgeLabelsComponent({
 }: EdgeLabelsProps): React.JSX.Element {
   // Memoize edge label data and positions to avoid recalculation
   const edgeLabelInfo = React.useMemo(() => {
-    return edges.map((e) => {
+    return GeometryRepository.getAllEdges().map((e) => {
       const rot = eulerFromNormalAndTangent(e.normal, e.tangent);
       const labelData = createLabelData(e.letter);
       // Calculate offset position - push label outward from center along edge normal

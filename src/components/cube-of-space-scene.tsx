@@ -1,7 +1,7 @@
 // src/components/cube-of-space-scene.tsx
 import { Grid, OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { button, useControls } from 'leva';
 import * as React from 'react';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
@@ -13,6 +13,7 @@ import {
   useIdleDetection,
   usePageVisibility,
 } from '../utils/performance-hooks';
+import { AboutModal } from './about-modal';
 import { AxisEnergyFlows } from './axis-energy-flows';
 import { AxisLines } from './axis-lines';
 import { CameraReset } from './camera-reset';
@@ -268,149 +269,164 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     { collapsed: true }
   );
 
+  // About modal state
+  const [isAboutOpen, setIsAboutOpen] = React.useState(false);
+
+  // About button control
+  useControls('Info', () => ({
+    About: button(() => setIsAboutOpen(true)),
+  }));
+
   return (
-    <Canvas
-      style={{ background: 'transparent' }}
-      dpr={
-        (isMobile
-          ? APP_CONFIG.rendering.dpr.mobile
-          : APP_CONFIG.rendering.dpr.desktop) as [number, number]
-      }
-      camera={{
-        position: APP_CONFIG.camera.defaultPosition as [number, number, number],
-        fov: APP_CONFIG.camera.fov,
-      }}
-      onCreated={({ gl }) => {
-        gl.domElement.style.userSelect = 'none'; // prevent selection of items
-        gl.setClearColor(0x000000, 0); // transparent clear color
-      }}
-    >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 8, 5]} intensity={0.9} />
-      <OrbitControls
-        ref={orbitControlsRef}
-        enableDamping
-        dampingFactor={APP_CONFIG.controls.orbit.dampingFactor}
-        rotateSpeed={APP_CONFIG.controls.orbit.rotateSpeed}
-      />
-      <GamepadControls
-        controlsRef={orbitControlsRef}
-        rotateSpeed={gamepadRotateSpeed}
-        zoomSpeed={gamepadZoomSpeed}
-        panSpeed={gamepadPanSpeed}
-        rotationCurve={gamepadRotationCurve}
-        onToggleFaceVisibility={handleToggleFaceVisibility}
-        onToggleFaceOpacity={handleToggleFaceOpacity}
-        onToggleEnergyFlow={handleToggleEnergyFlow}
-        onToggleAxisFlowDirection={handleToggleAxisFlowDirection}
-        onToggleMotherLetters={handleToggleMotherLetters}
-        onToggleDoubleLetters={handleToggleDoubleLetters}
-        onToggleSingleLetters={handleToggleSingleLetters}
-        onToggleFinalLetters={handleToggleFinalLetters}
-        onToggleDoubleSidedLabels={handleToggleDoubleSidedLabels}
-      />
-      <CameraReset
-        controlsRef={orbitControlsRef}
-        defaultPosition={
-          APP_CONFIG.camera.defaultPosition as [number, number, number]
+    <>
+      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <Canvas
+        style={{ background: 'transparent' }}
+        dpr={
+          (isMobile
+            ? APP_CONFIG.rendering.dpr.mobile
+            : APP_CONFIG.rendering.dpr.desktop) as [number, number]
         }
-        defaultTarget={
-          APP_CONFIG.camera.defaultTarget as [number, number, number]
-        }
-        animationDuration={APP_CONFIG.camera.resetAnimationDuration}
-      />
+        camera={{
+          position: APP_CONFIG.camera.defaultPosition as [
+            number,
+            number,
+            number,
+          ],
+          fov: APP_CONFIG.camera.fov,
+        }}
+        onCreated={({ gl }) => {
+          gl.domElement.style.userSelect = 'none'; // prevent selection of items
+          gl.setClearColor(0x000000, 0); // transparent clear color
+        }}
+      >
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 8, 5]} intensity={0.9} />
+        <OrbitControls
+          ref={orbitControlsRef}
+          enableDamping
+          dampingFactor={APP_CONFIG.controls.orbit.dampingFactor}
+          rotateSpeed={APP_CONFIG.controls.orbit.rotateSpeed}
+        />
+        <GamepadControls
+          controlsRef={orbitControlsRef}
+          rotateSpeed={gamepadRotateSpeed}
+          zoomSpeed={gamepadZoomSpeed}
+          panSpeed={gamepadPanSpeed}
+          rotationCurve={gamepadRotationCurve}
+          onToggleFaceVisibility={handleToggleFaceVisibility}
+          onToggleFaceOpacity={handleToggleFaceOpacity}
+          onToggleEnergyFlow={handleToggleEnergyFlow}
+          onToggleAxisFlowDirection={handleToggleAxisFlowDirection}
+          onToggleMotherLetters={handleToggleMotherLetters}
+          onToggleDoubleLetters={handleToggleDoubleLetters}
+          onToggleSingleLetters={handleToggleSingleLetters}
+          onToggleFinalLetters={handleToggleFinalLetters}
+          onToggleDoubleSidedLabels={handleToggleDoubleSidedLabels}
+        />
+        <CameraReset
+          controlsRef={orbitControlsRef}
+          defaultPosition={
+            APP_CONFIG.camera.defaultPosition as [number, number, number]
+          }
+          defaultTarget={
+            APP_CONFIG.camera.defaultTarget as [number, number, number]
+          }
+          animationDuration={APP_CONFIG.camera.resetAnimationDuration}
+        />
 
-      {/* Ground grid */}
-      {showGrid && (
-        <Grid
-          position={[0, -HALF - 0.001, 0]}
-          sectionSize={3}
-          sectionColor={'#666'}
-          sectionThickness={1}
-          cellSize={1}
-          cellColor={'#6f6f6f'}
-          cellThickness={0.6}
-          infiniteGrid
-          fadeDistance={20}
-          fadeStrength={1.5}
-        />
-      )}
-      {showAxesHelper && <axesHelper args={[5]} />}
+        {/* Ground grid */}
+        {showGrid && (
+          <Grid
+            position={[0, -HALF - 0.001, 0]}
+            sectionSize={3}
+            sectionColor={'#666'}
+            sectionThickness={1}
+            cellSize={1}
+            cellColor={'#6f6f6f'}
+            cellThickness={0.6}
+            infiniteGrid
+            fadeDistance={20}
+            fadeStrength={1.5}
+          />
+        )}
+        {showAxesHelper && <axesHelper args={[5]} />}
 
-      {/* Geometry */}
-      {showFaces && (
-        <FacePlanes
-          key={opaqueFaces ? 'opaque' : 'transparent'}
-          opacity={opaqueFaces ? 1.0 : 0.8}
-        />
-      )}
-      <WireCube />
-      {showAxisLines && <AxisLines opacity={0.7} />}
-      {showDiagonalLines && <DiagonalLines opacity={0.7} />}
+        {/* Geometry */}
+        {showFaces && (
+          <FacePlanes
+            key={opaqueFaces ? 'opaque' : 'transparent'}
+            opacity={opaqueFaces ? 1.0 : 0.8}
+          />
+        )}
+        <WireCube />
+        {showAxisLines && <AxisLines opacity={0.7} />}
+        {showDiagonalLines && <DiagonalLines opacity={0.7} />}
 
-      {/* Keep label components mounted, toggle visibility to prevent texture churn */}
-      <group visible={showDoubleLetters}>
-        <FaceLabels
-          doubleSided={doubleSidedLabels}
-          showColorBorders={showColorBorders}
-        />
-      </group>
-      <group visible={showEdges}>
-        <EdgeLabels
-          doubleSided={doubleSidedLabels}
-          showColorBorders={showColorBorders}
-        />
-      </group>
-      <group visible={showMotherLetters}>
-        <MotherLabels
-          doubleSided={doubleSidedLabels}
-          showColorBorders={showColorBorders}
-          isAnimationActive={isUserActive}
+        {/* Keep label components mounted, toggle visibility to prevent texture churn */}
+        <group visible={showDoubleLetters}>
+          <FaceLabels
+            doubleSided={doubleSidedLabels}
+            showColorBorders={showColorBorders}
+          />
+        </group>
+        <group visible={showEdges}>
+          <EdgeLabels
+            doubleSided={doubleSidedLabels}
+            showColorBorders={showColorBorders}
+          />
+        </group>
+        <group visible={showMotherLetters}>
+          <MotherLabels
+            doubleSided={doubleSidedLabels}
+            showColorBorders={showColorBorders}
+            isAnimationActive={isUserActive}
+            isMobile={isMobile}
+          />
+        </group>
+        <group visible={showDiagonals}>
+          <DiagonalLabels
+            doubleSided={doubleSidedLabels}
+            isAnimationActive={isUserActive}
+            isMobile={isMobile}
+          />
+        </group>
+
+        {/* Energy Flow */}
+        <EdgeEnergyFlows
+          visible={showEnergyFlow}
+          speed={energySpeed}
+          particleCount={energyParticles}
+          opacity={energyOpacity}
+          isAnimationActive={isPageVisible}
           isMobile={isMobile}
         />
-      </group>
-      <group visible={showDiagonals}>
-        <DiagonalLabels
-          doubleSided={doubleSidedLabels}
-          isAnimationActive={isUserActive}
+        <AxisEnergyFlows
+          visible={showEnergyFlow}
+          speed={energySpeed}
+          particleCount={energyParticles}
+          opacity={energyOpacity}
+          flowDirection={axisFlowDirection as 'center-to-faces' | 'directional'}
+          isAnimationActive={isPageVisible}
           isMobile={isMobile}
         />
-      </group>
+        <DiagonalEnergyFlows
+          visible={showEnergyFlow}
+          speed={energySpeed}
+          particleCount={energyParticles}
+          opacity={energyOpacity}
+          isAnimationActive={isPageVisible}
+          isMobile={isMobile}
+        />
 
-      {/* Energy Flow */}
-      <EdgeEnergyFlows
-        visible={showEnergyFlow}
-        speed={energySpeed}
-        particleCount={energyParticles}
-        opacity={energyOpacity}
-        isAnimationActive={isPageVisible}
-        isMobile={isMobile}
-      />
-      <AxisEnergyFlows
-        visible={showEnergyFlow}
-        speed={energySpeed}
-        particleCount={energyParticles}
-        opacity={energyOpacity}
-        flowDirection={axisFlowDirection as 'center-to-faces' | 'directional'}
-        isAnimationActive={isPageVisible}
-        isMobile={isMobile}
-      />
-      <DiagonalEnergyFlows
-        visible={showEnergyFlow}
-        speed={energySpeed}
-        particleCount={energyParticles}
-        opacity={energyOpacity}
-        isAnimationActive={isPageVisible}
-        isMobile={isMobile}
-      />
-
-      {/* Edge Position Labels */}
-      <EdgePositionLabels
-        visible={showEdgePositions}
-        fontSize={0.06}
-        color="#999999"
-        offset={0.15}
-      />
-    </Canvas>
+        {/* Edge Position Labels */}
+        <EdgePositionLabels
+          visible={showEdgePositions}
+          fontSize={0.06}
+          color="#999999"
+          offset={0.15}
+        />
+      </Canvas>
+    </>
   );
 }

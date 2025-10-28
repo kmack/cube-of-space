@@ -7,6 +7,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 import { APP_CONFIG } from '../config/app-config';
 import { HALF } from '../data/constants';
+import { useCycleCallback, useToggleCallback } from '../utils/control-utils';
 import { useIsMobile } from '../utils/mobile-detection';
 import {
   useIdleDetection,
@@ -71,26 +72,32 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     },
   }));
 
-  // Gamepad letter toggle callbacks
-  const handleToggleMotherLetters = React.useCallback(() => {
-    setLetters({ showMotherLetters: !showMotherLetters });
-  }, [showMotherLetters, setLetters]);
-
-  const handleToggleDoubleLetters = React.useCallback(() => {
-    setLetters({ showDoubleLetters: !showDoubleLetters });
-  }, [showDoubleLetters, setLetters]);
-
-  const handleToggleSingleLetters = React.useCallback(() => {
-    setLetters({ showEdges: !showEdges });
-  }, [showEdges, setLetters]);
-
-  const handleToggleFinalLetters = React.useCallback(() => {
-    setLetters({ showDiagonals: !showDiagonals });
-  }, [showDiagonals, setLetters]);
-
-  const handleToggleDoubleSidedLabels = React.useCallback(() => {
-    setLetters({ doubleSidedLabels: !doubleSidedLabels });
-  }, [doubleSidedLabels, setLetters]);
+  // Gamepad letter toggle callbacks - using utility to eliminate repetition
+  const handleToggleMotherLetters = useToggleCallback(
+    setLetters,
+    'showMotherLetters',
+    showMotherLetters
+  );
+  const handleToggleDoubleLetters = useToggleCallback(
+    setLetters,
+    'showDoubleLetters',
+    showDoubleLetters
+  );
+  const handleToggleSingleLetters = useToggleCallback(
+    setLetters,
+    'showEdges',
+    showEdges
+  );
+  const handleToggleFinalLetters = useToggleCallback(
+    setLetters,
+    'showDiagonals',
+    showDiagonals
+  );
+  const handleToggleDoubleSidedLabels = useToggleCallback(
+    setLetters,
+    'doubleSidedLabels',
+    doubleSidedLabels
+  );
 
   // Faces controls
   const [{ showFaces, opaqueFaces }, setFaces] = useControls(
@@ -108,14 +115,17 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     { collapsed: true }
   );
 
-  // Gamepad toggle callbacks
-  const handleToggleFaceVisibility = React.useCallback(() => {
-    setFaces({ showFaces: !showFaces });
-  }, [showFaces, setFaces]);
-
-  const handleToggleFaceOpacity = React.useCallback(() => {
-    setFaces({ opaqueFaces: !opaqueFaces });
-  }, [opaqueFaces, setFaces]);
+  // Gamepad toggle callbacks - using utility to eliminate repetition
+  const handleToggleFaceVisibility = useToggleCallback(
+    setFaces,
+    'showFaces',
+    showFaces
+  );
+  const handleToggleFaceOpacity = useToggleCallback(
+    setFaces,
+    'opaqueFaces',
+    opaqueFaces
+  );
 
   // Axes controls
   const { showAxisLines, showDiagonalLines, showEdgePositions } = useControls(
@@ -188,18 +198,18 @@ export function CubeOfSpaceScene(): React.JSX.Element {
     { collapsed: true }
   );
 
-  const handleToggleEnergyFlow = React.useCallback(() => {
-    setEnergyFlow({ showEnergyFlow: !showEnergyFlow });
-  }, [showEnergyFlow, setEnergyFlow]);
-
-  const handleToggleAxisFlowDirection = React.useCallback(() => {
-    setEnergyFlow({
-      axisFlowDirection:
-        axisFlowDirection === 'center-to-faces'
-          ? 'directional'
-          : 'center-to-faces',
-    });
-  }, [axisFlowDirection, setEnergyFlow]);
+  // Energy flow toggle callbacks - using utilities to eliminate repetition
+  const handleToggleEnergyFlow = useToggleCallback(
+    setEnergyFlow,
+    'showEnergyFlow',
+    showEnergyFlow
+  );
+  const handleToggleAxisFlowDirection = useCycleCallback(
+    setEnergyFlow,
+    'axisFlowDirection',
+    axisFlowDirection,
+    ['center-to-faces', 'directional'] as const
+  );
 
   // Gamepad controls
   const {

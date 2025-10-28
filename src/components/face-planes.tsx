@@ -3,8 +3,8 @@ import * as React from 'react';
 import * as THREE from 'three';
 
 import { FACE_COLOR_BY_KEY, SIZE } from '../data/constants';
-import { faces } from '../data/geometry';
 import { getSpec } from '../data/label-spec';
+import { GeometryRepository } from '../utils/geometry-repository';
 
 function FacePlanesComponent({
   opacity = 0.28,
@@ -22,7 +22,7 @@ function FacePlanesComponent({
 
   // Memoize face materials to avoid recreation when only opacity changes
   const faceMaterials = React.useMemo(() => {
-    return faces.map((f) => {
+    return GeometryRepository.getAllFaces().map((f) => {
       const keyNum = String(getSpec(f.letter).keyNumber);
       // eslint-disable-next-line security/detect-object-injection -- keyNum is TypeScript-typed, safe indexed access
       const faceColor = FACE_COLOR_BY_KEY[keyNum] ?? '#ffffff';
@@ -43,7 +43,7 @@ function FacePlanesComponent({
 
   return (
     <>
-      {faces.map((f, i) => {
+      {GeometryRepository.getAllFaces().map((f, i) => {
         return (
           <group key={`plane-${i}`} position={f.pos} rotation={f.rotation}>
             <mesh

@@ -2,7 +2,7 @@
 import { type FC } from 'react';
 
 import { DIAGONAL_LINE_COLOR } from '../data/constants';
-import { diagonals } from '../data/geometry';
+import { GeometryRepository } from '../utils/geometry-repository';
 
 interface DiagonalLinesProps {
   opacity?: number;
@@ -15,7 +15,7 @@ export const DiagonalLines: FC<DiagonalLinesProps> = ({
 }) => {
   return (
     <group>
-      {diagonals.map((diagonal, index) => {
+      {GeometryRepository.getAllDiagonals().map((diagonal, index) => {
         const points = new Float32Array([...diagonal.from, ...diagonal.to]);
 
         return (

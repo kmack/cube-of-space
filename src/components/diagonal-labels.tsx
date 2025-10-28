@@ -3,18 +3,22 @@ import { useFrame } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
 
-import { diagonals } from '../data/geometry';
 import { LABEL_SCALE } from '../data/label-styles';
 import type { CanvasLabelConfig } from '../utils/canvas-texture';
+import {
+  GeometryRepository,
+  type rawDiagonals,
+} from '../utils/geometry-repository';
 import { createLabelData } from '../utils/label-factory';
 import type { AnimatedLabelProps } from '../utils/label-utils';
 import { LABEL_FONTS } from '../utils/label-utils';
+import { useFrameThrottle } from '../utils/performance-hooks';
 import { RichLabel } from './rich-label';
 
 type DiagonalLabelsProps = AnimatedLabelProps;
 
 interface DiagonalConfig {
-  diagonal: (typeof diagonals)[0];
+  diagonal: (typeof rawDiagonals)[0];
   canvasConfig: CanvasLabelConfig;
 }
 
@@ -60,7 +64,7 @@ function DiagonalLabelInner({
   isAnimationActive,
   isMobile,
 }: {
-  diagonal: (typeof diagonals)[0];
+  diagonal: (typeof rawDiagonals)[0];
   canvasConfig: CanvasLabelConfig;
   useMemoryOptimization: boolean;
   doubleSided: boolean;
@@ -68,8 +72,8 @@ function DiagonalLabelInner({
   isMobile: boolean;
 }): React.JSX.Element {
   const ref = React.useRef<THREE.Group>(null!);
-  const frameCountRef = React.useRef(0);
   const isInitializedRef = React.useRef(false);
+  const shouldProcessFrame = useFrameThrottle(isMobile);
 
   // Reusable objects to prevent memory allocation every frame
   const tempObjects = React.useRef({
@@ -111,10 +115,7 @@ function DiagonalLabelInner({
     if (!isAnimationActive) return;
 
     // Throttle to 30fps on mobile (skip every other frame)
-    if (isMobile) {
-      frameCountRef.current++;
-      if (frameCountRef.current % 2 !== 0) return;
-    }
+    if (!shouldProcessFrame()) return;
 
     ref.current.getWorldPosition(tmp.worldPos);
 
@@ -203,7 +204,7 @@ export function DiagonalLabels({
 }: DiagonalLabelsProps): React.JSX.Element {
   // Memoize diagonal configs to prevent recreation on every render
   const diagonalConfigs = React.useMemo(() => {
-    return diagonals.map((d) => {
+    return GeometryRepository.getAllDiagonals().map((d) => {
       const labelData = createLabelData(d.letter);
 
       // Balanced memory optimization for iOS Safari - crisp rendering at small size

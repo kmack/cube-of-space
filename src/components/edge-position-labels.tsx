@@ -4,10 +4,10 @@ import * as React from 'react';
 import * as THREE from 'three';
 
 import { EDGE_POSITION_LABEL_OFFSET } from '../data/constants';
-import { edges } from '../data/geometry';
 import { LABEL_SCALE } from '../data/label-styles';
 import type { PositionedComponentProps } from '../types/component-props';
 import type { CanvasLabelConfig } from '../utils/canvas-texture';
+import { GeometryRepository } from '../utils/geometry-repository';
 import { RichLabel } from './rich-label';
 
 // Map Hebrew letters to their geometric position descriptions
@@ -48,7 +48,7 @@ export function EdgePositionLabels({
 
   return (
     <group>
-      {edges.map((edge) => {
+      {GeometryRepository.getAllEdges().map((edge) => {
         const positionText = POSITION_LABELS[edge.letter];
         if (!positionText) return null;
 

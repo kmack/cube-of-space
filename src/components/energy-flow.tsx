@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as THREE from 'three';
 
 import type { FlowDirection } from '../data/energy-flow-config';
+import { useFrameThrottle } from '../utils/performance-hooks';
 
 export type EnergyFlowProps = {
   startPosition: [number, number, number];
@@ -33,7 +34,7 @@ export function EnergyFlow({
   const meshRef = React.useRef<THREE.InstancedMesh>(null);
   const tempObject = React.useRef(new THREE.Object3D());
   const timeRef = React.useRef(0);
-  const frameCountRef = React.useRef(0);
+  const shouldProcessFrame = useFrameThrottle(isMobile);
 
   // Calculate edge vector and length
   const edgeVector = React.useMemo(() => {
@@ -66,10 +67,7 @@ export function EnergyFlow({
     if (!isAnimationActive) return;
 
     // Throttle to 30fps on mobile (skip every other frame)
-    if (isMobile) {
-      frameCountRef.current++;
-      if (frameCountRef.current % 2 !== 0) return;
-    }
+    if (!shouldProcessFrame()) return;
 
     timeRef.current += delta * speed;
 

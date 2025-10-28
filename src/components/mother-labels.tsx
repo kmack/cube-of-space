@@ -3,14 +3,18 @@ import { useFrame } from '@react-three/fiber';
 import * as React from 'react';
 import * as THREE from 'three';
 
-import { LABEL_OFFSET, MOTHER_OFFSET, UP } from '../data/constants';
-import { axes } from '../data/geometry';
+import { MOTHER_OFFSET, UP } from '../data/constants';
 import { LABEL_SCALE, MOTHER_LABEL_BACKGROUND } from '../data/label-styles';
+import { GeometryRepository, type rawAxes } from '../utils/geometry-repository';
 import { createLabelData } from '../utils/label-factory';
+import {
+  LabelPositioningStrategyFactory,
+  LabelPositioningUtils,
+} from '../utils/label-positioning';
 import type { AnimatedLabelProps } from '../utils/label-utils';
-import { LABEL_FONTS } from '../utils/label-utils';
 import { useAxisFacingQuaternion } from '../utils/orientation';
-import { RichLabel } from './rich-label';
+import { useFrameThrottle } from '../utils/performance-hooks';
+import { StandardRichLabel } from './standard-rich-label';
 
 type MotherLabelsProps = AnimatedLabelProps;
 
@@ -27,7 +31,7 @@ const MotherLabelNode = React.memo(
     isMobile,
   }: {
     pos: [number, number, number];
-    axisInfo: { a: (typeof axes)[0]; t: THREE.Vector3 };
+    axisInfo: { a: (typeof rawAxes)[0]; t: THREE.Vector3 };
     flipRef: [number, number, number] | undefined;
     useMemoryOptimization: boolean;
     doubleSided: boolean;
@@ -37,46 +41,28 @@ const MotherLabelNode = React.memo(
   }): React.JSX.Element => {
     const { a, t } = axisInfo;
     const ref = React.useRef<THREE.Group>(null!);
-    const frameCountRef = React.useRef(0);
     const isInitializedRef = React.useRef(false);
     const labelData = createLabelData(a.letter);
+    const shouldProcessFrame = useFrameThrottle(isMobile);
 
-    // Calculate axis-specific offset to avoid z-fighting with axis lines
-    const baseOffsetPos: [number, number, number] = [...pos];
-    if (a.letter === 'Mem') {
-      // East-West axis (X) - offset upward (positive Y)
-      baseOffsetPos[1] += LABEL_OFFSET;
-    } else if (a.letter === 'Shin') {
-      // North-South axis (Z) - offset upward (positive Y)
-      baseOffsetPos[1] += LABEL_OFFSET;
-    }
+    // Create positioning strategy based on axis letter
+    // Aleph (vertical) uses dynamic camera-based positioning
+    // Mem/Shin (horizontal) use static upward offset
+    const positioningStrategy = React.useMemo(
+      () => LabelPositioningStrategyFactory.createStrategy(a.letter),
+      [a.letter]
+    );
 
-    // Dynamic positioning for all mother letter labels
+    // Dynamic positioning using strategy pattern
     useFrame(({ camera }) => {
       if (!ref.current) return;
 
-      // Calculate the desired position
-      let finalPos: [number, number, number];
-
-      if (a.letter === 'Aleph') {
-        // Vertical axis (Y) - offset toward camera dynamically
-        const labelPos = new THREE.Vector3(...pos);
-        const cameraPos = camera.position.clone();
-        const toCamera = cameraPos.sub(labelPos).normalize();
-        // Project the camera direction onto the horizontal plane (remove Y component)
-        toCamera.y = 0;
-        toCamera.normalize();
-
-        // Calculate dynamic offset position
-        finalPos = [
-          pos[0] + toCamera.x * LABEL_OFFSET,
-          pos[1],
-          pos[2] + toCamera.z * LABEL_OFFSET,
-        ];
-      } else {
-        // Use the pre-calculated base offset position for other axes
-        finalPos = baseOffsetPos;
-      }
+      // Calculate position using the appropriate strategy
+      const finalPos = LabelPositioningUtils.calculateFramePosition(
+        pos,
+        positioningStrategy,
+        camera
+      );
 
       // Always initialize position on first frame
       if (!isInitializedRef.current) {
@@ -89,10 +75,7 @@ const MotherLabelNode = React.memo(
       if (!isAnimationActive) return;
 
       // Throttle to 30fps on mobile (skip every other frame)
-      if (isMobile) {
-        frameCountRef.current++;
-        if (frameCountRef.current % 2 !== 0) return;
-      }
+      if (!shouldProcessFrame()) return;
 
       // Update the group position
       ref.current.position.set(...finalPos);
@@ -108,30 +91,13 @@ const MotherLabelNode = React.memo(
 
     return (
       <group ref={ref}>
-        <RichLabel
-          title={labelData.title}
-          subtitle={labelData.subtitle}
-          hebrewLetter={labelData.glyph}
-          letterName={labelData.letterName}
-          assocGlyph={labelData.assocGlyph}
-          assocName={labelData.assocName}
-          colorName={labelData.color}
-          colorValue={labelData.colorValue}
-          note={labelData.note}
-          significance={labelData.significance}
-          gematria={labelData.gematria}
-          alchemy={labelData.alchemy}
-          intelligence={labelData.intelligence}
-          outerPlanet={labelData.outerPlanet}
-          outerPlanetGlyph={labelData.outerPlanetGlyph}
-          showColorBorders={showColorBorders}
-          imagePath={labelData.imagePath}
+        <StandardRichLabel
+          labelData={labelData}
           scale={LABEL_SCALE}
           background={MOTHER_LABEL_BACKGROUND}
-          hebrewFont={LABEL_FONTS.hebrew}
-          uiFont={LABEL_FONTS.ui}
           useMemoryOptimization={useMemoryOptimization}
           doubleSided={doubleSided}
+          showColorBorders={showColorBorders}
         />
       </group>
     );
@@ -148,7 +114,7 @@ function MotherLabelsComponent({
   isMobile = false,
 }: MotherLabelsProps): React.JSX.Element {
   // Find the two horizontal mother axes to use as flip references (Mem/Shin)
-  const info = axes.map((a, idx) => {
+  const info = GeometryRepository.getAllAxes().map((a, idx) => {
     const t = new THREE.Vector3(
       a.to[0] - a.from[0],
       a.to[1] - a.from[1],

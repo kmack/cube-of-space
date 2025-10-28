@@ -101,6 +101,36 @@ export function AboutModal({
           </div>
         </div>
 
+        <div className="about-modal-attribution">
+          <h3>Tarot Illustrations</h3>
+          <p>
+            Illustrations of Paul Foster Case&apos;s B.O.T.A. Tarot Keys are
+            reproduced by kind permission of Builders of the Adytum, Ltd., Los
+            Angeles.
+          </p>
+          <p className="about-modal-disclaimer">
+            B.O.T.A. does not in any way endorse the interpretation of the
+            author by granting permission for the use of its materials. Those
+            interested in pursuing the teachings of the B.O.T.A. may write to:
+          </p>
+          <address className="about-modal-address">
+            BUILDERS OF THE ADYTUM, LTD.
+            <br />
+            5105 N. Figueroa Street
+            <br />
+            Los Angeles, CA 90042
+          </address>
+          <p>
+            <a
+              href="https://www.bota.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              www.bota.org
+            </a>
+          </p>
+        </div>
+
         <div className="about-modal-footer">
           <p>Built with React, TypeScript, Three.js, and React Three Fiber</p>
         </div>

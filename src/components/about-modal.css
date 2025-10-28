@@ -136,6 +136,66 @@
   outline-offset: 2px;
 }
 
+.about-modal-attribution {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.about-modal-attribution h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888888;
+}
+
+.about-modal-attribution p {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #b0b0b0;
+}
+
+.about-modal-attribution p:last-of-type {
+  margin-bottom: 0;
+}
+
+.about-modal-disclaimer {
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.about-modal-address {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid rgba(106, 183, 255, 0.3);
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #c0c0c0;
+}
+
+.about-modal-attribution a {
+  color: #6ab7ff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.about-modal-attribution a:hover {
+  color: #8fc9ff;
+  text-decoration: underline;
+}
+
+.about-modal-attribution a:focus {
+  outline: 2px solid rgba(106, 183, 255, 0.5);
+  outline-offset: 2px;
+}
+
 .about-modal-footer {
   margin-top: 1.5rem;
   padding-top: 1.5rem;

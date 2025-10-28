@@ -95,7 +95,7 @@ function RichLabelComponent({
   subtitle,
   hebrewLetter,
   imagePath,
-  images: _images, // Prefixed with _ to indicate intentionally unused for now
+  images: _images, // Reserved for future multi-image support (currently using imagePath for single image)
   letterName,
   assocGlyph,
   assocName,

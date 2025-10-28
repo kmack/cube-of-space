@@ -1,12 +1,35 @@
 /**
  * @fileoverview Cube of Space geometry definitions including faces, edges, axes,
  * and diagonals with precise 3D positioning and Hebrew letter associations.
+ *
+ * GEOMETRY STRUCTURE:
+ * - Faces (6): The six cube faces representing Double Letters (planetary)
+ * - Edges (12): The twelve cube edges representing Simple Letters (zodiacal)
+ * - Axes (3): The three axes through the cube center representing Mother Letters (elemental)
+ * - Diagonals (4): The four space diagonals through opposite corners representing Final Letters
+ * - Center (1): The cube center representing Tav/Saturn/The World
+ *
+ * COORDINATE SYSTEM:
+ * - X-axis: East (+) / West (-)
+ * - Y-axis: Above (+) / Below (-)
+ * - Z-axis: South (+) / North (-)
+ * - Origin: Cube center at [0, 0, 0]
+ * - Size: Cube extends ±HALF units from origin
+ *
+ * VECTOR CONVENTIONS:
+ * - normal: Direction perpendicular to the surface (for label orientation)
+ * - tangent: Direction along the edge/axis (for text baseline)
+ * - All normal and tangent vectors are normalized to unit length
  */
 
 // src/data/geometry.ts
 import { GeometryValidationService } from '../utils/geometry-validation';
 import type { Axis, Diagonal, Edge, Face } from '../utils/types';
 import { HALF, MOTHER_OFFSET } from './constants';
+
+// =============================================================================
+// FACES - Six cube faces (Double Letters / Planetary)
+// =============================================================================
 
 export const faces: Face[] = [
   { letter: 'Beth', pos: [0, +HALF, 0], rotation: [-Math.PI / 2, 0, 0] }, // Above (Mercury)
@@ -32,11 +55,15 @@ const westX = -HALF;
 const southZ = +HALF;
 const northZ = -HALF;
 
-// Helper constant for normalizing diagonal vectors (1/√2)
+// Helper constant for edge normals at 45-degree angles (1/√2 ≈ 0.707)
 const INV_SQRT2 = 1 / Math.sqrt(2);
 
+// =============================================================================
+// EDGES - Twelve cube edges (Simple Letters / Zodiacal)
+// =============================================================================
+
 export const edges: Edge[] = [
-  // Corner verticals
+  // Four vertical edges at the cube corners
   {
     letter: 'Heh',
     pos: [eastX, 0, northZ],
@@ -62,62 +89,70 @@ export const edges: Edge[] = [
     tangent: [0, 1, 0],
   }, // SW
 
-  // East face (top/bottom)
+  // East face edges (top/bottom horizontal edges)
+  // Tangent points north-to-south along the edge
   {
     letter: 'Zain',
     pos: [eastX, topY, 0],
     normal: [INV_SQRT2, INV_SQRT2, 0],
-    tangent: [0, 0, -1],
-  }, // East-Above
+    tangent: [0, 0, -1], // Points from south to north
+  },
   {
     letter: 'Cheth',
     pos: [eastX, botY, 0],
     normal: [INV_SQRT2, -INV_SQRT2, 0],
-    tangent: [0, 0, -1],
-  }, // East-Below (fixed tangent):contentReference[oaicite:3]{index=3}
+    tangent: [0, 0, -1], // Points from south to north
+  },
 
-  // North face (top/bottom)
+  // North face edges (top/bottom horizontal edges)
+  // Tangent points west-to-east along the edge
   {
     letter: 'Teth',
     pos: [0, topY, northZ],
     normal: [0, INV_SQRT2, -INV_SQRT2],
-    tangent: [-1, 0, 0],
-  }, // North-Above
+    tangent: [-1, 0, 0], // Points from east to west
+  },
   {
     letter: 'Yod',
     pos: [0, botY, northZ],
     normal: [0, -INV_SQRT2, -INV_SQRT2],
-    tangent: [-1, 0, 0],
-  }, // North-Below (fixed tangent):contentReference[oaicite:4]{index=4}
+    tangent: [-1, 0, 0], // Points from east to west
+  },
 
-  // West face (top/bottom)
+  // West face edges (top/bottom horizontal edges)
+  // Tangent points south-to-north along the edge
   {
     letter: 'Samekh',
     pos: [westX, topY, 0],
     normal: [-INV_SQRT2, INV_SQRT2, 0],
-    tangent: [0, 0, +1],
-  }, // West-Above
+    tangent: [0, 0, +1], // Points from north to south
+  },
   {
     letter: 'Ayin',
     pos: [westX, botY, 0],
     normal: [-INV_SQRT2, -INV_SQRT2, 0],
-    tangent: [0, 0, +1],
-  }, // West-Below (fixed tangent):contentReference[oaicite:5]{index=5}
+    tangent: [0, 0, +1], // Points from north to south
+  },
 
-  // South face (top/bottom)
+  // South face edges (top/bottom horizontal edges)
+  // Tangent points east-to-west along the edge
   {
     letter: 'Tzaddi',
     pos: [0, topY, southZ],
     normal: [0, INV_SQRT2, INV_SQRT2],
-    tangent: [+1, 0, 0],
-  }, // South-Above
+    tangent: [+1, 0, 0], // Points from west to east
+  },
   {
     letter: 'Qoph',
     pos: [0, botY, southZ],
     normal: [0, -INV_SQRT2, INV_SQRT2],
-    tangent: [+1, 0, 0],
-  }, // South-Below (fixed tangent):contentReference[oaicite:6]{index=6},
+    tangent: [+1, 0, 0], // Points from west to east
+  },
 ];
+
+// =============================================================================
+// AXES - Three orthogonal axes (Mother Letters / Elemental)
+// =============================================================================
 
 export const axes: Axis[] = [
   {
@@ -146,8 +181,12 @@ export const axes: Axis[] = [
   },
 ];
 
-// Diagonals - Final Letters connecting opposite corners through center
-// Label positioned at offset from center along the diagonal
+// =============================================================================
+// DIAGONALS - Four space diagonals (Final Letters)
+// =============================================================================
+// These connect opposite corners through the cube center
+// Labels are positioned at DIAGONAL_OFFSET distance from center along each diagonal
+
 const DIAGONAL_OFFSET = 0.6;
 
 /**
@@ -186,35 +225,35 @@ const normalize = (v: [number, number, number]): [number, number, number] => {
 export const diagonals: Diagonal[] = [
   {
     letter: 'Kaph-final',
-    from: [eastX, botY, southZ], // SE bottom
-    to: [westX, topY, northZ], // NW top
+    from: [eastX, botY, southZ], // SE bottom corner
+    to: [westX, topY, northZ], // NW top corner
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: normalize([-2, 2, -2]), // direction: from SE bottom to NW top
-    normal: normalize([1, 0, -1]), // match Nun pattern but flip Z sign
+    tangent: normalize([-2, 2, -2]), // Direction vector along the diagonal
+    normal: normalize([1, 0, -1]), // Perpendicular direction for label orientation
   },
   {
     letter: 'Nun-final',
-    from: [eastX, botY, northZ], // NE bottom
-    to: [westX, topY, southZ], // SW top
+    from: [eastX, botY, northZ], // NE bottom corner
+    to: [westX, topY, southZ], // SW top corner
     pos: [-DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: normalize([-2, 2, 2]), // direction: from NE bottom to SW top
-    normal: normalize([-1, 0, -1]), // try negative X and Z
+    tangent: normalize([-2, 2, 2]), // Direction vector along the diagonal
+    normal: normalize([-1, 0, -1]), // Perpendicular direction for label orientation
   },
   {
     letter: 'Peh-final',
-    from: [westX, botY, southZ], // SW bottom
-    to: [eastX, topY, northZ], // NE top
+    from: [westX, botY, southZ], // SW bottom corner
+    to: [eastX, topY, northZ], // NE top corner
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, -DIAGONAL_OFFSET],
-    tangent: normalize([2, 2, -2]), // full 3D direction along diagonal
-    normal: normalize([1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
+    tangent: normalize([2, 2, -2]), // Direction vector along the diagonal
+    normal: normalize([1, 0, 1]), // Perpendicular direction in horizontal plane for label orientation
   },
   {
     letter: 'Tzaddi-final',
-    from: [westX, botY, northZ], // NW bottom
-    to: [eastX, topY, southZ], // SE top
+    from: [westX, botY, northZ], // NW bottom corner
+    to: [eastX, topY, southZ], // SE top corner
     pos: [DIAGONAL_OFFSET, DIAGONAL_OFFSET, DIAGONAL_OFFSET],
-    tangent: normalize([2, 2, 2]), // full 3D direction along diagonal
-    normal: normalize([-1, 0, 1]), // perpendicular to tangent, in horizontal plane (correct)
+    tangent: normalize([2, 2, 2]), // Direction vector along the diagonal
+    normal: normalize([-1, 0, 1]), // Perpendicular direction in horizontal plane for label orientation
   },
 ];
 

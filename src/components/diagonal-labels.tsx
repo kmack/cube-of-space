@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Diagonal labels component rendering Hebrew Final letters on cube
+ * space diagonals connecting opposite corners through the center.
+ */
+
 // src/components/diagonal-labels.tsx
 import { useFrame } from '@react-three/fiber';
 import * as React from 'react';

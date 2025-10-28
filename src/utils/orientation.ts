@@ -1,3 +1,8 @@
+/**
+ * @fileoverview 3D orientation utilities for computing Euler angles from normal
+ * and tangent vectors, and camera billboard effects.
+ */
+
 // src/utils/orientation.ts
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';

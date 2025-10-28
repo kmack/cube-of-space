@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Geometry validation service for checking vector normalization,
+ * orthogonality, and geometric consistency at module load time.
+ */
+
 // src/utils/geometry-validation.ts
 
 import type { Axis, Diagonal, Edge, Vec3 } from './types';

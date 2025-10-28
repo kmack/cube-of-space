@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Centralized application configuration for performance settings,
+ * gamepad controls, and responsive design breakpoints.
+ */
+
 // src/config/app-config.ts
 
 /**

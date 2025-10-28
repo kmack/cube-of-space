@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Wireframe cube component rendering the basic geometric structure
+ * using Line segments from react-three/drei.
+ */
+
 // src/components/wire-cube.tsx
 import { Line } from '@react-three/drei';
 import * as React from 'react';

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Canvas-based texture generation utilities for creating 3D text
+ * labels with Hebrew characters, images, and styled backgrounds.
+ */
+
 // src/utils/canvas-texture.ts
 import * as THREE from 'three';
 

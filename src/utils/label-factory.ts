@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Factory for creating standardized label data from Hebrew letters
+ * with Tarot correspondences, glyphs, and image paths.
+ */
+
 // src/utils/label-factory.ts
 import type { HebrewLetter } from '../data/label-spec';
 import {

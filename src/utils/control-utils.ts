@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React hooks for Leva control state management including toggle
+ * and cycle callbacks with proper memoization.
+ */
+
 // src/utils/control-utils.ts
 import * as React from 'react';
 

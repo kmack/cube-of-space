@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Mobile device detection utilities based on user agent, touch
+ * capability, and screen size with React hook integration.
+ */
+
 // src/utils/mobile-detection.ts
 import { useEffect, useState } from 'react';
 

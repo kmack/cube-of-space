@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Simple 3D text label component using @react-three/drei Text with
+ * Hebrew letter and subtitle support.
+ */
+
 // src/components/label3d.tsx
 import { Text } from '@react-three/drei';
 import * as React from 'react';

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Tarot image path mapping and loading utilities for Major Arcana
+ * card images (Keys 0-21).
+ */
+
 // src/utils/tarot-images.ts
 
 // Map Tarot key numbers to image filenames

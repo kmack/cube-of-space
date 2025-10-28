@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Application entry point that mounts the React root component.
+ */
+
 import './index.css';
 
 import { StrictMode } from 'react';

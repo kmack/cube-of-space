@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Camera reset component providing animated camera transitions to
+ * default position and target with easing.
+ */
+
 // src/components/camera-reset.tsx
 import { useThree } from '@react-three/fiber';
 import * as React from 'react';

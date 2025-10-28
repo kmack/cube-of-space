@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Gamepad controls component enabling camera manipulation via
+ * game controller with configurable speeds and curves.
+ */
+
 // src/components/gamepad-controls.tsx
 import { useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';

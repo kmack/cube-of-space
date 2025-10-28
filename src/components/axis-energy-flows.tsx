@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Axis energy flows component rendering bidirectional particle flows
+ * along the three Mother letter axes with configurable flow patterns.
+ */
+
 // src/components/axis-energy-flows.tsx
 import * as React from 'react';
 

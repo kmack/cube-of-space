@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Shared styling configurations for label backgrounds including
+ * padding, borders, and opacity settings for different label types.
+ */
+
 // src/data/label-styles.ts
 import type { BackgroundStyle } from '../utils/canvas-texture';
 

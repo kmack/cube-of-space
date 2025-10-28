@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Texture atlas utilities for efficient canvas creation and alpha
+ * mask texture generation to reduce draw calls.
+ */
+
 // src/utils/texture-atlas.ts
 import * as THREE from 'three';
 

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Edge position labels component displaying geometric position
+ * descriptions (e.g., "NE", "South-Above") for debugging and spatial reference.
+ */
+
 // src/components/edge-position-labels.tsx
 import { Billboard } from '@react-three/drei';
 import * as React from 'react';

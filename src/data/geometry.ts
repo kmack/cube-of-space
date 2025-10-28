@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Cube of Space geometry definitions including faces, edges, axes,
+ * and diagonals with precise 3D positioning and Hebrew letter associations.
+ */
+
 // src/data/geometry.ts
 import { GeometryValidationService } from '../utils/geometry-validation';
 import type { Axis, Diagonal, Edge, Face } from '../utils/types';

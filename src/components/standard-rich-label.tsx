@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Standardized rich label wrapper providing a simplified interface
+ * for rendering labels with pre-configured fonts and styling.
+ */
+
 // src/components/standard-rich-label.tsx
 import * as React from 'react';
 

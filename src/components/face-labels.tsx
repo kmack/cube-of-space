@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Face labels component rendering Hebrew letters and Tarot
+ * correspondences on the six cube faces (Double letters/planetary).
+ */
+
 // src/components/face-labels.tsx
 import { Billboard } from '@react-three/drei';
 import * as React from 'react';

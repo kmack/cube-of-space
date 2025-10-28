@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Edge energy flows component rendering animated particle flows
+ * along the twelve cube edges with configurable direction and speed.
+ */
+
 // src/components/edge-energy-flows.tsx
 import * as React from 'react';
 

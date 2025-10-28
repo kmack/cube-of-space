@@ -1,8 +1,20 @@
 {
   "name": "cube-of-space",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Kevin Mack",
+    "email": "kmack.lvx@proton.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kmack/cube-of-space.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kmack/cube-of-space/issues"
+  },
+  "homepage": "https://cube-of-space.vercel.app",
   "engines": {
     "node": ">=20 <23"
   },

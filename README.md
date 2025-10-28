@@ -381,22 +381,47 @@ Currently, the project does not have automated tests. Contributions that add tes
 
 ## License & Attribution
 
-### Author
-**Kevin Mack**
-Email: [kmack.lvx@proton.me](mailto:kmack.lvx@proton.me)
-GitHub: [https://github.com/kmack/cube-of-space](https://github.com/kmack/cube-of-space)
+### Software License
 
-### Tarot Illustrations
+This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for full details.
+
+**Summary**: You are free to use, modify, distribute, and create derivative works from this code for any purpose, including commercial use, as long as you include the original copyright notice.
+
+```
+Copyright (c) 2025 Kevin Mack
+```
+
+### Author
+
+**Kevin Mack**
+- Email: [kmack.lvx@proton.me](mailto:kmack.lvx@proton.me)
+- GitHub: [https://github.com/kmack/cube-of-space](https://github.com/kmack/cube-of-space)
+
+### Tarot Illustrations - SEPARATE LICENSE ⚠️
+
+**IMPORTANT**: The B.O.T.A. Tarot illustrations are **NOT covered by the MIT License** and remain the property of Builders of the Adytum, Ltd.
+
 Illustrations of Paul Foster Case's B.O.T.A. Tarot Keys are reproduced by kind permission of Builders of the Adytum, Ltd., Los Angeles.
 
-**Disclaimer**: B.O.T.A. does not in any way endorse the interpretation of the author by granting permission for the use of its materials. Those interested in pursuing the teachings of the B.O.T.A. may write to:
+#### If You Fork This Project
+
+If you fork or redistribute this project, you must either:
+1. **Obtain your own permission** from B.O.T.A. to use the Tarot images, OR
+2. **Remove the Tarot images** from your distribution
+
+Contact B.O.T.A. for image permissions at:
 
 **BUILDERS OF THE ADYTUM, LTD.**
 5105 N. Figueroa Street
 Los Angeles, CA 90042
 Website: [www.bota.org](https://www.bota.org)
 
+#### Disclaimer
+
+B.O.T.A. does not in any way endorse the interpretation of the author by granting permission for the use of its materials. Those interested in pursuing the teachings of the B.O.T.A. may write to the address above.
+
 ### Technology Credits
+
 Built with [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Three.js](https://threejs.org/), and [React Three Fiber](https://docs.pmnd.rs/react-three-fiber).
 
 ---

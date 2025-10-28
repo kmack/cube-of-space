@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React hook for gamepad input handling with dead zones and
+ * button state tracking for camera control integration.
+ */
+
 // src/hooks/use-gamepad.ts
 import { useEffect, useRef, useState } from 'react';
 

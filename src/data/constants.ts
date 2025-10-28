@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Global constants including cube dimensions, colors keyed by Tarot
+ * numbers, and font paths for Hebrew and UI text rendering.
+ */
+
 // src/data/constants.ts
 import * as THREE from 'three';
 

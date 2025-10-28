@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Shared label component utilities including base props, animated
+ * label helpers, and rich label rendering logic.
+ */
+
 // src/utils/label-utils.tsx
 import * as React from 'react';
 

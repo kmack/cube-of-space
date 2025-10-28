@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Service for calculating energy flow start and end positions along
+ * cube edges based on flow direction and edge geometry.
+ */
+
 // src/utils/energy-flow-geometry.ts
 import * as THREE from 'three';
 

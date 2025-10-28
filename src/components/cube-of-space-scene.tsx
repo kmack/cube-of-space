@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Main 3D scene component with React Three Fiber, Leva controls,
+ * and orchestration of all cube visualization elements.
+ */
+
 // src/components/cube-of-space-scene.tsx
 import { Grid, OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';

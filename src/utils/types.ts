@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Core TypeScript type definitions for geometric elements
+ * (faces, edges, axes, diagonals) with 3D positioning and Hebrew letter associations.
+ */
+
 // src/utils/types.ts
 import type { HebrewLetter } from '../data/label-spec';
 

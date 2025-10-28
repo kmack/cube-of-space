@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Standardized rich label wrapper providing a simplified interface
+ * for rendering labels with pre-configured fonts and styling.
+ */
+
 // src/components/standard-rich-label.tsx
 import * as React from 'react';
 
@@ -23,13 +28,13 @@ export interface StandardRichLabelProps {
  * StandardRichLabel - Wrapper component that eliminates RichLabel prop mapping duplication
  *
  * This component encapsulates the common pattern of mapping LabelData to RichLabel props,
- * which was previously duplicated across FaceLabels, EdgeLabels, and MotherLabels.
+ * providing a reusable interface used across FaceLabels, EdgeLabels, and MotherLabels.
  *
  * Benefits:
- * - Single source of truth for label rendering
- * - Reduces boilerplate from ~20 lines to 1 line per label
- * - Changes to label structure apply uniformly across all label types
- * - Easier to maintain and debug
+ * - Single source of truth for label rendering logic
+ * - Reduces boilerplate: ~20 lines of prop mapping per label → 1 line component usage
+ * - Ensures consistent label structure across all label types (faces, edges, axes)
+ * - Simplifies maintenance: changes to label rendering apply uniformly
  *
  * @example
  * ```tsx

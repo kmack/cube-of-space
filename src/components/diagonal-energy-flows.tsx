@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Diagonal energy flows component rendering particle flows along
+ * the four diagonal lines connecting opposite cube corners.
+ */
+
 // src/components/diagonal-energy-flows.tsx
 import * as React from 'react';
 

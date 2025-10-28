@@ -1,3 +1,8 @@
+/**
+ * @fileoverview About modal dialog displaying project information, BOTA attribution,
+ * and usage instructions with keyboard accessibility.
+ */
+
 // src/components/about-modal.tsx
 import './about-modal.css';
 

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Complete specification of Hebrew letter to Tarot key mappings
+ * with astrological associations (elements, planets, zodiac signs).
+ */
+
 // src/label-spec.ts
 export type HebrewLetter =
   | 'Aleph'

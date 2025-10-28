@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Configuration for edge energy flow animations including flow
+ * directions, speeds, and particle visualization parameters.
+ */
+
 // src/data/energy-flow-config.ts
 import type { HebrewLetter } from './label-spec';
 

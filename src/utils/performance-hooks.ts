@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React hooks for performance optimization including page visibility
+ * detection and user idle state tracking.
+ */
+
 // src/utils/performance-hooks.ts
 import { useEffect, useRef, useState } from 'react';
 

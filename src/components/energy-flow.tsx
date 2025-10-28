@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Base energy flow component rendering animated particles along a
+ * line segment with configurable direction, speed, and appearance.
+ */
+
 // src/components/energy-flow.tsx
 import { useFrame } from '@react-three/fiber';
 import * as React from 'react';

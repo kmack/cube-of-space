@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Strategy pattern implementation for label positioning including
+ * dynamic camera-based positioning to avoid z-fighting with faces.
+ */
+
 // src/utils/label-positioning.ts
 import * as THREE from 'three';
 

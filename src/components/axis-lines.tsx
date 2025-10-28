@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Axis lines component rendering the three major axes connecting
+ * opposite face centers (Mother letter paths).
+ */
+
 import { type FC } from 'react';
 
 import { AXIS_LINE_COLOR, HALF } from '../data/constants';

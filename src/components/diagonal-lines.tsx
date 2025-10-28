@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Diagonal lines component rendering lines connecting opposite
+ * cube corners through the center (Final letter paths).
+ */
+
 // src/components/diagonal-lines.tsx
 import { type FC } from 'react';
 

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Repository pattern for accessing cube geometry data with type-safe
+ * lookup methods for faces, edges, axes, and diagonals by Hebrew letter.
+ */
+
 // src/utils/geometry-repository.ts
 
 import { axes, center, diagonals, edges, faces } from '../data/geometry';

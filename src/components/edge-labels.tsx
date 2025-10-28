@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Edge labels component rendering Hebrew letters on cube edges
+ * (Simple letters/zodiacal correspondences).
+ */
+
 // src/components/edge-labels.tsx
 import * as React from 'react';
 

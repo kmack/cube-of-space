@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Type definitions for component props including Tarot keys,
+ * label configurations, and rich label data structures.
+ */
+
 // src/types/component-props.ts
 import type { HebrewLetter } from '../data/label-spec';
 

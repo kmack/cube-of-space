@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React error boundary for the 3D scene to gracefully handle
+ * rendering errors and prevent full application crashes.
+ */
+
 // src/components/scene-error-boundary.tsx
 import * as React from 'react';
 

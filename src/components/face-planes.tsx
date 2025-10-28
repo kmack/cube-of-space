@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Colored face planes component rendering the six cube faces with
+ * Tarot-associated colors (planetary correspondences).
+ */
+
 // src/components/face-planes.tsx
 import * as React from 'react';
 import * as THREE from 'three';

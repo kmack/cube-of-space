@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Configuration for axis (Mother letter) energy flow animations
+ * with bidirectional flow patterns and visualization parameters.
+ */
+
 // src/data/axis-energy-flow-config.ts
 
 import type { Vec3 } from '../utils/types';

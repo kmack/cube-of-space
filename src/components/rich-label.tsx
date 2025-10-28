@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Rich label component with canvas-based textures supporting Hebrew
+ * text, Tarot images, and styled backgrounds for 3D rendering.
+ */
+
 // src/components/rich-label.tsx
 import { useThree } from '@react-three/fiber';
 import * as React from 'react';
@@ -90,7 +95,7 @@ function RichLabelComponent({
   subtitle,
   hebrewLetter,
   imagePath,
-  images: _images, // Prefixed with _ to indicate intentionally unused for now
+  images: _images, // Reserved for future multi-image support (currently using imagePath for single image)
   letterName,
   assocGlyph,
   assocName,

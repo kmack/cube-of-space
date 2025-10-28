@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Mother labels component rendering Hebrew letters on cube axes
+ * (Mother letters/elemental correspondences) with dynamic camera-facing positioning.
+ */
+
 // src/components/mother-labels.tsx
 import { useFrame } from '@react-three/fiber';
 import * as React from 'react';

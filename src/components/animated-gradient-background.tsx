@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Animated CSS gradient background with performance optimizations
+ * for mobile devices and page visibility.
+ */
+
 import { type FC, useEffect, useRef } from 'react';
 
 import { isMobileDevice } from '../utils/mobile-detection';

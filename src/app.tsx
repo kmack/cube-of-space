@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Root application component that orchestrates the 3D scene,
+ * controls panel, animated background, and error boundary.
+ */
+
 // src/app.tsx
 import { Leva } from 'leva';
 import * as React from 'react';

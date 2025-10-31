@@ -1,8 +1,9 @@
 # Cube of Space - User Guide
 
-Welcome to the **Cube of Space**, an interactive 3D visualization of the Qabalistic/Tarot geometric model. This guide will help you navigate and interact with the application using various input methods.
+**Website:** https://cube-of-space.vercel.app
+**Support Email:** kmack.lvx@proton.me
 
-**Access the application at:** [https://cube-of-space.vercel.app/](https://cube-of-space.vercel.app/)
+Welcome to the **Cube of Space**, an interactive 3D visualization of the Qabalistic/Tarot geometric model. This guide will help you navigate and interact with the application using various input methods.
 
 ---
 
@@ -20,6 +21,7 @@ Welcome to the **Cube of Space**, an interactive 3D visualization of the Qabalis
 ## Overview
 
 The Cube of Space is a 3D interactive model that maps:
+
 - **Faces** - The 6 "Double" letters (planetary associations)
 - **Edges** - The 12 "Simple" letters (zodiacal associations)
 - **Axes** - The 3 "Mother" letters (elemental associations)
@@ -34,11 +36,11 @@ You can rotate, zoom, pan, and customize the visualization using mouse, touch, o
 
 ### Mouse Controls
 
-| Action | Control |
-|--------|---------|
-| **Rotate View** | Left-click and drag |
-| **Pan (Move)** | Right-click and drag |
-| **Zoom In/Out** | Mouse scroll wheel |
+| Action           | Control                             |
+| ---------------- | ----------------------------------- |
+| **Rotate View**  | Left-click and drag                 |
+| **Pan (Move)**   | Right-click and drag                |
+| **Zoom In/Out**  | Mouse scroll wheel                  |
 | **Reset Camera** | Double-click anywhere on the canvas |
 
 ### Keyboard Controls
@@ -50,16 +52,18 @@ Currently, the application uses an interactive control panel (Leva controls) for
 ## Touch Controls (Mobile/Tablet)
 
 ### Single Touch
-| Action | Control |
-|--------|---------|
-| **Rotate View** | Single-finger drag |
+
+| Action           | Control                           |
+| ---------------- | --------------------------------- |
+| **Rotate View**  | Single-finger drag                |
 | **Reset Camera** | Double-tap anywhere on the canvas |
 
 ### Two-Finger Gestures
-| Action | Control |
-|--------|---------|
+
+| Action          | Control                                 |
+| --------------- | --------------------------------------- |
 | **Zoom In/Out** | Pinch gesture (two-finger spread/pinch) |
-| **Pan (Move)** | Two-finger drag |
+| **Pan (Move)**  | Two-finger drag                         |
 
 **Note:** Touch controls use the same OrbitControls system as desktop, optimized for mobile performance with reduced particle counts and appropriate device pixel ratios.
 
@@ -71,47 +75,49 @@ The application fully supports Xbox-style gamepad controllers (Xbox, PlayStation
 
 ### Analog Sticks
 
-| Control | Function |
-|---------|----------|
-| **Left Stick (Horizontal/Vertical)** | Pan the view in screen space |
-| **Right Stick (Horizontal/Vertical)** | Rotate the camera around the cube |
-| **Left Stick Press (L3)** | Reset pan position (target returns to origin) |
-| **Right Stick Press (R3)** | Reset entire camera view to default position |
+| Control                               | Function                                      |
+| ------------------------------------- | --------------------------------------------- |
+| **Left Stick (Horizontal/Vertical)**  | Pan the view in screen space                  |
+| **Right Stick (Horizontal/Vertical)** | Rotate the camera around the cube             |
+| **Left Stick Press (L3)**             | Reset pan position (target returns to origin) |
+| **Right Stick Press (R3)**            | Reset entire camera view to default position  |
 
 ### Triggers
 
-| Control | Function |
-|---------|----------|
-| **Left Trigger (LT)** | Zoom out |
-| **Right Trigger (RT)** | Zoom in |
+| Control                | Function |
+| ---------------------- | -------- |
+| **Left Trigger (LT)**  | Zoom out |
+| **Right Trigger (RT)** | Zoom in  |
 
 ### Face Buttons
 
-| Button | Function |
-|--------|----------|
-| **A Button** | Toggle energy flow visibility on/off |
-| **B Button** | Toggle double-sided labels on/off |
+| Button       | Function                                                   |
+| ------------ | ---------------------------------------------------------- |
+| **A Button** | Toggle energy flow visibility on/off                       |
+| **B Button** | Toggle double-sided labels on/off                          |
+| **X Button** | Toggle edge position labels on/off                         |
 | **Y Button** | Cycle axis flow direction (center-to-faces ↔ directional) |
 
 ### D-Pad
 
-| Direction | Function |
-|-----------|----------|
-| **D-Pad Up** | Toggle Mother Letters (elemental axes) visibility |
-| **D-Pad Right** | Toggle Double Letters (face labels) visibility |
-| **D-Pad Down** | Toggle Simple Letters (edge labels) visibility |
-| **D-Pad Left** | Toggle Final Letters (diagonal labels) visibility |
+| Direction       | Function                                          |
+| --------------- | ------------------------------------------------- |
+| **D-Pad Up**    | Toggle Mother Letters (elemental axes) visibility |
+| **D-Pad Right** | Toggle Double Letters (face labels) visibility    |
+| **D-Pad Down**  | Toggle Simple Letters (edge labels) visibility    |
+| **D-Pad Left**  | Toggle Final Letters (diagonal labels) visibility |
 
 ### Bumper Buttons
 
-| Button | Function |
-|--------|----------|
-| **Left Bumper (LB)** | Toggle face visibility on/off |
+| Button                | Function                                    |
+| --------------------- | ------------------------------------------- |
+| **Left Bumper (LB)**  | Toggle face visibility on/off               |
 | **Right Bumper (RB)** | Toggle face opacity (transparent ↔ opaque) |
 
 ### Gamepad Settings
 
 The control panel includes adjustable gamepad settings:
+
 - **Rotation Speed** (1.0 - 20.0): How fast the camera rotates with right stick
 - **Zoom Speed** (0.5 - 10.0): How fast the camera zooms with triggers
 - **Pan Speed** (0.5 - 8.0): How fast the view pans with left stick
@@ -127,44 +133,44 @@ Click the **controls icon** (top-right corner) to open the interactive control p
 
 ### Letters Section
 
-| Control | Description |
-|---------|-------------|
-| **Mother Letters** | Show/hide the 3 elemental axis labels (Aleph, Mem, Shin) |
-| **Double Letters** | Show/hide the 6 planetary face labels |
-| **Simple Letters** | Show/hide the 12 zodiacal edge labels |
-| **Final Letters** | Show/hide the 4 diagonal labels |
-| **Double-Sided Labels** | Toggle whether labels are visible from both sides |
-| **Show Color Borders** | Toggle colored borders around labels based on Tarot associations |
+| Control                 | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| **Mother Letters**      | Show/hide the 3 elemental axis labels (Aleph, Mem, Shin)         |
+| **Double Letters**      | Show/hide the 6 planetary face labels                            |
+| **Simple Letters**      | Show/hide the 12 zodiacal edge labels                            |
+| **Final Letters**       | Show/hide the 4 diagonal labels                                  |
+| **Double-Sided Labels** | Toggle whether labels are visible from both sides                |
+| **Show Color Borders**  | Toggle colored borders around labels based on Tarot associations |
 
 ### Faces Section
 
-| Control | Description |
-|---------|-------------|
-| **Show Faces** | Toggle visibility of colored cube faces |
+| Control          | Description                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| **Show Faces**   | Toggle visibility of colored cube faces                         |
 | **Opaque Faces** | Switch between transparent (0.8 opacity) and fully opaque faces |
 
 ### Axes Section
 
-| Control | Description |
-|---------|-------------|
-| **Show Axis Lines** | Display the three elemental axis lines |
+| Control                 | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| **Show Axis Lines**     | Display the three elemental axis lines           |
 | **Show Diagonal Lines** | Display the four diagonal lines through the cube |
-| **Show Edge Positions** | Display position labels for the 12 edges |
+| **Show Edge Positions** | Display position labels for the 12 edges         |
 
 ### Energy Flow Section
 
-| Control | Description |
-|---------|-------------|
-| **Show Energy Flow** | Toggle animated particle effects along edges and axes |
+| Control                 | Description                                            |
+| ----------------------- | ------------------------------------------------------ |
+| **Show Energy Flow**    | Toggle animated particle effects along edges and axes  |
 | **Axis Flow Direction** | Choose between "Center to Faces" or "Directional Flow" |
 
 #### Energy Flow Effects (Sub-section)
 
-| Control | Range | Description |
-|---------|-------|-------------|
-| **Speed** | 0.1 - 3.0 | Animation speed of energy particles |
-| **Opacity** | 0.1 - 1.0 | Visibility strength of energy particles |
-| **Particles** | 10 - 50 | Number of particles per flow path |
+| Control       | Range     | Description                             |
+| ------------- | --------- | --------------------------------------- |
+| **Speed**     | 0.1 - 3.0 | Animation speed of energy particles     |
+| **Opacity**   | 0.1 - 1.0 | Visibility strength of energy particles |
+| **Particles** | 10 - 50   | Number of particles per flow path       |
 
 ### Gamepad Section
 
@@ -172,10 +178,10 @@ Customize gamepad sensitivity and behavior (see [Gamepad Controls](#gamepad-cont
 
 ### Debug Section
 
-| Control | Description |
-|---------|-------------|
+| Control              | Description                                               |
+| -------------------- | --------------------------------------------------------- |
 | **Show Ground Grid** | Display a grid plane below the cube for spatial reference |
-| **Show Axes Helper** | Display RGB axes helper (X=red, Y=green, Z=blue) |
+| **Show Axes Helper** | Display RGB axes helper (X=red, Y=green, Z=blue)          |
 
 ---
 
@@ -192,11 +198,12 @@ The cube maps the 22 Hebrew letters to geometric elements:
 
 ### Color System
 
-Each element is color-coded based on its Tarot card association (defined in the Rider-Waite-Smith tradition). Face colors correspond to planetary Tarot cards, and label borders reflect these associations.
+Each element is color-coded based on its Tarot card association (defined by Paul Foster Case in [The Tarot: A Key to the Wisdom of the Ages](https://storebota.org/products/tarot-a-key-to-the-wisdom-of-the-ages-new-edition)). Face colors correspond to planetary Tarot cards, and label borders reflect these associations.
 
 ### Energy Flows
 
 Animated particles show energy movement through the geometric structure:
+
 - **Edge flows**: Travel along the 12 edges
 - **Axis flows**: Travel along the 3 elemental axes (configurable direction)
 - **Diagonal flows**: Travel along the 4 body diagonals
@@ -204,6 +211,7 @@ Animated particles show energy movement through the geometric structure:
 ### Performance Optimizations
 
 The application automatically adjusts for device capabilities:
+
 - **Mobile devices**: Reduced particle counts and lower DPI for better performance
 - **Idle detection**: Animations pause when you're inactive to save resources
 - **Page visibility**: Animations pause when the tab is in the background
@@ -248,12 +256,22 @@ The application automatically adjusts for device capabilities:
 
 ## Credits
 
-Built with React, TypeScript, Three.js, React Three Fiber, and Leva controls.
+Authored by Frater Kevin Mack (kmack.lvx@proton.me)
 
-Based on the traditional Qabalistic "Cube of Space" model with Tarot and Hebrew letter correspondences.
+Based on the writings of Paul Foster Case and
+**BUILDERS OF THE ADYTUM, LTD.**
+5105 N. Figueroa Street
+Los Angeles, CA 90042
+Website: [www.bota.org](https://www.bota.org)
+
+#### Disclaimer
+
+B.O.T.A. does not in any way endorse the interpretation of the author by granting permission for the use of its materials. Those interested in pursuing the teachings of the B.O.T.A. may write to the address above.
+
+### Technology Credits
+
+Built with [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Three.js](https://threejs.org/), and [React Three Fiber](https://docs.pmnd.rs/react-three-fiber).
 
 ---
-
-**Explore the sacred geometry and discover the relationships between the Hebrew alphabet, Tarot, astrology, and the structure of space itself.**
 
 Visit: [https://cube-of-space.vercel.app/](https://cube-of-space.vercel.app/)

@@ -9,6 +9,8 @@ import * as React from 'react';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
+import { APP_CONFIG } from '../config/app-config';
+
 interface CameraResetProps {
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
   defaultPosition?: [number, number, number];
@@ -18,8 +20,16 @@ interface CameraResetProps {
 
 export function CameraReset({
   controlsRef,
-  defaultPosition = [4, 3, 6],
-  defaultTarget = [0, 0, 0],
+  defaultPosition = APP_CONFIG.camera.defaultPosition as unknown as [
+    number,
+    number,
+    number,
+  ],
+  defaultTarget = APP_CONFIG.camera.defaultTarget as unknown as [
+    number,
+    number,
+    number,
+  ],
   animationDuration = 1000,
 }: CameraResetProps): null {
   const { camera, gl } = useThree();

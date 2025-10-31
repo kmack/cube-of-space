@@ -134,23 +134,31 @@ export function CubeOfSpaceScene(): React.JSX.Element {
   );
 
   // Axes controls
-  const { showAxisLines, showDiagonalLines, showEdgePositions } = useControls(
-    'Axes',
-    {
-      showAxisLines: {
-        value: true,
-        label: 'Show Axis Lines',
-      },
-      showDiagonalLines: {
-        value: true,
-        label: 'Show Diagonal Lines',
-      },
-      showEdgePositions: {
-        value: true,
-        label: 'Show Edge Positions',
-      },
-    },
-    { collapsed: true }
+  const [{ showAxisLines, showDiagonalLines, showEdgePositions }, setAxes] =
+    useControls(
+      'Axes',
+      () => ({
+        showAxisLines: {
+          value: true,
+          label: 'Show Axis Lines',
+        },
+        showDiagonalLines: {
+          value: true,
+          label: 'Show Diagonal Lines',
+        },
+        showEdgePositions: {
+          value: true,
+          label: 'Show Edge Positions',
+        },
+      }),
+      { collapsed: true }
+    );
+
+  // Gamepad toggle callback for edge positions
+  const handleToggleEdgePositions = useToggleCallback(
+    setAxes,
+    'showEdgePositions',
+    showEdgePositions
   );
 
   // Energy Flow controls
@@ -328,6 +336,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
           onToggleSingleLetters={handleToggleSingleLetters}
           onToggleFinalLetters={handleToggleFinalLetters}
           onToggleDoubleSidedLabels={handleToggleDoubleSidedLabels}
+          onToggleEdgePositions={handleToggleEdgePositions}
         />
         <CameraReset
           controlsRef={orbitControlsRef}

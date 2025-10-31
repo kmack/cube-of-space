@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 import { Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
+import { APP_CONFIG } from '../config/app-config';
 import { useGamepad } from '../hooks/use-gamepad';
 
 interface GamepadControlsProps {
@@ -28,6 +29,7 @@ interface GamepadControlsProps {
   onToggleSingleLetters?: () => void;
   onToggleFinalLetters?: () => void;
   onToggleDoubleSidedLabels?: () => void;
+  onToggleEdgePositions?: () => void;
 }
 
 /**
@@ -46,8 +48,16 @@ export function GamepadControls({
   zoomSpeed = 3.0,
   panSpeed = 2.0,
   rotationCurve = 2.0,
-  defaultCameraPosition = [4, 3, 6],
-  defaultTarget = [0, 0, 0],
+  defaultCameraPosition = APP_CONFIG.camera.defaultPosition as unknown as [
+    number,
+    number,
+    number,
+  ],
+  defaultTarget = APP_CONFIG.camera.defaultTarget as unknown as [
+    number,
+    number,
+    number,
+  ],
   onToggleFaceVisibility,
   onToggleFaceOpacity,
   onToggleEnergyFlow,
@@ -57,6 +67,7 @@ export function GamepadControls({
   onToggleSingleLetters,
   onToggleFinalLetters,
   onToggleDoubleSidedLabels,
+  onToggleEdgePositions,
 }: GamepadControlsProps): null {
   const { camera } = useThree();
   const gamepad = useGamepad();
@@ -122,6 +133,9 @@ export function GamepadControls({
 
       // B button: Toggle double-sided labels
       handleButton('b', currentGamepad.buttons.b, onToggleDoubleSidedLabels);
+
+      // X button: Toggle edge position labels
+      handleButton('x', currentGamepad.buttons.x, onToggleEdgePositions);
 
       // Y button: Toggle axis flow direction
       handleButton('y', currentGamepad.buttons.y, onToggleAxisFlowDirection);
@@ -306,6 +320,7 @@ export function GamepadControls({
     onToggleSingleLetters,
     onToggleFinalLetters,
     onToggleDoubleSidedLabels,
+    onToggleEdgePositions,
   ]);
 
   return null;

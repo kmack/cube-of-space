@@ -203,7 +203,7 @@ const normalize = (v: [number, number, number]): [number, number, number] => {
 
   if (len < EPSILON) {
     // In development, throw error for immediate debugging
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       console.error(
         `Cannot normalize zero-length vector: [${v[0]}, ${v[1]}, ${v[2]}]`
       );

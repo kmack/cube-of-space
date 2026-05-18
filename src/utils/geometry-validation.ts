@@ -76,10 +76,7 @@ export interface GeometryValidationConfig {
  */
 export class GeometryValidationService {
   private static readonly DEFAULT_TOLERANCE = 1e-6;
-  // Access NODE_ENV with type assertion for build-time constant
-  private static readonly IS_PRODUCTION =
-    (process as unknown as { env: { NODE_ENV?: string } }).env.NODE_ENV ===
-    'production';
+  private static readonly IS_PRODUCTION = import.meta.env.PROD;
   private static readonly DEFAULT_CONFIG: Required<GeometryValidationConfig> = {
     normalizationTolerance: GeometryValidationService.DEFAULT_TOLERANCE,
     throwOnError: true,

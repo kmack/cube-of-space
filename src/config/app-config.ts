@@ -82,6 +82,13 @@ export const APP_CONFIG = {
       /** DPR range for desktop [min, max] */
       desktop: [1, 2] as const,
     },
+    /**
+     * Max DPR for off-screen label canvases. Capped at 1.5 so a label canvas
+     * matches the R3F mobile framebuffer — on iPhone 14 Pro Max (devicePixelRatio
+     * 3) this avoids a ~4x CPU memory spike per label during boot that caused
+     * intermittent first-load failures.
+     */
+    labelCanvasMaxDpr: 1.5,
   },
 
   /**

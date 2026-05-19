@@ -6,6 +6,7 @@
 // src/utils/canvas-texture.ts
 import * as THREE from 'three';
 
+import { APP_CONFIG } from '../config/app-config';
 import {
   LABEL_HEIGHT_NO_IMAGE,
   LABEL_HEIGHT_WITH_IMAGE,
@@ -15,9 +16,78 @@ import {
 import { createAlphaMaskTexture, createOptimizedCanvas } from './texture-atlas';
 
 /**
- * Module-level image cache to avoid repeated loading and decoding
+ * Module-level image cache. The cached promise is *signal-less* and shared
+ * across callers — each caller races the shared load against its own
+ * AbortSignal in loadImageWithSignal() rather than passing its signal into
+ * the cached load. This keeps one component's abort from rejecting every
+ * other caller of the same src, and avoids storing a permanently-rejected
+ * promise (the bug that previously required 2-3 page refreshes on iOS).
  */
 const imageCache = new Map<string, Promise<HTMLImageElement>>();
+
+function loadImageShared(src: string): Promise<HTMLImageElement> {
+  const cached = imageCache.get(src);
+  if (cached) return cached;
+
+  const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => {
+      // Only evict on real load failure — lets the next caller retry.
+      imageCache.delete(src);
+      const error = new Error(`Failed to load image: ${src}`);
+      error.name = 'ImageLoadError';
+      reject(error);
+    };
+    img.src = src;
+  });
+
+  imageCache.set(src, promise);
+  return promise;
+}
+
+function loadImageWithSignal(
+  src: string,
+  signal?: AbortSignal
+): Promise<HTMLImageElement> {
+  if (signal?.aborted) {
+    const error = new Error('Image loading aborted');
+    error.name = 'AbortError';
+    return Promise.reject(error);
+  }
+
+  const shared = loadImageShared(src);
+  if (!signal) return shared;
+
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const onAbort = (): void => {
+      const error = new Error('Image loading aborted');
+      error.name = 'AbortError';
+      reject(error);
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+
+    shared.then(
+      (img) => {
+        signal.removeEventListener('abort', onAbort);
+        // Re-check abort: image resolution and abort can land in the same
+        // microtask turn; if abort already fired we should reject rather
+        // than hand a texture to a torn-down component.
+        if (signal.aborted) {
+          const error = new Error('Image loading aborted');
+          error.name = 'AbortError';
+          reject(error);
+          return;
+        }
+        resolve(img);
+      },
+      (error: unknown) => {
+        signal.removeEventListener('abort', onAbort);
+        reject(error instanceof Error ? error : new Error(String(error)));
+      }
+    );
+  });
+}
 
 export type TextStyle = {
   fontSize: number;
@@ -113,7 +183,8 @@ export function createCanvasTexture(
       isBlackAndWhite
     );
 
-    const dpr = config.devicePixelRatio ?? window.devicePixelRatio ?? 1;
+    const rawDpr = config.devicePixelRatio ?? window.devicePixelRatio ?? 1;
+    const dpr = Math.min(rawDpr, APP_CONFIG.rendering.labelCanvasMaxDpr);
 
     // Set canvas dimensions with device pixel ratio for crisp rendering
     canvas.width = renderWidth * dpr;
@@ -341,58 +412,9 @@ async function loadImages(
   if (imageConfigs.length === 0) {
     return [];
   }
-
-  // Check if already aborted
-  if (signal?.aborted) {
-    const error = new Error('Image loading aborted');
-    error.name = 'AbortError';
-    throw error;
-  }
-
-  const promises = imageConfigs.map((config) => {
-    // Check cache first
-    if (imageCache.has(config.src)) {
-      return imageCache.get(config.src)!;
-    }
-
-    // Create and cache the promise with abort support
-    const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
-      if (signal?.aborted) {
-        const error = new Error('Image loading aborted');
-        error.name = 'AbortError';
-        reject(error);
-        return;
-      }
-
-      const img = new Image();
-
-      // Set up abort handler
-      const abortHandler = (): void => {
-        img.src = ''; // Cancel image loading
-        const error = new Error('Image loading aborted');
-        error.name = 'AbortError';
-        reject(error);
-      };
-      signal?.addEventListener('abort', abortHandler, { once: true });
-
-      img.onload = () => {
-        signal?.removeEventListener('abort', abortHandler);
-        resolve(img);
-      };
-      img.onerror = () => {
-        signal?.removeEventListener('abort', abortHandler);
-        const error = new Error(`Failed to load image: ${config.src}`);
-        error.name = 'ImageLoadError';
-        reject(error);
-      };
-      img.src = config.src;
-    });
-
-    imageCache.set(config.src, imagePromise);
-    return imagePromise;
-  });
-
-  return Promise.all(promises);
+  return Promise.all(
+    imageConfigs.map((config) => loadImageWithSignal(config.src, signal))
+  );
 }
 
 /**

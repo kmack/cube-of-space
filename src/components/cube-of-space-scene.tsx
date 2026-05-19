@@ -32,6 +32,7 @@ import { FaceLabels } from './face-labels';
 import { FacePlanes } from './face-planes';
 import { GamepadControls } from './gamepad-controls';
 import { MotherLabels } from './mother-labels';
+import { WebGLContextRecovery } from './webgl-context-recovery';
 import { WireCube } from './wire-cube';
 
 export function CubeOfSpaceScene(): React.JSX.Element {
@@ -313,6 +314,7 @@ export function CubeOfSpaceScene(): React.JSX.Element {
           gl.setClearColor(0x000000, 0); // transparent clear color
         }}
       >
+        <WebGLContextRecovery />
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 8, 5]} intensity={0.9} />
         <OrbitControls

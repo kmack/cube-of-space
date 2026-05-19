@@ -21,6 +21,7 @@ import {
   createHebrewLabelTexture,
   createStructuredHebrewLabel,
 } from '../utils/canvas-texture';
+import { withTextureSlot } from '../utils/texture-queue';
 
 export type RichLabelProps = {
   // Content
@@ -138,62 +139,68 @@ function RichLabelComponent({
     const abortController = new AbortController();
     let currentTexture: THREE.Texture | null = null;
 
-    // Use custom canvas config if provided, otherwise use Hebrew label helper
-    const texturePromise = canvasConfig
-      ? createCanvasTexture({
-          ...canvasConfig,
-          useOptimizedFormat:
-            canvasConfig.useOptimizedFormat ?? useMemoryOptimization,
-          targetResolution:
-            canvasConfig.targetResolution ??
-            (useMemoryOptimization
-              ? {
-                  width: Math.min(canvasConfig.width, 600),
-                  height: Math.min(canvasConfig.height, 480),
-                }
-              : undefined),
-          signal: abortController.signal,
-        })
-      : letterName && assocGlyph && assocName
-        ? createStructuredHebrewLabel(
-            hebrewLetter ?? '',
-            letterName,
-            assocGlyph,
-            assocName,
-            title,
-            {
-              width,
-              height,
-              color,
-              background,
-              hebrewFont,
-              uiFont,
-              imagePath,
-              useMemoryOptimization,
+    // Use custom canvas config if provided, otherwise use Hebrew label helper.
+    // Wrap factory call in withTextureSlot so canvas allocation only happens
+    // once a queue slot is held — prevents boot-time memory spike on iOS.
+    const texturePromise = withTextureSlot(
+      () =>
+        canvasConfig
+          ? createCanvasTexture({
+              ...canvasConfig,
+              useOptimizedFormat:
+                canvasConfig.useOptimizedFormat ?? useMemoryOptimization,
+              targetResolution:
+                canvasConfig.targetResolution ??
+                (useMemoryOptimization
+                  ? {
+                      width: Math.min(canvasConfig.width, 600),
+                      height: Math.min(canvasConfig.height, 480),
+                    }
+                  : undefined),
               signal: abortController.signal,
-              colorName,
-              colorValue,
-              note,
-              significance,
-              gematria,
-              alchemy,
-              intelligence,
-              showColorBorders,
-              outerPlanet,
-              outerPlanetGlyph,
-            }
-          )
-        : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
-            width,
-            height,
-            color,
-            background,
-            hebrewFont,
-            uiFont,
-            imagePath,
-            useMemoryOptimization,
-            signal: abortController.signal,
-          });
+            })
+          : letterName && assocGlyph && assocName
+            ? createStructuredHebrewLabel(
+                hebrewLetter ?? '',
+                letterName,
+                assocGlyph,
+                assocName,
+                title,
+                {
+                  width,
+                  height,
+                  color,
+                  background,
+                  hebrewFont,
+                  uiFont,
+                  imagePath,
+                  useMemoryOptimization,
+                  signal: abortController.signal,
+                  colorName,
+                  colorValue,
+                  note,
+                  significance,
+                  gematria,
+                  alchemy,
+                  intelligence,
+                  showColorBorders,
+                  outerPlanet,
+                  outerPlanetGlyph,
+                }
+              )
+            : createHebrewLabelTexture(hebrewLetter ?? '', title, subtitle, {
+                width,
+                height,
+                color,
+                background,
+                hebrewFont,
+                uiFont,
+                imagePath,
+                useMemoryOptimization,
+                signal: abortController.signal,
+              }),
+      abortController.signal
+    );
 
     texturePromise
       .then((tex) => {
@@ -473,10 +480,14 @@ function ComplexRichLabelComponent({
     const abortController = new AbortController();
     let currentTexture: THREE.Texture | null = null;
 
-    createCanvasTexture({
-      ...canvasConfig,
-      signal: abortController.signal,
-    })
+    withTextureSlot(
+      () =>
+        createCanvasTexture({
+          ...canvasConfig,
+          signal: abortController.signal,
+        }),
+      abortController.signal
+    )
       .then((tex) => {
         // Check if component is still mounted
         if (!abortController.signal.aborted) {
@@ -491,7 +502,7 @@ function ComplexRichLabelComponent({
           tex.dispose();
         }
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         // Silently ignore AbortErrors as they are expected during unmount
         if (error instanceof Error && error.name === 'AbortError') {
           return;
